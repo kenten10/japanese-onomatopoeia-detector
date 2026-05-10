@@ -1,0 +1,2 @@
+# japanese-onomatopoeia-detector
+マイク入力された音声が日本語のオノマトペっぽいかを判定してくれるiPhoneアプリ。外国人の日本語学習者向け。
