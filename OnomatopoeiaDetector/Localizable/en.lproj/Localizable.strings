@@ -1,0 +1,62 @@
+/* App */
+"app.title" = "Onomatopoeia Detector";
+"app.subtitle" = "オノマトペ判定";
+
+/* Home */
+"home.record.button" = "Record";
+"home.record.hint" = "Tap to speak";
+"home.last.result" = "Latest Result";
+"home.no.result" = "Try recording!";
+"home.no.result.sub" = "Tap the microphone button\nand say something";
+
+/* Recording */
+"recording.listening" = "Listening...";
+"recording.recognizing" = "Recognizing...";
+"recording.tap.stop" = "Tap to stop";
+
+/* Result */
+"result.title" = "Result";
+"result.recognized" = "Recognized word";
+"result.score.label" = "Onomatopoeia Score";
+"result.comment.5" = "Perfect onomatopoeia! 🎉";
+"result.comment.4" = "Very onomatopoeic! ✨";
+"result.comment.3" = "Somewhat onomatopoeic 😊";
+"result.comment.2" = "Doesn't seem very onomatopoeic";
+"result.comment.1" = "Doesn't seem onomatopoeic";
+"result.similar.title" = "Similar Onomatopoeia";
+"result.similar.meaning" = "Meaning";
+"result.similar.example" = "Example";
+"result.again" = "Try Again";
+"result.save" = "Save to History";
+"result.saved" = "Saved!";
+
+/* History */
+"history.title" = "History";
+"history.empty" = "No history yet";
+"history.delete" = "Delete";
+"history.clear.all" = "Clear All";
+"history.clear.confirm" = "Delete all history?";
+"history.clear.yes" = "Delete";
+"history.clear.cancel" = "Cancel";
+
+/* Settings */
+"settings.title" = "Settings";
+"settings.language" = "Display Language";
+"settings.language.auto" = "Follow System";
+"settings.language.ja" = "日本語";
+"settings.language.en" = "English";
+"settings.history.clear" = "Clear All History";
+"settings.version" = "Version";
+"settings.about" = "About";
+"settings.about.desc" = "Uses AI to rate how onomatopoeic your spoken Japanese words are on a 5-point scale.";
+
+/* Permissions */
+"permission.mic.title" = "Microphone Access";
+"permission.mic.message" = "Microphone is used to record your voice and evaluate onomatopoeia";
+"permission.mic.deny" = "Microphone access is denied. Please allow it in Settings.";
+"permission.mic.open.settings" = "Open Settings";
+"permission.speech.title" = "Speech Recognition";
+"permission.speech.message" = "Used to convert your recorded voice to text";
+
+/* Score accessibility */
+"score.stars" = "%d stars";

@@ -1,0 +1,449 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		A001 /* OnomatopoeiaDetectorApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = B001 /* OnomatopoeiaDetectorApp.swift */; };
+		A002 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B002 /* ContentView.swift */; };
+		A003 /* HomeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B003 /* HomeView.swift */; };
+		A004 /* ResultView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B004 /* ResultView.swift */; };
+		A005 /* HistoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B005 /* HistoryView.swift */; };
+		A006 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = B006 /* SettingsView.swift */; };
+		A007 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B007 /* AppViewModel.swift */; };
+		A008 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008 /* Models.swift */; };
+		A009 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B009 /* PersistenceController.swift */; };
+		A010 /* HistoryEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B010 /* HistoryEntity.swift */; };
+		A011 /* OnoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B011 /* OnoEngine.swift */; };
+		A012 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012 /* SpeechManager.swift */; };
+		A013 /* onomatopoeia_dict.json in Resources */ = {isa = PBXBuildFile; fileRef = B013 /* onomatopoeia_dict.json */; };
+		A014 /* ja in Resources */ = {isa = PBXBuildFile; fileRef = B014 /* ja */; };
+		A015 /* en in Resources */ = {isa = PBXBuildFile; fileRef = B015 /* en */; };
+		A016 /* OnomatopoeiaDetector.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = B016 /* OnomatopoeiaDetector.xcdatamodeld */; };
+		A017 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B017 /* Speech.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		A018 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B018 /* AVFoundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		A019 /* NaturalLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B019 /* NaturalLanguage.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		A020 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B020 /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		B001 /* OnomatopoeiaDetectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnomatopoeiaDetectorApp.swift; sourceTree = "<group>"; };
+		B002 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		B003 /* HomeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeView.swift; sourceTree = "<group>"; };
+		B004 /* ResultView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultView.swift; sourceTree = "<group>"; };
+		B005 /* HistoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryView.swift; sourceTree = "<group>"; };
+		B006 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		B007 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
+		B008 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+		B009 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		B010 /* HistoryEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryEntity.swift; sourceTree = "<group>"; };
+		B011 /* OnoEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnoEngine.swift; sourceTree = "<group>"; };
+		B012 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
+		B013 /* onomatopoeia_dict.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = onomatopoeia_dict.json; sourceTree = "<group>"; };
+		B014 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B015 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B016 /* OnomatopoeiaDetector.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OnomatopoeiaDetector.xcdatamodeld; sourceTree = "<group>"; };
+		B017 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
+		B018 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
+		B019 /* NaturalLanguage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NaturalLanguage.framework; path = System/Library/Frameworks/NaturalLanguage.framework; sourceTree = SDKROOT; };
+		B020 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		C001 /* OnomatopoeiaDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnomatopoeiaDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		C002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		D001 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A017 /* Speech.framework in Frameworks */,
+				A018 /* AVFoundation.framework in Frameworks */,
+				A019 /* NaturalLanguage.framework in Frameworks */,
+				A020 /* CoreData.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		E000 = {
+			isa = PBXGroup;
+			children = (
+				E001 /* OnomatopoeiaDetector */,
+				E008 /* Frameworks */,
+				F001 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E001 /* OnomatopoeiaDetector */ = {
+			isa = PBXGroup;
+			children = (
+				B001 /* OnomatopoeiaDetectorApp.swift */,
+				B002 /* ContentView.swift */,
+				E002 /* Views */,
+				E003 /* ViewModels */,
+				E004 /* Models */,
+				E005 /* Engine */,
+				E006 /* Resources */,
+				E007 /* Localizable */,
+				C002 /* Info.plist */,
+			);
+			path = OnomatopoeiaDetector;
+			sourceTree = "<group>";
+		};
+		E002 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				B003 /* HomeView.swift */,
+				B004 /* ResultView.swift */,
+				B005 /* HistoryView.swift */,
+				B006 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		E003 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				B007 /* AppViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		E004 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				B008 /* Models.swift */,
+				B009 /* PersistenceController.swift */,
+				B010 /* HistoryEntity.swift */,
+				B016 /* OnomatopoeiaDetector.xcdatamodeld */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		E005 /* Engine */ = {
+			isa = PBXGroup;
+			children = (
+				B011 /* OnoEngine.swift */,
+				B012 /* SpeechManager.swift */,
+			);
+			path = Engine;
+			sourceTree = "<group>";
+		};
+		E006 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				B013 /* onomatopoeia_dict.json */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		E007 /* Localizable */ = {
+			isa = PBXGroup;
+			children = (
+				B014 /* ja */,
+				B015 /* en */,
+			);
+			path = Localizable;
+			sourceTree = "<group>";
+		};
+		E008 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				B017 /* Speech.framework */,
+				B018 /* AVFoundation.framework */,
+				B019 /* NaturalLanguage.framework */,
+				B020 /* CoreData.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		F001 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C001 /* OnomatopoeiaDetector.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		T001 /* OnomatopoeiaDetector */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = X001 /* Build configuration list for PBXNativeTarget "OnomatopoeiaDetector" */;
+			buildPhases = (
+				D001 /* Frameworks */,
+				D002 /* Sources */,
+				D003 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = OnomatopoeiaDetector;
+			productName = OnomatopoeiaDetector;
+			productReference = C001 /* OnomatopoeiaDetector.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		P001 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					T001 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = X000 /* Build configuration list for PBXProject "OnomatopoeiaDetector" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = ja;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				ja,
+				Base,
+			);
+			mainGroup = E000;
+			productRefGroup = F001 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				T001 /* OnomatopoeiaDetector */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		D003 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A013 /* onomatopoeia_dict.json in Resources */,
+				A014 /* ja in Resources */,
+				A015 /* en in Resources */,
+				A016 /* OnomatopoeiaDetector.xcdatamodeld in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		D002 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A001 /* OnomatopoeiaDetectorApp.swift in Sources */,
+				A002 /* ContentView.swift in Sources */,
+				A003 /* HomeView.swift in Sources */,
+				A004 /* ResultView.swift in Sources */,
+				A005 /* HistoryView.swift in Sources */,
+				A006 /* SettingsView.swift in Sources */,
+				A007 /* AppViewModel.swift in Sources */,
+				A008 /* Models.swift in Sources */,
+				A009 /* PersistenceController.swift in Sources */,
+				A010 /* HistoryEntity.swift in Sources */,
+				A011 /* OnoEngine.swift in Sources */,
+				A012 /* SpeechManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		X010 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLES = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		X011 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_CYCLES = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		X020 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 4CTNU287UV;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OnomatopoeiaDetector/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.OnomatopoeiaDetector;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Debug;
+		};
+		X021 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_ASSET_PATHS = "";
+				DEVELOPMENT_TEAM = 4CTNU287UV;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = OnomatopoeiaDetector/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.OnomatopoeiaDetector;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = iphoneos;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		X000 /* Build configuration list for PBXProject "OnomatopoeiaDetector" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				X010 /* Debug */,
+				X011 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		X001 /* Build configuration list for PBXNativeTarget "OnomatopoeiaDetector" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				X020 /* Debug */,
+				X021 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = P001 /* Project object */;
+}
