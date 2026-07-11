@@ -1,14 +1,14 @@
 import Foundation
-import Combine
-import SwiftUI
+import Observation
 
 @MainActor
-final class AppViewModel: ObservableObject {
+@Observable
+final class AppViewModel {
 
-    // MARK: - Published
-    @Published var recordingState: RecordingState = .idle
-    @Published var history: [HistoryItem] = []
-    @Published var appLanguage: AppLanguage = .system
+    // MARK: - Observable state
+    var recordingState: RecordingState = .idle
+    var history: [HistoryItem] = []
+    var appLanguage: AppLanguage = .defaultLanguage
 
     // MARK: - Sub-managers
     let speech = SpeechManager()
@@ -21,11 +21,8 @@ final class AppViewModel: ObservableObject {
         loadHistory()
         setupSpeechCallback()
 
-        // Load saved language preference
-        if let saved = UserDefaults.standard.string(forKey: "appLanguage"),
-           let lang = AppLanguage(rawValue: saved) {
-            appLanguage = lang
-        }
+        // 保存済みの言語設定（なければ既定＝英語）を反映
+        appLanguage = AppLanguage.stored
     }
 
     // MARK: - Speech Setup
@@ -35,6 +32,18 @@ final class AppViewModel: ObservableObject {
             guard let self else { return }
             Task { @MainActor in
                 self.evaluateText(text)
+            }
+        }
+        speech.onCancelled = { [weak self] in
+            Task { @MainActor in
+                guard let self else { return }
+                // 評価中／結果表示中を上書きしないよう、録音・認識中のときだけ待機に戻す
+                switch self.recordingState {
+                case .recording, .recognizing:
+                    self.recordingState = .idle
+                default:
+                    break
+                }
             }
         }
     }
@@ -48,7 +57,10 @@ final class AppViewModel: ObservableObject {
     // MARK: - Recording
 
     func startRecording() {
-        guard speech.canRecord else { return }
+        guard speech.canRecord else {
+            recordingState = .error(String(localized: "permission.mic.deny"))
+            return
+        }
         do {
             recordingState = .recording
             try speech.startRecordingWithAutoStop(maxSeconds: 10)
@@ -71,13 +83,11 @@ final class AppViewModel: ObservableObject {
             return
         }
         recordingState = .evaluating
-        // Run on background then hop back to main
-        Task.detached(priority: .userInitiated) { [weak self] in
+        // 評価は actor 上（メインスレッド外）で実行し、完了後にメインへ戻して反映する
+        Task { [weak self] in
             guard let self else { return }
-            let result = self.engine.evaluate(text: text)
-            await MainActor.run {
-                self.recordingState = .result(result)
-            }
+            let result = await self.engine.evaluate(text: text)
+            self.recordingState = .result(result)
         }
     }
 
@@ -116,6 +126,6 @@ final class AppViewModel: ObservableObject {
 
     func setLanguage(_ lang: AppLanguage) {
         appLanguage = lang
-        UserDefaults.standard.set(lang.rawValue, forKey: "appLanguage")
+        lang.persist() // AppleLanguages に反映（切り替えは次回起動時に反映される）
     }
 }

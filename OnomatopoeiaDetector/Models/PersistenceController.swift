@@ -1,5 +1,6 @@
 import Foundation
 import CoreData
+import os
 
 // MARK: - PersistenceController
 
@@ -7,6 +8,7 @@ final class PersistenceController {
 
     static let shared = PersistenceController()
 
+    private let log = Logger(subsystem: "OnomatopoeiaDetector", category: "Persistence")
     let container: NSPersistentContainer
 
     init(inMemory: Bool = false) {
@@ -28,8 +30,11 @@ final class PersistenceController {
 
     func save() {
         let ctx = viewContext
-        if ctx.hasChanges {
-            try? ctx.save()
+        guard ctx.hasChanges else { return }
+        do {
+            try ctx.save()
+        } catch {
+            log.error("Core Data save failed: \(error.localizedDescription, privacy: .public)")
         }
     }
 
@@ -72,7 +77,11 @@ final class PersistenceController {
     func deleteAll() {
         let request: NSFetchRequest<NSFetchRequestResult> = HistoryEntity.fetchRequest()
         let batch = NSBatchDeleteRequest(fetchRequest: request)
-        try? viewContext.execute(batch)
+        do {
+            try viewContext.execute(batch)
+        } catch {
+            log.error("Core Data batch delete failed: \(error.localizedDescription, privacy: .public)")
+        }
         save()
     }
 

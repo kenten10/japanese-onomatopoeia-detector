@@ -4,124 +4,125 @@ struct ResultView: View {
     let result: EvaluationResult
     let onDismiss: () -> Void
 
-    @EnvironmentObject var vm: AppViewModel
-    @State private var starsAnimated = 0
+    @Environment(AppViewModel.self) private var vm
+    @State private var starsShown = 0
+    @State private var burstIn = false
     @State private var savedFeedback = false
+    @State private var saveResetTask: Task<Void, Never>?
 
     var body: some View {
         NavigationStack {
             ScrollView {
-                VStack(spacing: 24) {
-                    // Recognized text
-                    recognizedTextCard
-
-                    // Score card
+                VStack(spacing: 22) {
+                    sfxBurst
                     scoreCard
-
-                    // Similar onomatopoeia (score >= 3)
                     if result.score >= 3 && !result.similarEntries.isEmpty {
                         similarSection
                     }
-
-                    // Action buttons
                     actionButtons
                 }
                 .padding(.horizontal, 20)
                 .padding(.vertical, 24)
             }
-            .background(Color(.systemGroupedBackground))
+            .background(Ink.paper.ignoresSafeArea())
             .navigationTitle(String(localized: "result.title"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button {
-                        onDismiss()
-                    } label: {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundStyle(.secondary)
+                    Button { onDismiss() } label: {
+                        Image(systemName: "xmark")
+                            .font(.system(size: 15, weight: .black))
+                            .foregroundStyle(Ink.ink)
                     }
                 }
             }
         }
         .onAppear {
+            withAnimation(.spring(response: 0.45, dampingFraction: 0.55)) { burstIn = true }
             animateStars()
         }
+        .onDisappear { saveResetTask?.cancel() }
     }
 
-    // MARK: - Recognized Text
+    // MARK: - SFX burst (signature)
 
-    private var recognizedTextCard: some View {
-        VStack(spacing: 8) {
-            Text(String(localized: "result.recognized"))
-                .font(.caption)
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .leading)
+    private var sfxBurst: some View {
+        ZStack {
+            SpeedLines(color: Ink.ink.opacity(0.18))
+            Halftone(color: Ink.vermilion.opacity(0.10))
 
             Text(result.inputText)
-                .font(.system(size: 36, weight: .bold, design: .rounded))
-                .foregroundStyle(.primary)
+                .font(.sfx(min(52, 220 / max(CGFloat(result.inputText.count), 3) + 20)))
+                .foregroundStyle(Ink.ink)
+                .minimumScaleFactor(0.4)
+                .lineLimit(2)
                 .multilineTextAlignment(.center)
-                .frame(maxWidth: .infinity)
+                .padding(.horizontal, 12)
+                .rotationEffect(.degrees(-4))
+                .scaleEffect(burstIn ? 1 : 0.4)
+                .opacity(burstIn ? 1 : 0)
         }
-        .padding(20)
-        .background(.background, in: RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
+        .frame(height: 180)
+        .frame(maxWidth: .infinity)
+        .mangaPanel(radius: 10)
+        .overlay(alignment: .topLeading) {
+            Text(String(localized: "result.recognized").uppercased())
+                .font(.system(size: 10, weight: .bold, design: .monospaced))
+                .tracking(1.5)
+                .foregroundStyle(Ink.paper)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Ink.ink)
+                .padding(12)
+        }
     }
 
-    // MARK: - Score Card
+    // MARK: - Score card
 
     private var scoreCard: some View {
-        VStack(spacing: 16) {
-            Text(String(localized: "result.score.label"))
-                .font(.caption)
-                .foregroundStyle(.secondary)
+        VStack(spacing: 14) {
+            Text(String(localized: "result.score.label").uppercased())
+                .font(.system(size: 11, weight: .bold, design: .monospaced))
+                .tracking(2)
+                .foregroundStyle(Ink.ink.opacity(0.5))
 
-            // Stars
-            HStack(spacing: 8) {
+            HStack(spacing: 6) {
                 ForEach(1...5, id: \.self) { i in
-                    Image(systemName: i <= starsAnimated ? "star.fill" : "star")
-                        .font(.system(size: 36))
-                        .foregroundStyle(i <= result.score ? scoreColor : Color(.systemGray4))
-                        .scaleEffect(i <= starsAnimated ? 1.0 : 0.8)
-                        .animation(.spring(response: 0.3, dampingFraction: 0.5).delay(Double(i) * 0.08), value: starsAnimated)
+                    Image(systemName: i <= starsShown ? "star.fill" : "star")
+                        .font(.system(size: 34, weight: .black))
+                        .foregroundStyle(i <= result.score ? Ink.score(result.score) : Ink.ink.opacity(0.15))
+                        .scaleEffect(i <= starsShown ? 1 : 0.7)
+                        .animation(.spring(response: 0.3, dampingFraction: 0.5), value: starsShown)
                 }
             }
             .accessibilityLabel(String(format: String(localized: "score.stars"), result.score))
 
-            // Score number badge
-            Text("\(result.score) / 5")
-                .font(.title.bold())
-                .foregroundStyle(scoreColor)
+            HStack(alignment: .firstTextBaseline, spacing: 2) {
+                Text("\(result.score)")
+                    .font(.sfx(48))
+                    .foregroundStyle(Ink.score(result.score))
+                Text("/ 5")
+                    .font(.mangaHeading(22))
+                    .foregroundStyle(Ink.ink.opacity(0.4))
+            }
 
-            // Comment
             Text(result.scoreComment)
-                .font(.subheadline.weight(.medium))
-                .foregroundStyle(.secondary)
+                .font(.mangaHeading(16))
+                .foregroundStyle(Ink.ink)
                 .multilineTextAlignment(.center)
         }
-        .padding(24)
+        .padding(22)
         .frame(maxWidth: .infinity)
-        .background(.background, in: RoundedRectangle(cornerRadius: 16))
-        .shadow(color: .black.opacity(0.06), radius: 8, y: 2)
+        .mangaPanel(radius: 10)
     }
 
-    private var scoreColor: Color {
-        switch result.score {
-        case 5: return .yellow
-        case 4: return .indigo
-        case 3: return .green
-        case 2: return .orange
-        default: return .gray
-        }
-    }
-
-    // MARK: - Similar Section
+    // MARK: - Similar
 
     private var similarSection: some View {
         VStack(alignment: .leading, spacing: 12) {
             Label(String(localized: "result.similar.title"), systemImage: "sparkles")
-                .font(.headline)
-                .foregroundStyle(.indigo)
+                .font(.mangaHeading(17))
+                .foregroundStyle(Ink.ink)
 
             ForEach(result.similarEntries) { similar in
                 SimilarEntryCard(entry: similar.entry)
@@ -129,53 +130,73 @@ struct ResultView: View {
         }
     }
 
-    // MARK: - Action Buttons
+    // MARK: - Actions
 
     private var actionButtons: some View {
         VStack(spacing: 12) {
-            // Save button
             Button {
                 vm.saveCurrentResult()
                 withAnimation { savedFeedback = true }
-                DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
-                    savedFeedback = false
+                saveResetTask?.cancel()
+                saveResetTask = Task {
+                    try? await Task.sleep(for: .seconds(1.5))
+                    if !Task.isCancelled { savedFeedback = false }
                 }
             } label: {
                 Label(
                     savedFeedback ? String(localized: "result.saved") : String(localized: "result.save"),
-                    systemImage: savedFeedback ? "checkmark.circle.fill" : "bookmark.fill"
+                    systemImage: savedFeedback ? "checkmark" : "bookmark.fill"
                 )
-                .font(.subheadline.weight(.semibold))
+                .font(.mangaHeading(16))
+                .foregroundStyle(Ink.paper)
                 .frame(maxWidth: .infinity)
-                .padding(.vertical, 14)
-                .background(savedFeedback ? Color.green : Color.indigo, in: RoundedRectangle(cornerRadius: 12))
-                .foregroundStyle(.white)
+                .padding(.vertical, 15)
+                .background(savedFeedback ? Ink.score(5) : Ink.ink)
                 .animation(.default, value: savedFeedback)
             }
+            .buttonStyle(MangaButtonStyle())
 
-            // Try again
-            Button {
-                onDismiss()
-            } label: {
+            Button { onDismiss() } label: {
                 Text(String(localized: "result.again"))
-                    .font(.subheadline.weight(.semibold))
+                    .font(.mangaHeading(16))
+                    .foregroundStyle(Ink.ink)
                     .frame(maxWidth: .infinity)
-                    .padding(.vertical, 14)
-                    .background(Color(.secondarySystemBackground), in: RoundedRectangle(cornerRadius: 12))
-                    .foregroundStyle(.primary)
+                    .padding(.vertical, 15)
+                    .background(Ink.panel)
             }
+            .buttonStyle(MangaButtonStyle())
         }
     }
 
     // MARK: - Animation
 
     private func animateStars() {
-        starsAnimated = 0
+        starsShown = 0
         for i in 1...result.score {
-            DispatchQueue.main.asyncAfter(deadline: .now() + Double(i) * 0.12) {
-                starsAnimated = i
+            let delay = Double(i) * 0.12
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(delay))
+                starsShown = i
             }
         }
+    }
+}
+
+// MARK: - Manga button style (押し込みでオフセット影が縮む)
+
+struct MangaButtonStyle: ButtonStyle {
+    func makeBody(configuration: Configuration) -> some View {
+        let pressed = configuration.isPressed
+        return configuration.label
+            .clipShape(RoundedRectangle(cornerRadius: 8))
+            .overlay(RoundedRectangle(cornerRadius: 8).stroke(Ink.ink, lineWidth: 2.5))
+            .background(
+                RoundedRectangle(cornerRadius: 8)
+                    .fill(Ink.ink)
+                    .offset(x: pressed ? 1 : 4, y: pressed ? 1 : 4)
+            )
+            .offset(x: pressed ? 3 : 0, y: pressed ? 3 : 0)
+            .animation(.easeOut(duration: 0.08), value: pressed)
     }
 }
 
@@ -186,56 +207,47 @@ struct SimilarEntryCard: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
-            // Word + reading + category
             HStack(alignment: .firstTextBaseline) {
                 Text(entry.word)
-                    .font(.system(size: 22, weight: .bold, design: .rounded))
-                    .foregroundStyle(.indigo)
+                    .font(.sfx(24))
+                    .foregroundStyle(Ink.ink)
 
                 Text("（\(entry.reading)）")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Ink.ink.opacity(0.5))
 
                 Spacer()
 
                 Text(entry.category)
-                    .font(.caption2.weight(.medium))
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
-                    .background(Color.indigo.opacity(0.12), in: Capsule())
-                    .foregroundStyle(.indigo)
+                    .foregroundStyle(Ink.paper)
+                    .background(Ink.vermilion, in: Capsule())
             }
 
-            Divider()
+            Rectangle().fill(Ink.ink.opacity(0.15)).frame(height: 1)
 
-            // Meanings
             VStack(alignment: .leading, spacing: 6) {
                 meaningRow(flag: "🇯🇵", text: entry.meaning_ja)
                 meaningRow(flag: "🇬🇧", text: entry.meaning_en)
             }
 
-            // Examples
             VStack(alignment: .leading, spacing: 4) {
                 Label(String(localized: "result.similar.example"), systemImage: "text.bubble")
-                    .font(.caption2.weight(.semibold))
-                    .foregroundStyle(.secondary)
+                    .font(.system(size: 11, weight: .bold, design: .monospaced))
+                    .foregroundStyle(Ink.ink.opacity(0.5))
 
                 Text("・\(entry.example_ja)")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
-
+                    .foregroundStyle(Ink.ink.opacity(0.7))
                 Text("・\(entry.example_en)")
                     .font(.caption)
-                    .foregroundStyle(.secondary)
+                    .foregroundStyle(Ink.ink.opacity(0.7))
             }
         }
         .padding(16)
-        .background(.background, in: RoundedRectangle(cornerRadius: 14))
-        .overlay(
-            RoundedRectangle(cornerRadius: 14)
-                .strokeBorder(Color.indigo.opacity(0.15), lineWidth: 1)
-        )
-        .shadow(color: .black.opacity(0.04), radius: 6, y: 2)
+        .mangaPanel(radius: 8, offset: 3)
     }
 
     private func meaningRow(flag: String, text: String) -> some View {
@@ -243,7 +255,7 @@ struct SimilarEntryCard: View {
             Text(flag)
             Text(text)
                 .font(.subheadline)
-                .foregroundStyle(.primary)
+                .foregroundStyle(Ink.ink)
         }
     }
 }

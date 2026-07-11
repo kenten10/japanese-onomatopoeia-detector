@@ -1,12 +1,14 @@
 import SwiftUI
 
 struct HistoryView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @Environment(AppViewModel.self) private var vm
     @State private var showClearConfirm = false
 
     var body: some View {
         NavigationStack {
-            Group {
+            ZStack {
+                Ink.paper.ignoresSafeArea()
+
                 if vm.history.isEmpty {
                     emptyState
                 } else {
@@ -20,7 +22,8 @@ struct HistoryView: View {
                         Button(String(localized: "history.clear.all"), role: .destructive) {
                             showClearConfirm = true
                         }
-                        .font(.caption)
+                        .font(.system(size: 13, weight: .bold))
+                        .tint(Ink.vermilion)
                     }
                 }
             }
@@ -37,32 +40,39 @@ struct HistoryView: View {
         }
     }
 
-    // MARK: - Empty State
+    // MARK: - Empty state
 
     private var emptyState: some View {
-        VStack(spacing: 16) {
-            Image(systemName: "clock.badge.questionmark")
-                .font(.system(size: 60))
-                .foregroundStyle(.secondary.opacity(0.5))
+        VStack(spacing: 12) {
+            // マンガで「閑散・空っぽ」を表す描き文字
+            Text("がらーん")
+                .font(.sfx(52))
+                .foregroundStyle(Ink.ink.opacity(0.16))
+                .rotationEffect(.degrees(-5))
             Text(String(localized: "history.empty"))
-                .foregroundStyle(.secondary)
+                .font(.mangaHeading(16))
+                .foregroundStyle(Ink.ink.opacity(0.5))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
-    // MARK: - History List
+    // MARK: - List
 
     private var historyList: some View {
-        List {
-            ForEach(vm.history) { item in
-                HistoryRow(item: item)
-                    .listRowInsets(EdgeInsets(top: 6, leading: 16, bottom: 6, trailing: 16))
+        ScrollView {
+            LazyVStack(spacing: 12) {
+                ForEach(vm.history) { item in
+                    HistoryRow(item: item)
+                        .contextMenu {
+                            Button(String(localized: "history.delete"), role: .destructive) {
+                                vm.deleteHistoryItem(item)
+                            }
+                        }
+                }
             }
-            .onDelete { indexSet in
-                indexSet.forEach { vm.deleteHistoryItem(vm.history[$0]) }
-            }
+            .padding(.horizontal, 18)
+            .padding(.vertical, 12)
         }
-        .listStyle(.insetGrouped)
     }
 }
 
@@ -71,50 +81,41 @@ struct HistoryView: View {
 struct HistoryRow: View {
     let item: HistoryItem
 
-    private var starColor: Color {
-        switch item.score {
-        case 5: return .yellow
-        case 4: return .indigo
-        case 3: return .green
-        case 2: return .orange
-        default: return .gray
-        }
-    }
-
     var body: some View {
-        HStack(spacing: 12) {
-            // Score badge
+        HStack(spacing: 14) {
+            // スコアバッジ
             ZStack {
                 Circle()
-                    .fill(starColor.opacity(0.15))
-                    .frame(width: 44, height: 44)
-
+                    .fill(Ink.score(item.score))
+                    .frame(width: 46, height: 46)
+                    .overlay(Circle().stroke(Ink.ink, lineWidth: 2))
                 Text("\(item.score)")
-                    .font(.system(size: 18, weight: .bold, design: .rounded))
-                    .foregroundStyle(starColor)
+                    .font(.sfx(20))
+                    .foregroundStyle(Ink.paper)
             }
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 5) {
                 Text(item.inputText)
-                    .font(.headline)
+                    .font(.mangaHeading(18))
+                    .foregroundStyle(Ink.ink)
                     .lineLimit(1)
 
-                HStack(spacing: 4) {
+                HStack(spacing: 3) {
                     ForEach(1...5, id: \.self) { i in
                         Image(systemName: i <= item.score ? "star.fill" : "star")
-                            .font(.system(size: 10))
-                            .foregroundStyle(i <= item.score ? starColor : Color(.systemGray4))
+                            .font(.system(size: 9, weight: .black))
+                            .foregroundStyle(i <= item.score ? Ink.score(item.score) : Ink.ink.opacity(0.15))
                     }
-
                     Text(item.date.formatted(date: .abbreviated, time: .shortened))
-                        .font(.caption2)
-                        .foregroundStyle(.secondary)
-                        .padding(.leading, 4)
+                        .font(.system(size: 11, weight: .medium, design: .monospaced))
+                        .foregroundStyle(Ink.ink.opacity(0.45))
+                        .padding(.leading, 6)
                 }
             }
 
             Spacer()
         }
-        .padding(.vertical, 4)
+        .padding(14)
+        .mangaPanel(radius: 8, offset: 3)
     }
 }

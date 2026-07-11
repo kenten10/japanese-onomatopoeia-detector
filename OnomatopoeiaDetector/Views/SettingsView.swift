@@ -1,12 +1,13 @@
 import SwiftUI
 
 struct SettingsView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @Environment(AppViewModel.self) private var vm
     @State private var showClearConfirm = false
 
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
 
     var body: some View {
+        @Bindable var vm = vm
         NavigationStack {
             Form {
                 // Language
@@ -17,11 +18,12 @@ struct SettingsView: View {
                         }
                     }
                     .pickerStyle(.menu)
+                    .tint(Ink.vermilion)
                     .onChange(of: vm.appLanguage) { _, newValue in
                         vm.setLanguage(newValue)
                     }
                 } header: {
-                    Text(String(localized: "settings.language"))
+                    sectionHeader("settings.language")
                 }
 
                 // History
@@ -31,31 +33,37 @@ struct SettingsView: View {
                     } label: {
                         Label(String(localized: "settings.history.clear"), systemImage: "trash")
                     }
+                    .tint(Ink.vermilion)
                 } header: {
-                    Text(String(localized: "history.title"))
+                    sectionHeader("history.title")
                 }
 
                 // About
                 Section {
                     HStack {
                         Text(String(localized: "settings.version"))
+                            .foregroundStyle(Ink.ink)
                         Spacer()
                         Text(appVersion)
-                            .foregroundStyle(.secondary)
+                            .font(.system(.body, design: .monospaced))
+                            .foregroundStyle(Ink.ink.opacity(0.5))
                     }
 
                     VStack(alignment: .leading, spacing: 6) {
                         Text(String(localized: "settings.about"))
-                            .font(.subheadline.weight(.semibold))
+                            .font(.mangaHeading(15))
+                            .foregroundStyle(Ink.ink)
                         Text(String(localized: "settings.about.desc"))
                             .font(.caption)
-                            .foregroundStyle(.secondary)
+                            .foregroundStyle(Ink.ink.opacity(0.6))
                     }
                     .padding(.vertical, 4)
                 } header: {
-                    Text(String(localized: "settings.about"))
+                    sectionHeader("settings.about")
                 }
             }
+            .scrollContentBackground(.hidden)
+            .background(Ink.paper.ignoresSafeArea())
             .navigationTitle(String(localized: "settings.title"))
             .confirmationDialog(
                 String(localized: "history.clear.confirm"),
@@ -68,5 +76,12 @@ struct SettingsView: View {
                 Button(String(localized: "history.clear.cancel"), role: .cancel) {}
             }
         }
+    }
+
+    private func sectionHeader(_ key: String.LocalizationValue) -> some View {
+        Text(String(localized: key).uppercased())
+            .font(.system(size: 11, weight: .bold, design: .monospaced))
+            .tracking(1.5)
+            .foregroundStyle(Ink.ink.opacity(0.5))
     }
 }

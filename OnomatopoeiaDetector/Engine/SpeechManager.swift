@@ -1,41 +1,46 @@
 import Foundation
 import AVFoundation
 import Speech
-import Combine
+import Observation
+import os
 
 // MARK: - SpeechManager
 
 @MainActor
-final class SpeechManager: NSObject, ObservableObject {
+@Observable
+final class SpeechManager: NSObject {
 
-    // MARK: Published
-    @Published var partialText: String = ""
-    @Published var authStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
-    @Published var micAuthStatus: AVAuthorizationStatus = .notDetermined
+    // MARK: Observable state
+    var partialText: String = ""
+    var authStatus: SFSpeechRecognizerAuthorizationStatus = .notDetermined
+    var micAuthStatus: AVAuthorizationStatus = .notDetermined
 
     // MARK: Private
-    private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "ja-JP"))!
-    private var audioEngine = AVAudioEngine()
+    private let recognizer = SFSpeechRecognizer(locale: Locale(identifier: "ja-JP"))
+    private let audioEngine = AVAudioEngine()
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
+    private var autoStopTask: Task<Void, Never>?
+    /// 1回の録音につき最終結果（確定 or キャンセル）を一度だけ配送するためのフラグ。
+    private var hasFinished = false
+    private let log = Logger(subsystem: "OnomatopoeiaDetector", category: "Speech")
 
-    // MARK: Completion callback
+    // MARK: Callbacks
+    /// 確定テキストが得られたとき、1録音につき一度だけ呼ばれる。
     var onFinalResult: ((String) -> Void)?
+    /// 結果を得ずに録音が終了したとき（無音・エラー・キャンセル）、一度だけ呼ばれる。
+    var onCancelled: (() -> Void)?
 
     // MARK: - Auth
 
     func requestPermissions() async {
-        // Speech
         let speechStatus = await withCheckedContinuation { cont in
-            SFSpeechRecognizer.requestAuthorization { status in
-                cont.resume(returning: status)
-            }
+            SFSpeechRecognizer.requestAuthorization { cont.resume(returning: $0) }
         }
         authStatus = speechStatus
 
-        // Microphone
-        let micStatus = await AVAudioApplication.requestRecordPermission()
-        micAuthStatus = micStatus ? .authorized : .denied
+        let micGranted = await AVAudioApplication.requestRecordPermission()
+        micAuthStatus = micGranted ? .authorized : .denied
     }
 
     var canRecord: Bool {
@@ -45,83 +50,127 @@ final class SpeechManager: NSObject, ObservableObject {
     // MARK: - Recording
 
     func startRecording() throws {
-        stopRecording()
+        teardownAudio()
         partialText = ""
+        hasFinished = false
+
+        guard let recognizer, recognizer.isAvailable else {
+            throw SpeechError.recognizerUnavailable
+        }
 
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.record, mode: .measurement, options: .duckOthers)
-        try session.setActive(true, options: .notifyOthersOnDeactivation)
+        try session.setActive(true)
 
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        guard let request = recognitionRequest else { return }
+        let request = SFSpeechAudioBufferRecognitionRequest()
         request.shouldReportPartialResults = true
-        request.requiresOnDeviceRecognition = true // offline first
-
-        let inputNode = audioEngine.inputNode
-        let format = inputNode.outputFormat(forBus: 0)
+        request.requiresOnDeviceRecognition = true // オフライン優先
+        recognitionRequest = request
 
         recognitionTask = recognizer.recognitionTask(with: request) { [weak self] result, error in
-            guard let self else { return }
-            Task { @MainActor in
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+
                 if let result {
                     self.partialText = result.bestTranscription.formattedString
                     if result.isFinal {
-                        self.onFinalResult?(result.bestTranscription.formattedString)
-                        self.stopRecording()
+                        self.finish(with: result.bestTranscription.formattedString)
                     }
                 }
+
                 if let error {
                     let nsError = error as NSError
-                    // Ignore cancellation errors
-                    if nsError.domain != "kAFAssistantErrorDomain" || nsError.code != 216 {
-                        self.stopRecording()
+                    // kAFAssistantErrorDomain / 216 は正常な打ち切りなので無視する
+                    let isBenign = nsError.domain == "kAFAssistantErrorDomain" && nsError.code == 216
+                    if !isBenign {
+                        self.log.error("recognition failed: \(nsError.domain, privacy: .public) (\(nsError.code))")
+                        self.finishCancelled()
                     }
                 }
             }
         }
 
+        // フォーマット取得の前に prepare する（シミュレータで sampleRate が 0 になる問題への対策）
+        let inputNode = audioEngine.inputNode
+        audioEngine.prepare()
+
+        var format = inputNode.outputFormat(forBus: 0)
+        if format.sampleRate == 0 {
+            log.warning("input sampleRate was 0; falling back to 48kHz")
+            format = AVAudioFormat(standardFormatWithSampleRate: 48_000, channels: 1) ?? format
+        }
+
+        inputNode.removeTap(onBus: 0)
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
             self?.recognitionRequest?.append(buffer)
         }
 
-        audioEngine.prepare()
         try audioEngine.start()
     }
-
-    func stopRecording() {
-        audioEngine.stop()
-        audioEngine.inputNode.removeTap(onBus: 0)
-        recognitionRequest?.endAudio()
-        recognitionRequest = nil
-        recognitionTask?.cancel()
-        recognitionTask = nil
-
-        try? AVAudioSession.sharedInstance().setActive(false)
-    }
-
-    // MARK: - Auto-stop after max duration
-
-    private var autoStopTask: Task<Void, Never>?
 
     func startRecordingWithAutoStop(maxSeconds: Double = 10) throws {
         try startRecording()
         autoStopTask?.cancel()
-        autoStopTask = Task {
-            try? await Task.sleep(nanoseconds: UInt64(maxSeconds * 1_000_000_000))
-            if !Task.isCancelled {
-                await MainActor.run {
-                    self.stopAndFinalize()
-                }
-            }
+        autoStopTask = Task { [weak self] in
+            try? await Task.sleep(for: .seconds(maxSeconds))
+            guard !Task.isCancelled else { return }
+            self?.stopAndFinalize()
         }
     }
 
+    /// 手動／自動停止。現在の partialText を確定として扱う。
     func stopAndFinalize() {
-        autoStopTask?.cancel()
         let text = partialText
-        stopRecording()
-        if !text.isEmpty {
-            onFinalResult?(text)
+        if text.isEmpty {
+            finishCancelled()
+        } else {
+            finish(with: text)
+        }
+    }
+
+    // MARK: - Single delivery
+
+    private func finish(with text: String) {
+        guard !hasFinished else { return }
+        hasFinished = true
+        teardownAudio()
+        onFinalResult?(text)
+    }
+
+    private func finishCancelled() {
+        guard !hasFinished else { return }
+        hasFinished = true
+        teardownAudio()
+        onCancelled?()
+    }
+
+    // MARK: - Teardown（冪等・コールバックを発火しない）
+
+    private func teardownAudio() {
+        autoStopTask?.cancel()
+        autoStopTask = nil
+
+        if audioEngine.isRunning {
+            audioEngine.stop()
+            audioEngine.inputNode.removeTap(onBus: 0)
+        }
+        recognitionRequest?.endAudio()
+        recognitionRequest = nil
+        recognitionTask?.cancel()
+        recognitionTask = nil
+        try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+}
+
+// MARK: - SpeechError
+
+enum SpeechError: LocalizedError {
+    case recognizerUnavailable
+
+    var errorDescription: String? {
+        switch self {
+        case .recognizerUnavailable:
+            return String(localized: "error.recognizer.unavailable")
         }
     }
 }

@@ -1,18 +1,18 @@
 import SwiftUI
 
 struct ContentView: View {
-    @EnvironmentObject var vm: AppViewModel
+    @Environment(AppViewModel.self) private var vm
 
     var body: some View {
         TabView {
             HomeView()
                 .tabItem {
-                    Label("home", systemImage: "mic.circle.fill")
+                    Label(String(localized: "home.tab"), systemImage: "waveform")
                 }
 
             HistoryView()
                 .tabItem {
-                    Label(String(localized: "history.title"), systemImage: "clock.fill")
+                    Label(String(localized: "history.title"), systemImage: "book.closed.fill")
                 }
 
             SettingsView()
@@ -20,6 +20,6 @@ struct ContentView: View {
                     Label(String(localized: "settings.title"), systemImage: "gearshape.fill")
                 }
         }
-        .tint(.indigo)
+        .tint(Ink.vermilion)
     }
 }

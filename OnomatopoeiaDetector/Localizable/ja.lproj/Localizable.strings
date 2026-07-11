@@ -3,6 +3,7 @@
 "app.subtitle" = "Onomatopoeia Detector";
 
 /* Home */
+"home.tab" = "ホーム";
 "home.record.button" = "録音する";
 "home.record.hint" = "タップして音声を入力";
 "home.last.result" = "最新の判定結果";
@@ -48,7 +49,7 @@
 "settings.history.clear" = "履歴をすべて削除";
 "settings.version" = "バージョン";
 "settings.about" = "このアプリについて";
-"settings.about.desc" = "音声入力された言葉が日本語のオノマトペらしいかをAIで5段階評価します。";
+"settings.about.desc" = "音声入力した言葉が日本語のオノマトペらしいかを1〜5段階で判定します。";
 
 /* Permissions */
 "permission.mic.title" = "マイクへのアクセス";
@@ -60,3 +61,8 @@
 
 /* Score accessibility */
 "score.stars" = "%d つ星";
+
+/* Errors */
+"error.title" = "エラー";
+"error.ok" = "OK";
+"error.recognizer.unavailable" = "音声認識が利用できません。しばらくしてからもう一度お試しください。";

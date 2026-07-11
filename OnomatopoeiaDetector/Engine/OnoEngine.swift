@@ -1,29 +1,31 @@
 import Foundation
 import NaturalLanguage
+import os
 
 // MARK: - OnoEngine
 
-final class OnoEngine {
+/// オノマトペらしさを評価するエンジン。辞書は初期化時に一度だけ読み込む不変データのため
+/// actor として隔離し、評価処理をメインスレッド外で安全に実行できるようにしている。
+actor OnoEngine {
 
-    // MARK: Singleton
     static let shared = OnoEngine()
 
-    // MARK: Dictionary
-    private var dictionary: [OnomatopoeiaEntry] = []
+    private let dictionary: [OnomatopoeiaEntry]
+    private static let log = Logger(subsystem: "OnomatopoeiaDetector", category: "OnoEngine")
 
     private init() {
-        loadDictionary()
+        dictionary = Self.loadDictionary()
     }
 
-    private func loadDictionary() {
+    private static func loadDictionary() -> [OnomatopoeiaEntry] {
         guard let url = Bundle.main.url(forResource: "onomatopoeia_dict", withExtension: "json"),
               let data = try? Data(contentsOf: url),
               let entries = try? JSONDecoder().decode([OnomatopoeiaEntry].self, from: data) else {
-            print("[OnoEngine] Failed to load dictionary")
-            return
+            log.error("Failed to load onomatopoeia_dict.json")
+            return []
         }
-        dictionary = entries
-        print("[OnoEngine] Loaded \(dictionary.count) entries")
+        log.info("Loaded \(entries.count) dictionary entries")
+        return entries
     }
 
     // MARK: - Public API
@@ -36,16 +38,15 @@ final class OnoEngine {
         let symbolScore  = soundSymbolScore(normalized)
         let morphScore   = morphemeScore(normalized)
 
-        // Weighted total: 40 / 30 / 20 / 10
+        // 重み付き合計: 40 / 30 / 20 / 10
         let raw = dictScore * 0.40
                 + patternScore * 0.30
                 + symbolScore  * 0.20
                 + morphScore   * 0.10
 
-        // Normalize to 1〜5
+        // 1〜5 に正規化
         let score = max(1, min(5, Int((raw * 4).rounded()) + 1))
 
-        // Similar entries (only collected, displayed by ViewModel when score >= 3)
         let similar = score >= 3 ? findSimilar(to: normalized, top: 3) : []
 
         return EvaluationResult(
@@ -59,89 +60,73 @@ final class OnoEngine {
     // MARK: - Dictionary Score
 
     private func dictionaryScore(_ text: String) -> Double {
-        // Exact match
+        // 完全一致
         if dictionary.contains(where: { $0.word == text || $0.reading == text }) {
             return 1.0
         }
-        // Partial match
+        // 部分一致
         let partials = dictionary.filter {
             text.contains($0.word) || $0.word.contains(text)
         }
         if !partials.isEmpty {
             return 0.7
         }
-        // Reading-level partial
+        // 読みレベルの部分一致
         let readingPartials = dictionary.filter {
-            let r = hiraganaToRomaji(text)
-            return r.contains($0.reading) || $0.reading.contains(r)
+            text.contains($0.reading) || $0.reading.contains(text)
         }
         return readingPartials.isEmpty ? 0.0 : 0.4
     }
 
     // MARK: - Phonetic Pattern Score
 
-    /// Detects ABAB / ABB / AB reduplication patterns typical of onomatopoeia
+    /// オノマトペに典型的な ABAB / 畳語などの反復パターンを検出する
     private func phoneticPatternScore(_ text: String) -> Double {
         let chars = Array(text)
         let len = chars.count
         guard len >= 2 else { return 0.0 }
 
-        // ABAB pattern (e.g. ふわふわ)
+        // ABAB パターン（例: ふわふわ）
         if len >= 4 && len % 2 == 0 {
             let half = len / 2
-            let first = String(chars[0..<half])
-            let second = String(chars[half...])
-            if first == second { return 1.0 }
+            if String(chars[0..<half]) == String(chars[half...]) { return 1.0 }
         }
 
-        // ABB pattern (e.g. ぐるぐる → not ABB but covers 3-char)
-        if len == 3 {
-            let first = chars[0]
-            let last2 = String(chars[1...])
-            if String(chars[1]) == String(chars[2]) { return 0.8 }
-            _ = first; _ = last2
+        // 3文字で後半2文字が畳語（例: ぐるる）
+        if len == 3 && chars[1] == chars[2] {
+            return 0.8
         }
 
-        // Contains small kana (っ, ー, ん) – onomatopoeia markers
+        // 促音・長音・撥音（オノマトペの目印）
         let smallKana = Set("っーん")
-        let smallCount = chars.filter { smallKana.contains($0) }.count
-        if smallCount > 0 { return 0.5 }
+        if chars.contains(where: { smallKana.contains($0) }) { return 0.5 }
 
-        // Consonant repetition heuristic via reading analysis
-        if len == 4 {
-            let midA = String(chars[1])
-            let midB = String(chars[3])
-            if midA == midB { return 0.6 }
-        }
+        // 4文字で 2・4文字目が一致（子音反復のヒューリスティック）
+        if len == 4 && chars[1] == chars[3] { return 0.6 }
 
         return 0.1
     }
 
     // MARK: - Sound Symbol Score
 
-    /// Scores based on voiced/unvoiced consonant ratio and special mora usage
+    /// 濁音・半濁音・特殊モーラの比率で音象徴性を採点する
     private func soundSymbolScore(_ text: String) -> Double {
         var score = 0.0
         let chars = Array(text)
 
-        // Voiced consonants (dakuten) give "heavy/round" feel
+        // 濁音（重い・丸い印象）
         let voicedSet = Set("がぎぐげござじずぜぞだぢづでどばびぶべぼ")
         let voicedCount = Double(chars.filter { voicedSet.contains($0) }.count)
         let voicedRatio = voicedCount / Double(max(chars.count, 1))
         score += min(voicedRatio * 1.5, 0.4)
 
-        // Unvoiced plosives (pa-row) give "light/crisp" feel
+        // 半濁音（軽い・鋭い印象）
         let plosiveSet = Set("ぱぴぷぺぽ")
         if chars.contains(where: { plosiveSet.contains($0) }) { score += 0.3 }
 
-        // Long vowel marker
-        if text.contains("ー") { score += 0.2 }
-
-        // Glottal stop (っ)
-        if text.contains("っ") { score += 0.2 }
-
-        // Nasal (ん) at end
-        if text.hasSuffix("ん") { score += 0.1 }
+        if text.contains("ー") { score += 0.2 } // 長音
+        if text.contains("っ") { score += 0.2 } // 促音
+        if text.hasSuffix("ん") { score += 0.1 } // 撥音止め
 
         return min(score, 1.0)
     }
@@ -157,8 +142,8 @@ final class OnoEngine {
         tagger.enumerateTags(in: text.startIndex..<text.endIndex,
                              unit: .word,
                              scheme: .lexicalClass) { tag, _ in
-            if tag == .particle      { hasParticle = true }
-            if tag == .verb          { hasVerb = true }
+            if tag == .particle { hasParticle = true }
+            if tag == .verb     { hasVerb = true }
             return true
         }
 
@@ -170,21 +155,16 @@ final class OnoEngine {
     // MARK: - Similarity Search
 
     func findSimilar(to text: String, top k: Int) -> [SimilarEntry] {
-        let candidates = dictionary.map { entry -> SimilarEntry in
-            let sim = similarity(text, entry.word)
-            return SimilarEntry(entry: entry, similarity: sim)
-        }
-        return candidates
+        dictionary
+            .map { SimilarEntry(entry: $0, similarity: similarity(text, $0.word)) }
             .sorted { $0.similarity > $1.similarity }
             .prefix(k)
             .map { $0 }
     }
 
-    /// Combined similarity: Levenshtein (60%) + phonetic character overlap (40%)
+    /// 複合類似度: レーベンシュタイン(60%) + 文字集合の重なり(40%)
     private func similarity(_ a: String, _ b: String) -> Double {
-        let lev = levenshteinSimilarity(a, b)
-        let pho = phoneticOverlap(a, b)
-        return lev * 0.6 + pho * 0.4
+        levenshteinSimilarity(a, b) * 0.6 + phoneticOverlap(a, b) * 0.4
     }
 
     private func levenshteinSimilarity(_ a: String, _ b: String) -> Double {
@@ -210,21 +190,18 @@ final class OnoEngine {
     }
 
     private func phoneticOverlap(_ a: String, _ b: String) -> Double {
-        let setA = Set(a)
-        let setB = Set(b)
-        let intersection = setA.intersection(setB).count
+        let setA = Set(a), setB = Set(b)
         let union = setA.union(setB).count
         guard union > 0 else { return 0 }
-        return Double(intersection) / Double(union)
+        return Double(setA.intersection(setB).count) / Double(union)
     }
 
     // MARK: - Helpers
 
+    /// カタカナ→ひらがな正規化＋空白・記号除去
     private func normalize(_ text: String) -> String {
-        // Katakana → Hiragana
-        var s = text
         var result = ""
-        for c in s.unicodeScalars {
+        for c in text.unicodeScalars {
             let v = c.value
             if v >= 0x30A1 && v <= 0x30F6 {
                 result.append(Character(UnicodeScalar(v - 0x60)!))
@@ -232,14 +209,6 @@ final class OnoEngine {
                 result.append(Character(c))
             }
         }
-        s = result
-        // Remove spaces / punctuation
-        s = s.filter { !$0.isWhitespace && !$0.isPunctuation }
-        return s
-    }
-
-    private func hiraganaToRomaji(_ text: String) -> String {
-        // Simplified - just return as-is for internal comparison
-        return text
+        return result.filter { !$0.isWhitespace && !$0.isPunctuation }
     }
 }
