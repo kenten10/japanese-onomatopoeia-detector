@@ -43,7 +43,7 @@ OnomatopoeiaDetector/
 │   └── OnomatopoeiaDetector.xcdatamodeld/
 ├── Engine/
 │   ├── OnoEngine.swift                # 評価エンジン（辞書照合・音韻解析）
-│   └── SpeechManager.swift            # AVFoundation + Speech Framework
+│   └── SpeechManager.swift            # AVFoundation + Speech Framework・音声認識結果のひらがな変換
 ├── Resources/
 │   └── onomatopoeia_dict.json         # オノマトペ辞書（50語、日英意味付き）
 ├── Localizable/
@@ -51,6 +51,25 @@ OnomatopoeiaDetector/
 │   └── en.lproj/Localizable.strings   # 英語UI文字列
 └── Info.plist                          # マイク・音声認識権限設定
 
+OnomatopoeiaDetectorTests/
+├── AppLanguageTests.swift
+├── OnoEngineTests.swift
+├── PersistenceControllerTests.swift
+└── SpeechTextConverterTests.swift
+
+```
+
+## テスト
+
+Xcodeでは共有scheme `OnomatopoeiaDetector` を選び、⌘UでUnit Testを実行します。
+
+CLIでは利用可能なiOS Simulatorを指定して実行します。
+
+```sh
+xcodebuild test \
+  -project OnomatopoeiaDetector.xcodeproj \
+  -scheme OnomatopoeiaDetector \
+  -destination 'platform=iOS Simulator,name=iPhone 16'
 ```
 
 ## 主な機能

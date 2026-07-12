@@ -72,7 +72,9 @@ final class SpeechManager: NSObject {
                 guard let self else { return }
 
                 if let result {
-                    let hiraganaText = Self.hiraganaText(from: result.bestTranscription.formattedString)
+                    let hiraganaText = SpeechTextConverter.hiraganaText(
+                        from: result.bestTranscription.formattedString
+                    )
                     self.partialText = hiraganaText
                     if result.isFinal {
                         self.finish(with: hiraganaText)
@@ -135,7 +137,7 @@ final class SpeechManager: NSObject {
         guard !hasFinished else { return }
         hasFinished = true
         teardownAudio()
-        onFinalResult?(Self.hiraganaText(from: text))
+        onFinalResult?(SpeechTextConverter.hiraganaText(from: text))
     }
 
     private func finishCancelled() {
@@ -162,9 +164,12 @@ final class SpeechManager: NSObject {
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
     }
 
-    // MARK: - Text Conversion
+}
 
-    private static func hiraganaText(from text: String) -> String {
+// MARK: - SpeechTextConverter
+
+enum SpeechTextConverter {
+    static func hiraganaText(from text: String) -> String {
         let nsText = text as NSString
         let tokenizer = CFStringTokenizerCreate(
             kCFAllocatorDefault,

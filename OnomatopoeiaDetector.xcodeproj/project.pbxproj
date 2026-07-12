@@ -28,7 +28,21 @@
 		A018 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B018 /* AVFoundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A019 /* NaturalLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B019 /* NaturalLanguage.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A020 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B020 /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		AT01 /* SpeechTextConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT01 /* SpeechTextConverterTests.swift */; };
+		AT02 /* OnoEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT02 /* OnoEngineTests.swift */; };
+		AT03 /* PersistenceControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT03 /* PersistenceControllerTests.swift */; };
+		AT04 /* AppLanguageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT04 /* AppLanguageTests.swift */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		G001 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = P001 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = T001;
+			remoteInfo = OnomatopoeiaDetector;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		B001 /* OnomatopoeiaDetectorApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnomatopoeiaDetectorApp.swift; sourceTree = "<group>"; };
@@ -52,8 +66,13 @@
 		B018 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
 		B019 /* NaturalLanguage.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = NaturalLanguage.framework; path = System/Library/Frameworks/NaturalLanguage.framework; sourceTree = SDKROOT; };
 		B020 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = System/Library/Frameworks/CoreData.framework; sourceTree = SDKROOT; };
+		BT01 /* SpeechTextConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTextConverterTests.swift; sourceTree = "<group>"; };
+		BT02 /* OnoEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnoEngineTests.swift; sourceTree = "<group>"; };
+		BT03 /* PersistenceControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceControllerTests.swift; sourceTree = "<group>"; };
+		BT04 /* AppLanguageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageTests.swift; sourceTree = "<group>"; };
 		C001 /* OnomatopoeiaDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnomatopoeiaDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C003 /* OnomatopoeiaDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OnomatopoeiaDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -68,6 +87,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D004 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -75,6 +101,7 @@
 			isa = PBXGroup;
 			children = (
 				E001 /* OnomatopoeiaDetector */,
+				E009 /* OnomatopoeiaDetectorTests */,
 				E008 /* Frameworks */,
 				F001 /* Products */,
 			);
@@ -168,8 +195,20 @@
 			isa = PBXGroup;
 			children = (
 				C001 /* OnomatopoeiaDetector.app */,
+				C003 /* OnomatopoeiaDetectorTests.xctest */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		E009 /* OnomatopoeiaDetectorTests */ = {
+			isa = PBXGroup;
+			children = (
+				BT01 /* SpeechTextConverterTests.swift */,
+				BT02 /* OnoEngineTests.swift */,
+				BT03 /* PersistenceControllerTests.swift */,
+				BT04 /* AppLanguageTests.swift */,
+			);
+			path = OnomatopoeiaDetectorTests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -192,6 +231,24 @@
 			productReference = C001 /* OnomatopoeiaDetector.app */;
 			productType = "com.apple.product-type.application";
 		};
+		T002 /* OnomatopoeiaDetectorTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = X002 /* Build configuration list for PBXNativeTarget "OnomatopoeiaDetectorTests" */;
+			buildPhases = (
+				D004 /* Frameworks */,
+				D005 /* Sources */,
+				D006 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				H001 /* PBXTargetDependency */,
+			);
+			name = OnomatopoeiaDetectorTests;
+			productName = OnomatopoeiaDetectorTests;
+			productReference = C003 /* OnomatopoeiaDetectorTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -204,6 +261,10 @@
 				TargetAttributes = {
 					T001 = {
 						CreatedOnToolsVersion = 15.0;
+					};
+					T002 = {
+						CreatedOnToolsVersion = 15.0;
+						TestTargetID = T001;
 					};
 				};
 			};
@@ -222,6 +283,7 @@
 			projectRoot = "";
 			targets = (
 				T001 /* OnomatopoeiaDetector */,
+				T002 /* OnomatopoeiaDetectorTests */,
 			);
 		};
 /* End PBXProject section */
@@ -235,6 +297,13 @@
 				A014 /* ja in Resources */,
 				A015 /* en in Resources */,
 				A016 /* OnomatopoeiaDetector.xcdatamodeld in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		D006 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -261,7 +330,26 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		D005 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				AT01 /* SpeechTextConverterTests.swift in Sources */,
+				AT02 /* OnoEngineTests.swift in Sources */,
+				AT03 /* PersistenceControllerTests.swift in Sources */,
+				AT04 /* AppLanguageTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		H001 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = T001 /* OnomatopoeiaDetector */;
+			targetProxy = G001 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		X010 /* Debug */ = {
@@ -426,6 +514,54 @@
 			};
 			name = Release;
 		};
+		X030 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4CTNU287UV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.OnomatopoeiaDetectorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OnomatopoeiaDetector.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OnomatopoeiaDetector";
+			};
+			name = Debug;
+		};
+		X031 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 4CTNU287UV;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.OnomatopoeiaDetectorTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/OnomatopoeiaDetector.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/OnomatopoeiaDetector";
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -443,6 +579,15 @@
 			buildConfigurations = (
 				X020 /* Debug */,
 				X021 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		X002 /* Build configuration list for PBXNativeTarget "OnomatopoeiaDetectorTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				X030 /* Debug */,
+				X031 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
