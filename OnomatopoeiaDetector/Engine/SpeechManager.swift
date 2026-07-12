@@ -72,9 +72,10 @@ final class SpeechManager: NSObject {
                 guard let self else { return }
 
                 if let result {
-                    self.partialText = result.bestTranscription.formattedString
+                    let hiraganaText = Self.hiraganaText(from: result.bestTranscription.formattedString)
+                    self.partialText = hiraganaText
                     if result.isFinal {
-                        self.finish(with: result.bestTranscription.formattedString)
+                        self.finish(with: hiraganaText)
                     }
                 }
 
@@ -134,7 +135,7 @@ final class SpeechManager: NSObject {
         guard !hasFinished else { return }
         hasFinished = true
         teardownAudio()
-        onFinalResult?(text)
+        onFinalResult?(Self.hiraganaText(from: text))
     }
 
     private func finishCancelled() {
@@ -159,6 +160,68 @@ final class SpeechManager: NSObject {
         recognitionTask?.cancel()
         recognitionTask = nil
         try? AVAudioSession.sharedInstance().setActive(false, options: .notifyOthersOnDeactivation)
+    }
+
+    // MARK: - Text Conversion
+
+    private static func hiraganaText(from text: String) -> String {
+        let nsText = text as NSString
+        let tokenizer = CFStringTokenizerCreate(
+            kCFAllocatorDefault,
+            text as CFString,
+            CFRange(location: 0, length: nsText.length),
+            kCFStringTokenizerUnitWord,
+            NSLocale(localeIdentifier: "ja_JP") as CFLocale
+        )
+        guard let tokenizer else {
+            return katakanaToHiragana(text)
+        }
+
+        var output = ""
+        var cursor = 0
+        var tokenType = CFStringTokenizerAdvanceToNextToken(tokenizer)
+
+        while tokenType.rawValue != 0 {
+            let tokenRange = CFStringTokenizerGetCurrentTokenRange(tokenizer)
+
+            if tokenRange.location > cursor {
+                output += nsText.substring(
+                    with: NSRange(location: cursor, length: tokenRange.location - cursor)
+                )
+            }
+
+            let range = NSRange(location: tokenRange.location, length: tokenRange.length)
+            let token = nsText.substring(with: range)
+            output += hiraganaReading(for: token, tokenizer: tokenizer)
+
+            cursor = tokenRange.location + tokenRange.length
+            tokenType = CFStringTokenizerAdvanceToNextToken(tokenizer)
+        }
+
+        if cursor < nsText.length {
+            output += nsText.substring(from: cursor)
+        }
+
+        return katakanaToHiragana(output)
+    }
+
+    private static func hiraganaReading(for token: String, tokenizer: CFStringTokenizer) -> String {
+        guard let latin = CFStringTokenizerCopyCurrentTokenAttribute(
+            tokenizer,
+            kCFStringTokenizerAttributeLatinTranscription
+        ) as? String else {
+            return katakanaToHiragana(token)
+        }
+
+        let mutable = NSMutableString(string: latin.lowercased())
+        CFStringTransform(mutable as CFMutableString, nil, "Latin-Hiragana" as CFString, false)
+        return (mutable as String).filter { !$0.isWhitespace }
+    }
+
+    private static func katakanaToHiragana(_ text: String) -> String {
+        let mutable = NSMutableString(string: text)
+        CFStringTransform(mutable as CFMutableString, nil, "Katakana-Hiragana" as CFString, false)
+        return mutable as String
     }
 }
 
