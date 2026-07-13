@@ -1,0 +1,68 @@
+/* App */
+"app.title" = "Onomatopoeia Detector";
+"app.subtitle" = "オノマトペ判定";
+
+/* Home */
+"home.tab" = "Home";
+"home.record.button" = "Record";
+"home.record.hint" = "Tap to speak";
+"home.last.result" = "Latest Result";
+"home.no.result" = "Say a Japanese sound word";
+"home.no.result.sub" = "Tap the mic and try one —\nlike ふわふわ or きらきら";
+
+/* Recording */
+"recording.listening" = "Listening…";
+"recording.recognizing" = "Recognizing…";
+"recording.tap.stop" = "Tap to stop";
+
+/* Result */
+"result.title" = "Result";
+"result.recognized" = "You said";
+"result.score.label" = "Onomatopoeia Score";
+"result.comment.5" = "Perfect onomatopoeia! 🎉";
+"result.comment.4" = "Very onomatopoeic! ✨";
+"result.comment.3" = "Nicely onomatopoeic 😊";
+"result.comment.2" = "A little onomatopoeic";
+"result.comment.1" = "Not onomatopoeia yet — try another!";
+"result.similar.title" = "Similar Onomatopoeia";
+"result.similar.meaning" = "Meaning";
+"result.similar.example" = "Example";
+"result.again" = "Try Again";
+"result.save" = "Save to History";
+"result.saved" = "Saved!";
+
+/* History */
+"history.title" = "History";
+"history.empty" = "No saved results yet";
+"history.delete" = "Delete";
+"history.clear.all" = "Clear All";
+"history.clear.confirm" = "Delete all history?";
+"history.clear.yes" = "Delete";
+"history.clear.cancel" = "Cancel";
+
+/* Settings */
+"settings.title" = "Settings";
+"settings.language" = "Display Language";
+"settings.language.auto" = "Follow System";
+"settings.language.ja" = "日本語";
+"settings.language.en" = "English";
+"settings.history.clear" = "Clear All History";
+"settings.version" = "Version";
+"settings.about" = "About";
+"settings.about.desc" = "Rate how onomatopoeic your spoken Japanese is, on a scale of 1 to 5.";
+
+/* Permissions */
+"permission.mic.title" = "Microphone Access";
+"permission.mic.message" = "Microphone is used to record your voice and evaluate onomatopoeia";
+"permission.mic.deny" = "Microphone access is off. Turn it on in Settings to record.";
+"permission.mic.open.settings" = "Open Settings";
+"permission.speech.title" = "Speech Recognition";
+"permission.speech.message" = "Used to convert your recorded voice to text";
+
+/* Score accessibility */
+"score.stars" = "%d stars";
+
+/* Errors */
+"error.title" = "Error";
+"error.ok" = "OK";
+"error.recognizer.unavailable" = "Speech recognition is unavailable. Please try again in a moment.";
