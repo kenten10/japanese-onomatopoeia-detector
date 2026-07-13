@@ -73,7 +73,7 @@ final class SpeechManager: NSObject {
 
                 if let result {
                     let hiraganaText = SpeechTextConverter.hiraganaText(
-                        from: result.bestTranscription.formattedString
+                        from: result.bestTranscription
                     )
                     self.partialText = hiraganaText
                     if result.isFinal {
@@ -169,6 +169,21 @@ final class SpeechManager: NSObject {
 // MARK: - SpeechTextConverter
 
 enum SpeechTextConverter {
+    static func hiraganaText(from transcription: SFTranscription) -> String {
+        let text = transcription.segments
+            .map { segment in
+                let candidates = [segment.substring] + segment.alternativeSubstrings
+                return candidates.first(where: isKanaText).map(katakanaToHiragana)
+                    ?? hiraganaText(from: segment.substring)
+            }
+            .joined()
+
+        guard !text.isEmpty else {
+            return hiraganaText(from: transcription.formattedString)
+        }
+        return applyOnomatopoeiaLongSoundCorrections(text)
+    }
+
     static func hiraganaText(from text: String) -> String {
         let nsText = text as NSString
         let tokenizer = CFStringTokenizerCreate(
@@ -179,7 +194,7 @@ enum SpeechTextConverter {
             NSLocale(localeIdentifier: "ja_JP") as CFLocale
         )
         guard let tokenizer else {
-            return katakanaToHiragana(text)
+            return applyOnomatopoeiaLongSoundCorrections(katakanaToHiragana(text))
         }
 
         var output = ""
@@ -207,7 +222,7 @@ enum SpeechTextConverter {
             output += nsText.substring(from: cursor)
         }
 
-        return katakanaToHiragana(output)
+        return applyOnomatopoeiaLongSoundCorrections(katakanaToHiragana(output))
     }
 
     private static func hiraganaReading(for token: String, tokenizer: CFStringTokenizer) -> String {
@@ -223,10 +238,33 @@ enum SpeechTextConverter {
         return (mutable as String).filter { !$0.isWhitespace }
     }
 
+    private static func isKanaText(_ text: String) -> Bool {
+        var hasKana = false
+        for scalar in text.unicodeScalars {
+            switch scalar.value {
+            case 0x3041...0x3096, 0x30A1...0x30FA, 0x30FC:
+                hasKana = true
+            case 0x3000, 0x0020:
+                continue
+            default:
+                return false
+            }
+        }
+        return hasKana
+    }
+
     private static func katakanaToHiragana(_ text: String) -> String {
         let mutable = NSMutableString(string: text)
         CFStringTransform(mutable as CFMutableString, nil, "Katakana-Hiragana" as CFString, false)
         return mutable as String
+    }
+
+    private static func applyOnomatopoeiaLongSoundCorrections(_ text: String) -> String {
+        var corrected = text
+        ["しいん": "しーん"].forEach { source, replacement in
+            corrected = corrected.replacingOccurrences(of: source, with: replacement)
+        }
+        return corrected
     }
 }
 

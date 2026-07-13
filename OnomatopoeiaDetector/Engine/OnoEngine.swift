@@ -33,6 +33,15 @@ actor OnoEngine {
     func evaluate(text: String) -> EvaluationResult {
         let normalized = normalize(text)
 
+        if isDictionaryExactMatch(normalized) {
+            return EvaluationResult(
+                inputText: text,
+                score: 5,
+                similarEntries: findSimilar(to: normalized, top: 3),
+                date: Date()
+            )
+        }
+
         let dictScore    = dictionaryScore(normalized)
         let patternScore = phoneticPatternScore(normalized)
         let symbolScore  = soundSymbolScore(normalized)
@@ -59,9 +68,13 @@ actor OnoEngine {
 
     // MARK: - Dictionary Score
 
+    private func isDictionaryExactMatch(_ text: String) -> Bool {
+        dictionary.contains { $0.word == text || $0.reading == text }
+    }
+
     private func dictionaryScore(_ text: String) -> Double {
         // 完全一致
-        if dictionary.contains(where: { $0.word == text || $0.reading == text }) {
+        if isDictionaryExactMatch(text) {
             return 1.0
         }
         // 部分一致

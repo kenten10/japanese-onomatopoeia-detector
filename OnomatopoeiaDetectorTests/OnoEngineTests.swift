@@ -11,6 +11,13 @@ final class OnoEngineTests: XCTestCase {
         XCTAssertFalse(result.similarEntries.isEmpty)
     }
 
+    func testDictionaryExactMatchReceivesPerfectScore() async {
+        let result = await OnoEngine.shared.evaluate(text: "しーん")
+
+        XCTAssertEqual(result.score, 5)
+        XCTAssertFalse(result.similarEntries.isEmpty)
+    }
+
     func testPlainPhraseReceivesLowerScoreThanOnomatopoeia() async {
         let onomatopoeia = await OnoEngine.shared.evaluate(text: "どきどき")
         let plainPhrase = await OnoEngine.shared.evaluate(text: "ごはんをたべる")

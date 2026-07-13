@@ -10,8 +10,18 @@ final class SpeechTextConverterTests: XCTestCase {
         let converted = SpeechTextConverter.hiraganaText(from: "日本語を入力")
 
         XCTAssertFalse(converted.containsKanji)
-        XCTAssertTrue(converted.contains("にほんご"))
+        XCTAssertTrue(converted.contains("にほんご") || converted.contains("にっぽんご"))
         XCTAssertTrue(converted.contains("にゅうりょく"))
+    }
+
+    func testPreservesReceivedHiraganaPronunciation() {
+        XCTAssertEqual(SpeechTextConverter.hiraganaText(from: "にほんご"), "にほんご")
+        XCTAssertEqual(SpeechTextConverter.hiraganaText(from: "にっぽんご"), "にっぽんご")
+    }
+
+    func testCorrectsOnomatopoeiaLongSoundWrittenAsVowelKana() {
+        XCTAssertEqual(SpeechTextConverter.hiraganaText(from: "しいん"), "しーん")
+        XCTAssertEqual(SpeechTextConverter.hiraganaText(from: "シーン"), "しーん")
     }
 }
 

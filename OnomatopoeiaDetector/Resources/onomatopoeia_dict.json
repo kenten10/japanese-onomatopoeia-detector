@@ -20,6 +20,7 @@
   {"word":"ぱたぱた","reading":"patapata","meaning_ja":"羽ばたく・早く動く様子","meaning_en":"Fluttering, scurrying about","example_ja":"鳥がぱたぱた羽ばたく","example_en":"The bird flutters its wings","category":"動作"},
   {"word":"きらきら","reading":"kirakira","meaning_ja":"光が輝いてまばゆい様子","meaning_en":"Glittering, twinkling","example_ja":"宝石がきらきら光る","example_en":"The jewels glitter brightly","category":"光"},
   {"word":"ぐっすり","reading":"gussuri","meaning_ja":"ぐっすり深く眠っている様子","meaning_en":"Sound asleep, sleeping deeply","example_ja":"ぐっすり眠れた","example_en":"I slept soundly through the night","category":"状態"},
+  {"word":"しーん","reading":"しーん","meaning_ja":"音がなく静まり返っている様子","meaning_en":"Completely silent, still","example_ja":"部屋がしーんと静まり返った","example_en":"The room fell completely silent","category":"音"},
   {"word":"しんしん","reading":"shinshin","meaning_ja":"静かに降り積もる・冷え込む様子","meaning_en":"Falling quietly (snow), bitter cold","example_ja":"雪がしんしんと降る","example_en":"Snow falls silently and steadily","category":"天気"},
   {"word":"ずきずき","reading":"zukizuki","meaning_ja":"痛みが繰り返す・ずきずきする様子","meaning_en":"Throbbing pain, pulsing ache","example_ja":"歯がずきずき痛む","example_en":"My tooth is throbbing with pain","category":"感覚"},
   {"word":"わくわく","reading":"wakuwaku","meaning_ja":"期待や楽しみで胸がはずむ様子","meaning_en":"Excited with anticipation","example_ja":"旅行を前にわくわくする","example_en":"I'm excited and looking forward to the trip","category":"感情"},
