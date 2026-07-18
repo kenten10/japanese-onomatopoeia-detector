@@ -9,6 +9,7 @@ final class AppViewModel {
     var recordingState: RecordingState = .idle
     var history: [HistoryItem] = []
     var appLanguage: AppLanguage = .defaultLanguage
+    var persistenceErrorMessage: String?
 
     // MARK: - Sub-managers
     let speech = SpeechManager()
@@ -50,13 +51,17 @@ final class AppViewModel {
 
     // MARK: - Permissions
 
-    func requestPermissionsIfNeeded() async {
-        await speech.requestPermissions()
+    func startRecording() {
+        Task { [weak self] in
+            guard let self else { return }
+            if speech.authStatus == .notDetermined || speech.micAuthStatus == .notDetermined {
+                await speech.requestPermissions()
+            }
+            beginRecordingIfAuthorized()
+        }
     }
 
-    // MARK: - Recording
-
-    func startRecording() {
+    private func beginRecordingIfAuthorized() {
         guard speech.canRecord else {
             recordingState = .error(String(localized: "permission.mic.deny"))
             return
@@ -93,26 +98,46 @@ final class AppViewModel {
 
     // MARK: - Save to History
 
-    func saveCurrentResult() {
-        guard case .result(let r) = recordingState else { return }
-        persistence.addHistory(inputText: r.inputText, score: r.score)
-        loadHistory()
+    @discardableResult
+    func saveCurrentResult() -> Bool {
+        guard case .result(let r) = recordingState else { return false }
+        do {
+            try persistence.addHistory(inputText: r.inputText, score: r.score)
+            loadHistory()
+            return true
+        } catch {
+            showPersistenceError(error)
+            return false
+        }
     }
 
     // MARK: - History
 
     func loadHistory() {
-        history = persistence.fetchHistory()
+        do {
+            history = try persistence.fetchHistory()
+        } catch {
+            history = []
+            showPersistenceError(error)
+        }
     }
 
     func deleteHistoryItem(_ item: HistoryItem) {
-        persistence.delete(item: item)
-        loadHistory()
+        do {
+            try persistence.delete(item: item)
+            loadHistory()
+        } catch {
+            showPersistenceError(error)
+        }
     }
 
     func clearAllHistory() {
-        persistence.deleteAll()
-        loadHistory()
+        do {
+            try persistence.deleteAll()
+            loadHistory()
+        } catch {
+            showPersistenceError(error)
+        }
     }
 
     // MARK: - Reset
@@ -127,5 +152,14 @@ final class AppViewModel {
     func setLanguage(_ lang: AppLanguage) {
         appLanguage = lang
         lang.persist() // AppleLanguages に反映（切り替えは次回起動時に反映される）
+    }
+
+    func dismissPersistenceError() {
+        persistenceErrorMessage = nil
+    }
+
+    private func showPersistenceError(_ error: Error) {
+        persistenceErrorMessage = (error as? LocalizedError)?.errorDescription
+            ?? String(localized: "error.persistence.load")
     }
 }

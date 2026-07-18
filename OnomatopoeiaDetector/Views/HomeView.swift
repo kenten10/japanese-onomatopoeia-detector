@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 struct HomeView: View {
     @Environment(AppViewModel.self) private var vm
@@ -62,6 +63,12 @@ struct HomeView: View {
                 if case .result = newState { showResult = true }
             }
             .alert(String(localized: "error.title"), isPresented: showError) {
+                if vm.speech.permissionsDenied,
+                   let settingsURL = URL(string: UIApplication.openSettingsURLString) {
+                    Button(String(localized: "permission.mic.open.settings")) {
+                        UIApplication.shared.open(settingsURL)
+                    }
+                }
                 Button(String(localized: "error.ok"), role: .cancel) { vm.resetToIdle() }
             } message: {
                 Text(errorMessage ?? "")

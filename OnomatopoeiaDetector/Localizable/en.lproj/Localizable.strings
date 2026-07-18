@@ -50,12 +50,23 @@
 "settings.version" = "Version";
 "settings.about" = "About";
 "settings.about.desc" = "Rate how onomatopoeic your spoken Japanese is, on a scale of 1 to 5.";
+"settings.privacy" = "Privacy Policy";
+
+/* Privacy */
+"privacy.summary" = "This app does not collect personal or usage data, serve advertising, or track you.";
+"privacy.audio.title" = "Audio Data";
+"privacy.audio.body" = "Microphone audio is used only to recognize spoken Japanese. Recognition runs on your device, and neither recordings nor recognized text are sent to the developer's servers. Recordings are not saved.";
+"privacy.storage.title" = "Data Stored on Your Device";
+"privacy.storage.body" = "Only saved evaluation history and your display language preference are stored on your device. This data is not shared with third parties.";
+"privacy.control.title" = "Deletion and Permissions";
+"privacy.control.body" = "You can delete evaluation history from Settings at any time. You can change microphone and speech recognition access at any time in the iOS Settings app.";
 
 /* Permissions */
 "permission.mic.title" = "Microphone Access";
 "permission.mic.message" = "Microphone is used to record your voice and evaluate onomatopoeia";
 "permission.mic.deny" = "Microphone access is off. Turn it on in Settings to record.";
 "permission.mic.open.settings" = "Open Settings";
+"permission.denied.title" = "Permission Required to Record";
 "permission.speech.title" = "Speech Recognition";
 "permission.speech.message" = "Used to convert your recorded voice to text";
 
@@ -66,3 +77,6 @@
 "error.title" = "Error";
 "error.ok" = "OK";
 "error.recognizer.unavailable" = "Speech recognition is unavailable. Please try again in a moment.";
+"error.persistence.load" = "Your history could not be loaded. Please restart the app.";
+"error.persistence.save" = "Your history could not be saved. Check available storage and try again.";
+"error.persistence.delete" = "Your history could not be deleted. Please try again.";

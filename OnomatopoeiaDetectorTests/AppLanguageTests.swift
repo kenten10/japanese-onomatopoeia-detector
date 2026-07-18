@@ -26,6 +26,7 @@ final class AppLanguageTests: XCTestCase {
         AppLanguage.system.persist()
 
         XCTAssertEqual(AppLanguage.stored, .system)
-        XCTAssertNil(UserDefaults.standard.object(forKey: "AppleLanguages"))
+        let bundleID = Bundle.main.bundleIdentifier ?? "com.kensukeyoshida.OnomatopoeiaDetector"
+        XCTAssertNil(UserDefaults.standard.persistentDomain(forName: bundleID)?["AppleLanguages"])
     }
 }
