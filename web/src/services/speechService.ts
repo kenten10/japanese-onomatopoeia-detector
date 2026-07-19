@@ -3,6 +3,17 @@ import { SpeechServiceError } from '../types'
 
 const MAX_SECONDS = 10
 
+export function isIOS(): boolean {
+  return /iPad|iPhone|iPod/u.test(navigator.userAgent)
+    || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+}
+
+export function isIOSStandalone(): boolean {
+  const displayModeStandalone = typeof window.matchMedia === 'function'
+    && window.matchMedia('(display-mode: standalone)').matches
+  return isIOS() && (displayModeStandalone || navigator.standalone === true)
+}
+
 export class WebSpeechService {
   private recognition?: BrowserSpeechRecognition
   private timeout?: number
@@ -54,9 +65,15 @@ export class WebSpeechService {
     }
     recognition.onerror = (event) => {
       if (this.finished || (this.stopping && event.error === 'aborted')) return
-      if (event.error === 'no-speech' || event.error === 'aborted') this.cancel()
-      else if (event.error === 'not-allowed' || event.error === 'service-not-allowed') {
+      if (event.error === 'no-speech') this.cancel()
+      else if (isIOSStandalone() && (event.error === 'service-not-allowed' || event.error === 'aborted')) {
+        this.fail(new SpeechServiceError('standalone-unsupported', event.message))
+      } else if (event.error === 'not-allowed') {
         this.fail(new SpeechServiceError('permission-denied', event.message))
+      } else if (event.error === 'service-not-allowed') {
+        this.fail(new SpeechServiceError('speech-service-disabled', event.message))
+      } else if (event.error === 'aborted') {
+        this.cancel()
       } else if (event.error === 'language-not-supported') {
         this.fail(new SpeechServiceError('unavailable', event.message))
       } else {
@@ -130,4 +147,3 @@ export class WebSpeechService {
     this.recognition = undefined
   }
 }
-

@@ -8,7 +8,7 @@ import { ShieldIcon, TrashIcon } from '../components/Icons'
 export function PrivacyPolicyView({ onBack }: { onBack(): void }) {
   const { t } = useI18n()
   return <main className="screen settings-screen privacy-screen">
-    <header className="navigation-header centered"><button className="back-button" onClick={onBack}>‹</button><h1>{t('settings.privacy')}</h1></header>
+    <header className="navigation-header centered"><button className="back-button" aria-label={t('navigation.back')} onClick={onBack}>‹</button><h1>{t('settings.privacy')}</h1></header>
     <div className="form-list privacy-list"><section><p>{t('privacy.summary')}</p></section>
       {(['audio', 'storage', 'control'] as const).map((section) => <section key={section}><h2>{t(`privacy.${section}.title`)}</h2><p>{t(`privacy.${section}.body`)}</p></section>)}
     </div>
@@ -41,4 +41,3 @@ export function SettingsView() {
     <ConfirmDialog open={confirmClear} onCancel={() => setConfirmClear(false)} onConfirm={() => { setConfirmClear(false); void clearHistory() }} />
   </main>
 }
-

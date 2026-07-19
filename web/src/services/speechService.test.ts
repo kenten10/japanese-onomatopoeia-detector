@@ -14,6 +14,9 @@ class FakeRecognition extends EventTarget implements BrowserSpeechRecognition {
   result(text: string, isFinal: boolean) {
     this.onresult?.({ results: { 0: { 0: { transcript: text, confidence: 1 }, isFinal, length: 1 }, length: 1 }, resultIndex: 0 } as unknown as BrowserSpeechRecognitionEvent)
   }
+  error(error: string) {
+    this.onerror?.({ error, message: error } as BrowserSpeechRecognitionErrorEvent)
+  }
 }
 
 describe('WebSpeechService', () => {
@@ -41,5 +44,13 @@ describe('WebSpeechService', () => {
     vi.advanceTimersByTime(10_000)
     expect(onCancelled).toHaveBeenCalledOnce()
   })
-})
 
+  it('distinguishes a disabled speech service from microphone denial', async () => {
+    window.SpeechRecognition = FakeRecognition
+    const onError = vi.fn()
+    const service = new WebSpeechService({ onPartial: vi.fn(), onFinal: vi.fn(), onCancelled: vi.fn(), onError })
+    await service.start()
+    FakeRecognition.latest?.error('service-not-allowed')
+    expect(onError.mock.calls[0][0].code).toBe('speech-service-disabled')
+  })
+})

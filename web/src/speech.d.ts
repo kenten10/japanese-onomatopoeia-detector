@@ -25,3 +25,6 @@ interface Window {
   webkitSpeechRecognition?: BrowserSpeechRecognitionConstructor
 }
 
+interface Navigator {
+  readonly standalone?: boolean
+}

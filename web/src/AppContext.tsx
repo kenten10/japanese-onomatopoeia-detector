@@ -31,7 +31,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
   const [history, setHistory] = useState<HistoryItem[]>([])
   const [persistenceError, setPersistenceError] = useState<string>()
   const stateRef = useRef(recordingState)
+  const tRef = useRef(t)
+  const sessionGeneration = useRef(0)
+  const partialGeneration = useRef(0)
   stateRef.current = recordingState
+  tRef.current = t
 
   const loadHistory = useCallback(async () => {
     try { setHistory(await repository.fetch()) }
@@ -40,47 +44,68 @@ export function AppProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => { void loadHistory() }, [loadHistory])
 
-  const speech = useMemo(() => new WebSpeechService({
-    onPartial(raw) {
-      void hiraganaText(raw).then(setPartialText)
-    },
-    onFinal(raw) {
-      setRecordingState({ kind: 'recognizing' })
-      void hiraganaText(raw).then(async (text) => {
-        if (!text.trim()) { setRecordingState({ kind: 'idle' }); return }
-        setPartialText(text)
-        setRecordingState({ kind: 'evaluating' })
-        setRecordingState({ kind: 'result', result: await evaluate(text) })
-      })
-    },
-    onCancelled() {
-      if (stateRef.current.kind === 'recording' || stateRef.current.kind === 'recognizing') {
-        setRecordingState({ kind: 'idle' })
+  const speechRef = useRef<WebSpeechService | null>(null)
+  if (!speechRef.current) {
+    speechRef.current = new WebSpeechService({
+      onPartial(raw) {
+        const generation = ++partialGeneration.current
+        const session = sessionGeneration.current
+        void hiraganaText(raw).then((text) => {
+          if (generation === partialGeneration.current
+            && session === sessionGeneration.current
+            && stateRef.current.kind === 'recording') setPartialText(text)
+        })
+      },
+      onFinal(raw) {
+        const session = sessionGeneration.current
+        ++partialGeneration.current
+        setRecordingState({ kind: 'recognizing' })
+        void hiraganaText(raw).then(async (text) => {
+          if (session !== sessionGeneration.current) return
+          if (!text.trim()) { setRecordingState({ kind: 'idle' }); return }
+          setPartialText(text)
+          setRecordingState({ kind: 'evaluating' })
+          const result = await evaluate(text)
+          if (session === sessionGeneration.current) setRecordingState({ kind: 'result', result })
+        })
+      },
+      onCancelled() {
+        if (stateRef.current.kind === 'recording' || stateRef.current.kind === 'recognizing') {
+          setRecordingState({ kind: 'idle' })
+        }
+      },
+      onError(error) {
+        const translate = tRef.current
+        const message = error.code === 'permission-denied' ? translate('permission.mic.deny')
+          : error.code === 'standalone-unsupported' ? translate('permission.pwa.unsupported')
+            : error.code === 'speech-service-disabled' ? translate('permission.speech.disabled')
+              : error.code === 'recognition-failed' ? translate('error.recognition.failed')
+                : translate('error.recognizer.unavailable')
+        setRecordingState({ kind: 'error', message, code: error.code })
       }
-    },
-    onError(error) {
-      const denied = error.code === 'permission-denied'
-      const message = denied ? t('permission.mic.deny')
-        : error.code === 'recognition-failed' ? t('error.recognition.failed')
-          : t('error.recognizer.unavailable')
-      setRecordingState({ kind: 'error', message, permissionDenied: denied })
-    }
-  }), [t])
+    })
+  }
+  const speech = speechRef.current
 
   useEffect(() => () => speech.abort(), [speech])
 
   const value = useMemo<AppValue>(() => ({
     recordingState, partialText, history, persistenceError,
     async startRecording() {
+      sessionGeneration.current += 1
+      partialGeneration.current += 1
       setPartialText('')
       try {
         await speech.start()
         setRecordingState({ kind: 'recording' })
       } catch (error) {
-        const denied = error instanceof SpeechServiceError && error.code === 'permission-denied'
+        const code = error instanceof SpeechServiceError ? error.code : 'unavailable'
         setRecordingState({
-          kind: 'error', permissionDenied: denied,
-          message: denied ? t('permission.mic.deny') : t('error.recognizer.unavailable')
+          kind: 'error', code,
+          message: code === 'permission-denied' ? t('permission.mic.deny')
+            : code === 'standalone-unsupported' ? t('permission.pwa.unsupported')
+              : code === 'speech-service-disabled' ? t('permission.speech.disabled')
+                : t('error.recognizer.unavailable')
         })
       }
     },
@@ -89,7 +114,11 @@ export function AppProvider({ children }: { children: ReactNode }) {
       setRecordingState({ kind: 'recognizing' })
       speech.stop()
     },
-    resetToIdle() { speech.abort(); setPartialText(''); setRecordingState({ kind: 'idle' }) },
+    resetToIdle() {
+      sessionGeneration.current += 1
+      partialGeneration.current += 1
+      speech.abort(); setPartialText(''); setRecordingState({ kind: 'idle' })
+    },
     async saveCurrentResult() {
       if (recordingState.kind !== 'result') return false
       try { await repository.add(recordingState.result.inputText, recordingState.result.score); await loadHistory(); return true }
@@ -114,4 +143,3 @@ export function useApp(): AppValue {
   if (!value) throw new Error('useApp must be used inside AppProvider')
   return value
 }
-

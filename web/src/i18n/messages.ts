@@ -2,6 +2,7 @@ export const messages = {
   en: {
     'app.title': 'Onomatopoeia Detector', 'app.subtitle': 'オノマトペ判定',
     'home.tab': 'Home', 'home.record.button': 'Record',
+    'navigation.main': 'Main navigation', 'navigation.back': 'Back',
     'home.no.result': 'Say a Japanese sound word',
     'home.no.result.sub': 'Tap the mic and try one —\nlike ふわふわ or きらきら',
     'recording.listening': 'Listening…', 'recording.recognizing': 'Recognizing…',
@@ -31,16 +32,21 @@ export const messages = {
     'privacy.control.body': 'You can delete evaluation history from Settings at any time. You can change microphone access in your browser or device settings.',
     'permission.mic.deny': 'Microphone access is off. Allow it in your browser or device settings to record.',
     'permission.mic.help': 'Open browser settings',
+    'permission.speech.disabled': 'Speech recognition is unavailable. On iPhone, turn on Siri and Dictation in Settings, then try again.',
+    'permission.pwa.unsupported': 'Speech recognition is not available in an iPhone Home Screen app. Open this page in Safari to record.',
+    'permission.open.safari': 'Open in Safari',
     'error.title': 'Error', 'error.ok': 'OK',
     'error.recognizer.unavailable': 'Speech recognition is unavailable in this browser. Please try Safari, Chrome, or Edge.',
     'error.recognition.failed': 'Speech recognition failed. Check your connection and try again.',
     'error.persistence.load': 'Your history could not be loaded. Please reload the app.',
     'error.persistence.save': 'Your history could not be saved. Check available storage and try again.',
-    'error.persistence.delete': 'Your history could not be deleted. Please try again.'
+    'error.persistence.delete': 'Your history could not be deleted. Please try again.',
+    'update.available': 'A new version is ready.', 'update.action': 'Update now'
   },
   ja: {
     'app.title': 'オノマトペ判定', 'app.subtitle': 'Onomatopoeia Detector',
     'home.tab': 'ホーム', 'home.record.button': '録音する',
+    'navigation.main': 'メインナビゲーション', 'navigation.back': '戻る',
     'home.no.result': '録音してみよう！', 'home.no.result.sub': 'マイクボタンをタップして\n音声を入力してください',
     'recording.listening': '聞いています...', 'recording.recognizing': '認識中...',
     'recording.tap.stop': 'タップして停止',
@@ -68,14 +74,17 @@ export const messages = {
     'privacy.control.body': '判定履歴は設定画面からいつでも削除できます。マイク権限はブラウザまたは端末の設定から変更できます。',
     'permission.mic.deny': 'マイクへのアクセスが拒否されています。ブラウザまたは端末の設定から許可してください。',
     'permission.mic.help': 'ブラウザ設定を確認',
+    'permission.speech.disabled': '音声認識を利用できません。iPhoneでは「設定」でSiriと音声入力を有効にしてから、もう一度お試しください。',
+    'permission.pwa.unsupported': 'iPhoneのホーム画面版では音声認識を利用できません。このページをSafariで開いて録音してください。',
+    'permission.open.safari': 'Safariで開く',
     'error.title': 'エラー', 'error.ok': 'OK',
     'error.recognizer.unavailable': 'このブラウザでは音声認識を利用できません。Safari、Chrome、Edgeをお試しください。',
     'error.recognition.failed': '音声認識に失敗しました。通信状態を確認して、もう一度お試しください。',
     'error.persistence.load': '判定履歴を読み込めませんでした。アプリを再読み込みしてください。',
     'error.persistence.save': '判定履歴を保存できませんでした。空き容量を確認して、もう一度お試しください。',
-    'error.persistence.delete': '判定履歴を削除できませんでした。もう一度お試しください。'
+    'error.persistence.delete': '判定履歴を削除できませんでした。もう一度お試しください。',
+    'update.available': '新しいバージョンを利用できます。', 'update.action': '今すぐ更新'
   }
 } as const
 
 export type MessageKey = keyof typeof messages.en
-

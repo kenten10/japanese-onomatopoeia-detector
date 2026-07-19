@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
-import { I18nProvider, resolvedLanguage, useI18n } from './I18nContext'
+import { describe, expect, it, vi } from 'vitest'
+import { I18nProvider, resolvedLanguage, storedLanguage, useI18n } from './I18nContext'
 
 function Title() { return <span>{useI18n().t('app.title')}</span> }
 
@@ -15,5 +15,10 @@ describe('localization', () => {
     Object.defineProperty(navigator, 'language', { value: 'ja-JP', configurable: true })
     expect(resolvedLanguage('system')).toBe('ja')
   })
-})
 
+  it('falls back to English when local storage is blocked', () => {
+    const getItem = vi.spyOn(localStorage, 'getItem').mockImplementation(() => { throw new DOMException('blocked', 'SecurityError') })
+    expect(storedLanguage()).toBe('en')
+    getItem.mockRestore()
+  })
+})

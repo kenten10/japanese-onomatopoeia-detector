@@ -34,7 +34,7 @@ export type RecordingState =
   | { kind: 'recognizing' }
   | { kind: 'evaluating' }
   | { kind: 'result'; result: EvaluationResult }
-  | { kind: 'error'; message: string; permissionDenied?: boolean }
+  | { kind: 'error'; message: string; code: SpeechServiceErrorCode }
 
 export type AppLanguage = 'system' | 'ja' | 'en'
 
@@ -45,12 +45,19 @@ export interface SpeechCallbacks {
   onError(error: SpeechServiceError): void
 }
 
+export type SpeechServiceErrorCode =
+  | 'unsupported'
+  | 'permission-denied'
+  | 'standalone-unsupported'
+  | 'speech-service-disabled'
+  | 'unavailable'
+  | 'recognition-failed'
+
 export class SpeechServiceError extends Error {
   constructor(
-    public readonly code: 'unsupported' | 'permission-denied' | 'unavailable' | 'recognition-failed',
+    public readonly code: SpeechServiceErrorCode,
     message?: string
   ) {
     super(message ?? code)
   }
 }
-

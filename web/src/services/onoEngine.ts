@@ -11,14 +11,20 @@ export function normalize(text: string): string {
   }).join('').replace(/[\p{White_Space}\p{P}]/gu, '')
 }
 
+const normalizedDictionary = dictionary.map((entry) => ({
+  entry,
+  word: normalize(entry.word),
+  reading: normalize(entry.reading)
+}))
+
 function exactMatch(text: string): boolean {
-  return dictionary.some((entry) => entry.word === text || entry.reading === text)
+  return normalizedDictionary.some(({ word, reading }) => word === text || reading === text)
 }
 
 function dictionaryScore(text: string): number {
   if (exactMatch(text)) return 1
-  if (dictionary.some((entry) => text.includes(entry.word) || entry.word.includes(text))) return 0.7
-  return dictionary.some((entry) => text.includes(entry.reading) || entry.reading.includes(text)) ? 0.4 : 0
+  if (normalizedDictionary.some(({ word }) => text.includes(word) || word.includes(text))) return 0.7
+  return normalizedDictionary.some(({ reading }) => text.includes(reading) || reading.includes(text)) ? 0.4 : 0
 }
 
 function phoneticPatternScore(text: string): number {
@@ -70,7 +76,7 @@ function similarity(a: string, b: string): number {
 }
 
 export function findSimilar(text: string, top = 3): SimilarEntry[] {
-  return dictionary.map((entry) => ({ entry, similarity: similarity(text, entry.word) }))
+  return normalizedDictionary.map(({ entry, word }) => ({ entry, similarity: similarity(text, word) }))
     .sort((a, b) => b.similarity - a.similarity)
     .slice(0, top)
 }
@@ -92,4 +98,3 @@ export async function evaluate(text: string): Promise<EvaluationResult> {
     similarEntries: score >= 3 ? findSimilar(normalized) : [], date: new Date()
   }
 }
-

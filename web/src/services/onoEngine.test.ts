@@ -12,6 +12,12 @@ describe('OnoEngine parity', () => {
     expect(result.similarEntries).toHaveLength(3)
   })
 
+  it('normalizes katakana dictionary entries before matching', async () => {
+    const result = await evaluate('ドキドキ')
+    expect(result.score).toBe(5)
+    expect(result.similarEntries[0].entry.word).toBe('ドキドキ')
+  })
+
   it('scores a known repeating word above a plain phrase', async () => {
     const onomatopoeia = await evaluate('ふわふわ')
     const phrase = await evaluate('ごはんをたべる')
@@ -26,4 +32,3 @@ describe('OnoEngine parity', () => {
     expect(results[0].similarity).toBeGreaterThanOrEqual(results[1].similarity)
   })
 })
-

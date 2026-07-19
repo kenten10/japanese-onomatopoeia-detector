@@ -3,6 +3,7 @@ import { useApp } from '../AppContext'
 import { useI18n } from '../i18n/I18nContext'
 import type { EvaluationResult, OnomatopoeiaEntry } from '../types'
 import { BookmarkIcon, CloseIcon, StarIcon } from '../components/Icons'
+import { ModalPortal } from '../components/ModalPortal'
 
 function SimilarCard({ entry }: { entry: OnomatopoeiaEntry }) {
   const { t } = useI18n()
@@ -32,9 +33,9 @@ export function ResultView({ result, onDismiss }: { result: EvaluationResult; on
     }
   }
 
-  return <div className="result-backdrop">
+  return <ModalPortal backdropClassName="result-backdrop" onClose={onDismiss}>
     <section className="result-sheet" role="dialog" aria-modal="true" aria-labelledby="result-heading">
-      <header className="sheet-header"><h2 id="result-heading">{t('result.title')}</h2><button onClick={onDismiss} aria-label={t('result.again')}><CloseIcon /></button></header>
+      <header className="sheet-header"><h2 id="result-heading">{t('result.title')}</h2><button data-autofocus onClick={onDismiss} aria-label={t('result.again')}><CloseIcon /></button></header>
       <div className="result-scroll">
         <div className="manga-panel sfx-burst"><span className="speed-lines" aria-hidden="true" /><span className="halftone" aria-hidden="true" /><b>{t('result.recognized').toUpperCase()}</b><strong>{result.inputText}</strong></div>
         <section className="manga-panel score-card">
@@ -55,6 +56,5 @@ export function ResultView({ result, onDismiss }: { result: EvaluationResult; on
         </div>
       </div>
     </section>
-  </div>
+  </ModalPortal>
 }
-

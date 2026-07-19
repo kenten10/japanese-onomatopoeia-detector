@@ -18,6 +18,19 @@ describe('HistoryRepository', () => {
   it('prunes local history to one hundred entries', async () => {
     for (let index = 0; index < 105; index += 1) await repository.add(`word-${index}`, 3)
     expect(await repository.fetch()).toHaveLength(100)
+    expect(await rawHistoryCount()).toBe(100)
   })
 })
 
+function rawHistoryCount(): Promise<number> {
+  return new Promise((resolve, reject) => {
+    const open = indexedDB.open('OnomatopoeiaDetector', 1)
+    open.onerror = () => reject(open.error)
+    open.onsuccess = () => {
+      const database = open.result
+      const request = database.transaction('history').objectStore('history').count()
+      request.onerror = () => reject(request.error)
+      request.onsuccess = () => { database.close(); resolve(request.result) }
+    }
+  })
+}

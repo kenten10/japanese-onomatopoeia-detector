@@ -5,8 +5,12 @@ import type { AppLanguage } from '../types'
 const STORAGE_KEY = 'appLanguage'
 
 export function storedLanguage(): AppLanguage {
-  const value = localStorage.getItem(STORAGE_KEY)
-  return value === 'system' || value === 'ja' || value === 'en' ? value : 'en'
+  try {
+    const value = localStorage.getItem(STORAGE_KEY)
+    return value === 'system' || value === 'ja' || value === 'en' ? value : 'en'
+  } catch {
+    return 'en'
+  }
 }
 
 export function resolvedLanguage(language: AppLanguage): 'ja' | 'en' {
@@ -30,7 +34,7 @@ export function I18nProvider({ children }: { children: ReactNode }) {
     language,
     locale,
     setLanguage(next) {
-      localStorage.setItem(STORAGE_KEY, next)
+      try { localStorage.setItem(STORAGE_KEY, next) } catch { /* Keep the in-memory preference for this session. */ }
       updateLanguage(next)
     },
     t: (key) => messages[locale][key]
@@ -44,4 +48,3 @@ export function useI18n(): I18nValue {
   if (!value) throw new Error('useI18n must be used inside I18nProvider')
   return value
 }
-
