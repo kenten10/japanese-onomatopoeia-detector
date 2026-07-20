@@ -112,6 +112,7 @@ test('loads the production PWA offline after service worker activation', async (
 })
 
 test('matches the home screen visual baseline in light and dark mode', async ({ page }) => {
+  test.skip(process.platform !== 'linux', 'Visual baselines are generated on Ubuntu')
   await page.goto('/')
   await expect(page).toHaveScreenshot('home-light.png', { animations: 'disabled', maxDiffPixelRatio: 0.04 })
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })
