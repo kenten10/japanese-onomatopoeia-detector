@@ -1,6 +1,52 @@
 # オノマトペ判定アプリ / Onomatopoeia Detector
 
-iOSアプリ。音声入力された日本語をひらがな表記に整え、オノマトペらしさを5段階で評価します。
+iOSアプリとPWA。音声入力された日本語をひらがな表記に整え、オノマトペらしさを5段階で評価します。
+
+## PWA（Web版）
+
+React、TypeScript、Viteで実装したWeb版は `web/` にあります。既存iOS版と同じ3タブ、判定アルゴリズム、最大100件の端末内履歴、日本語・英語UIを備えています。
+
+### 必要環境
+
+- Node.js 22+
+- npm 10+
+- マイクを使う場合はHTTPSまたはlocalhost
+
+### 開発とビルド
+
+```sh
+cd web
+npm install
+npm run dev
+```
+
+プロダクション用の静的ファイルは次のコマンドで `web/dist/` に生成されます。
+
+```sh
+npm run build
+npm run preview
+```
+
+`dist/` を任意のHTTPS対応静的ホスティングへ配置できます。Web App ManifestとService Workerが含まれ、初回読み込み後は画面、辞書、判定、履歴をオフラインで利用できます。
+
+### Web版のテスト
+
+```sh
+npm test
+npx playwright install chromium webkit  # 初回のみ
+npm run test:e2e
+```
+
+### iPhoneへのインストール
+
+1. Safariで配信URLを開く
+2. 共有ボタンをタップする
+3. 「ホーム画面に追加」を選ぶ
+
+Web版は利用可能な場合にオンデバイス音声認識を優先します。利用できない場合はブラウザの音声認識サービスへフォールバックするため、その場合の音声認識にはネットワーク接続が必要です。履歴と表示言語はサーバーではなく、現在の端末・ブラウザ・サイト単位のIndexedDBとWeb Storageに保存され、別のユーザーや端末とは共有されません。
+
+> [!IMPORTANT]
+> WebKitの制約により、iPhoneでホーム画面に追加したPWAでは音声認識サービスを利用できない場合があります。その場合、アプリ内の「Safariで開く」から同じURLをSafariタブで開いて録音してください。また、iPhoneの「設定」でSiriと音声入力が有効になっている必要があります。リリース前には対象iOS実機のSafariタブとホーム画面版の両方で録音を確認してください。
 
 ## 必要環境
 

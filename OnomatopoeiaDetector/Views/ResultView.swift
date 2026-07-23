@@ -135,12 +135,13 @@ struct ResultView: View {
     private var actionButtons: some View {
         VStack(spacing: 12) {
             Button {
-                vm.saveCurrentResult()
-                withAnimation { savedFeedback = true }
-                saveResetTask?.cancel()
-                saveResetTask = Task {
-                    try? await Task.sleep(for: .seconds(1.5))
-                    if !Task.isCancelled { savedFeedback = false }
+                if vm.saveCurrentResult() {
+                    withAnimation { savedFeedback = true }
+                    saveResetTask?.cancel()
+                    saveResetTask = Task {
+                        try? await Task.sleep(for: .seconds(1.5))
+                        if !Task.isCancelled { savedFeedback = false }
+                    }
                 }
             } label: {
                 Label(

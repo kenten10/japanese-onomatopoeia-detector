@@ -58,6 +58,12 @@ struct SettingsView: View {
                             .foregroundStyle(Ink.ink.opacity(0.6))
                     }
                     .padding(.vertical, 4)
+
+                    NavigationLink {
+                        PrivacyPolicyView()
+                    } label: {
+                        Label(String(localized: "settings.privacy"), systemImage: "hand.raised.fill")
+                    }
                 } header: {
                     sectionHeader("settings.about")
                 }

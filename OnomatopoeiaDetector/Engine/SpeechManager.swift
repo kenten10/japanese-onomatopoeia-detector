@@ -47,6 +47,10 @@ final class SpeechManager: NSObject {
         authStatus == .authorized && micAuthStatus == .authorized
     }
 
+    var permissionsDenied: Bool {
+        authStatus == .denied || authStatus == .restricted || micAuthStatus == .denied
+    }
+
     // MARK: - Recording
 
     func startRecording() throws {

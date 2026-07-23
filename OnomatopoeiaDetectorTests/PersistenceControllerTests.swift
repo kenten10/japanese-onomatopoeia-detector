@@ -15,34 +15,34 @@ final class PersistenceControllerTests: XCTestCase {
         super.tearDown()
     }
 
-    func testAddAndFetchHistoryReturnsNewestFirst() {
-        persistence.addHistory(inputText: "ふわふわ", score: 5)
-        persistence.addHistory(inputText: "さらさら", score: 4)
+    func testAddAndFetchHistoryReturnsNewestFirst() throws {
+        try persistence.addHistory(inputText: "ふわふわ", score: 5)
+        try persistence.addHistory(inputText: "さらさら", score: 4)
 
-        let history = persistence.fetchHistory()
+        let history = try persistence.fetchHistory()
 
         XCTAssertEqual(history.count, 2)
         XCTAssertEqual(history.first?.inputText, "さらさら")
         XCTAssertEqual(history.first?.score, 4)
     }
 
-    func testDeleteHistoryItemRemovesOnlySelectedItem() {
-        persistence.addHistory(inputText: "ふわふわ", score: 5)
-        persistence.addHistory(inputText: "さらさら", score: 4)
-        let target = persistence.fetchHistory().first { $0.inputText == "ふわふわ" }
+    func testDeleteHistoryItemRemovesOnlySelectedItem() throws {
+        try persistence.addHistory(inputText: "ふわふわ", score: 5)
+        try persistence.addHistory(inputText: "さらさら", score: 4)
+        let target = try persistence.fetchHistory().first { $0.inputText == "ふわふわ" }
 
         XCTAssertNotNil(target)
-        persistence.delete(item: target!)
+        try persistence.delete(item: target!)
 
-        let history = persistence.fetchHistory()
+        let history = try persistence.fetchHistory()
         XCTAssertEqual(history.map(\.inputText), ["さらさら"])
     }
 
-    func testHistoryIsPrunedToOneHundredItems() {
+    func testHistoryIsPrunedToOneHundredItems() throws {
         for index in 0..<105 {
-            persistence.addHistory(inputText: "word-\(index)", score: 3)
+            try persistence.addHistory(inputText: "word-\(index)", score: 3)
         }
 
-        XCTAssertEqual(persistence.fetchHistory().count, 100)
+        XCTAssertEqual(try persistence.fetchHistory().count, 100)
     }
 }

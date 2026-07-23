@@ -15,9 +15,6 @@ struct OnomatopoeiaDetectorApp: App {
         WindowGroup {
             ContentView()
                 .environment(viewModel)
-                .task {
-                    await viewModel.requestPermissionsIfNeeded()
-                }
         }
     }
 }

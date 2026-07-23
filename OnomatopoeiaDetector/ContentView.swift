@@ -21,5 +21,18 @@ struct ContentView: View {
                 }
         }
         .tint(Ink.vermilion)
+        .alert(
+            String(localized: "error.title"),
+            isPresented: Binding(
+                get: { vm.persistenceErrorMessage != nil },
+                set: { if !$0 { vm.dismissPersistenceError() } }
+            )
+        ) {
+            Button(String(localized: "error.ok"), role: .cancel) {
+                vm.dismissPersistenceError()
+            }
+        } message: {
+            Text(vm.persistenceErrorMessage ?? "")
+        }
     }
 }

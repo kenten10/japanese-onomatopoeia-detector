@@ -50,12 +50,23 @@
 "settings.version" = "バージョン";
 "settings.about" = "このアプリについて";
 "settings.about.desc" = "音声入力した言葉が日本語のオノマトペらしいかを1〜5段階で判定します。";
+"settings.privacy" = "プライバシーポリシー";
+
+/* Privacy */
+"privacy.summary" = "このアプリは、個人情報や利用状況データを収集せず、広告やトラッキングも行いません。";
+"privacy.audio.title" = "音声データ";
+"privacy.audio.body" = "マイク音声は日本語の音声認識にのみ使用されます。音声認識は端末上で実行され、録音データや認識結果を開発者のサーバーへ送信しません。録音データは保存されません。";
+"privacy.storage.title" = "端末内に保存するデータ";
+"privacy.storage.body" = "判定履歴と表示言語の設定だけを端末内に保存します。これらのデータを第三者と共有しません。";
+"privacy.control.title" = "削除と権限";
+"privacy.control.body" = "判定履歴は設定画面からいつでも削除できます。マイクと音声認識の権限はiOSの設定アプリからいつでも変更できます。";
 
 /* Permissions */
 "permission.mic.title" = "マイクへのアクセス";
 "permission.mic.message" = "音声を録音してオノマトペを判定するためにマイクを使用します";
 "permission.mic.deny" = "マイクへのアクセスが拒否されています。設定アプリから許可してください。";
 "permission.mic.open.settings" = "設定を開く";
+"permission.denied.title" = "録音するには権限が必要です";
 "permission.speech.title" = "音声認識へのアクセス";
 "permission.speech.message" = "録音した音声をテキストに変換するために使用します";
 
@@ -66,3 +77,6 @@
 "error.title" = "エラー";
 "error.ok" = "OK";
 "error.recognizer.unavailable" = "音声認識が利用できません。しばらくしてからもう一度お試しください。";
+"error.persistence.load" = "判定履歴を読み込めませんでした。アプリを再起動してください。";
+"error.persistence.save" = "判定履歴を保存できませんでした。空き容量を確認して、もう一度お試しください。";
+"error.persistence.delete" = "判定履歴を削除できませんでした。もう一度お試しください。";

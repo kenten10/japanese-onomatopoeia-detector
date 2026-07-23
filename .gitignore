@@ -62,3 +62,12 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
+
+# Web / PWA
+web/node_modules/
+web/dist/
+web/coverage/
+web/playwright-report/
+web/test-results/
+web/public/dict/
+web/*.tsbuildinfo
