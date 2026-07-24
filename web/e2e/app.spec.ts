@@ -31,6 +31,20 @@ test.beforeEach(async ({ page }) => {
   await page.addInitScript(() => localStorage.clear())
 })
 
+test('serves the PWA with restrictive security headers', async ({ request }) => {
+  const response = await request.get('/')
+  expect(response.ok()).toBe(true)
+
+  const headers = response.headers()
+  expect(headers['content-security-policy']).toContain("default-src 'self'")
+  expect(headers['content-security-policy']).toContain("frame-ancestors 'none'")
+  expect(headers['permissions-policy']).toContain('microphone=(self)')
+  expect(headers['referrer-policy']).toBe('no-referrer')
+  expect(headers['strict-transport-security']).toBe('max-age=31536000')
+  expect(headers['x-content-type-options']).toBe('nosniff')
+  expect(headers['x-frame-options']).toBe('DENY')
+})
+
 test('shows the three-tab app and changes language', async ({ page }) => {
   await page.goto('/')
   await expect(page.getByRole('heading', { name: 'Onomatopoeia Detector' })).toBeVisible()
@@ -75,6 +89,26 @@ test('keeps the active recognition service across a language change', async ({ p
   await page.getByRole('button', { name: 'ホーム' }).click()
   await page.getByRole('button', { name: 'タップして停止' }).click()
   await expect(page.getByRole('dialog', { name: '判定結果' })).toBeVisible()
+})
+
+test('keeps portal dialogs readable in dark mode', async ({ page }) => {
+  await installFakeSpeech(page)
+  await page.emulateMedia({ colorScheme: 'dark' })
+  await page.goto('/')
+
+  await page.getByRole('button', { name: 'Settings' }).click()
+  await page.getByRole('button', { name: 'Clear All History' }).click()
+  const confirmDialog = page.getByRole('alertdialog')
+  await expect(confirmDialog).toHaveCSS('color', 'rgb(242, 238, 228)')
+  await expect(confirmDialog).toHaveCSS('background-color', 'rgb(43, 39, 33)')
+  await expect(confirmDialog.getByRole('button', { name: 'Cancel' })).toBeVisible()
+  await confirmDialog.getByRole('button', { name: 'Cancel' }).click()
+
+  await page.getByRole('button', { name: 'Home' }).click()
+  await page.getByRole('button', { name: 'Record' }).click()
+  const result = page.getByRole('dialog', { name: 'Result' })
+  await expect(result).toHaveCSS('color', 'rgb(242, 238, 228)')
+  await expect(result.getByRole('button', { name: 'Try Again' }).last()).toBeVisible()
 })
 
 test('distinguishes microphone denial and iPhone standalone failure', async ({ page }) => {

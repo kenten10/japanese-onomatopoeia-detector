@@ -29,6 +29,12 @@ npm run preview
 
 `dist/` を任意のHTTPS対応静的ホスティングへ配置できます。Web App ManifestとService Workerが含まれ、初回読み込み後は画面、辞書、判定、履歴をオフラインで利用できます。
 
+### セキュリティヘッダー
+
+ビルド成果物にはCloudflare PagesとNetlifyが認識する `dist/_headers` が含まれます。CSP、クリックジャッキング対策、MIMEスニッフィング対策、リファラー制限、HSTS、Permissions Policyを設定し、マイクは同一オリジンのPWAだけに許可しています。`npm run preview` でも同じヘッダーを返します。
+
+`_headers` に対応しないホスティングを利用する場合は、`web/public/_headers` の設定をそのサービスのレスポンスヘッダー設定へ移してください。HSTSを有効にするため、本番環境は必ずHTTPSで配信してください。
+
 ### Web版のテスト
 
 ```sh
