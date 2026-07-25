@@ -2,6 +2,32 @@ import { defineConfig } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
 
+const securityHeaders = {
+  'Content-Security-Policy': [
+    "default-src 'self'",
+    "base-uri 'self'",
+    "connect-src 'self'",
+    "font-src 'self'",
+    "form-action 'none'",
+    "frame-ancestors 'none'",
+    "img-src 'self' data:",
+    "manifest-src 'self'",
+    "media-src 'self'",
+    "object-src 'none'",
+    "script-src 'self'",
+    "style-src 'self'",
+    "worker-src 'self'"
+  ].join('; '),
+  'Cross-Origin-Opener-Policy': 'same-origin',
+  'Cross-Origin-Resource-Policy': 'same-origin',
+  'Permissions-Policy': 'camera=(), geolocation=(), microphone=(self), payment=(), usb=()',
+  'Referrer-Policy': 'no-referrer',
+  'Strict-Transport-Security': 'max-age=31536000',
+  'X-Content-Type-Options': 'nosniff',
+  'X-Frame-Options': 'DENY',
+  'X-Permitted-Cross-Domain-Policies': 'none'
+}
+
 export default defineConfig({
   base: './',
   plugins: [
@@ -37,6 +63,9 @@ export default defineConfig({
   ],
   server: {
     fs: { allow: ['..'] }
+  },
+  preview: {
+    headers: securityHeaders
   },
   test: {
     environment: 'jsdom',
