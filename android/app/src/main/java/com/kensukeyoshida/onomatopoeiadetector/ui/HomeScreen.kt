@@ -50,6 +50,7 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.rotate
@@ -69,6 +70,7 @@ import com.kensukeyoshida.onomatopoeiadetector.R
 import com.kensukeyoshida.onomatopoeiadetector.model.RecordingState
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Halftone
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Ink
+import com.kensukeyoshida.onomatopoeiadetector.ui.theme.SecondaryOpacity
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.SpeedLines
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaHeading
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.monoLabel
@@ -217,7 +219,7 @@ private fun AppHeader() {
         Text(
             text = stringResource(R.string.app_subtitle).uppercase(),
             style = monoLabel(11.sp, 2.sp),
-            color = Ink.ink.copy(alpha = 0.5f)
+            color = Ink.ink.copy(alpha = SecondaryOpacity)
         )
     }
 }
@@ -245,7 +247,9 @@ private fun IdleContent() {
             text = "シーン…",
             style = sfx(64.sp),
             color = Ink.ink.copy(alpha = 0.16f),
-            modifier = Modifier.rotate(-6f)
+            modifier = Modifier
+                .rotate(-6f)
+                .clearAndSetSemantics { }
         )
 
         Column(
@@ -260,7 +264,7 @@ private fun IdleContent() {
             Text(
                 text = stringResource(R.string.home_no_result_sub),
                 fontSize = 15.sp,
-                color = Ink.ink.copy(alpha = 0.55f),
+                color = Ink.ink.copy(alpha = SecondaryOpacity),
                 textAlign = TextAlign.Center
             )
         }
@@ -283,7 +287,7 @@ private fun RecordingContent(partialText: String) {
         AutoShrinkText(
             text = partialText.ifEmpty { stringResource(R.string.recording_listening) },
             style = sfx(if (partialText.isEmpty()) 24.sp else 40.sp),
-            color = if (partialText.isEmpty()) Ink.ink.copy(alpha = 0.4f) else Ink.ink,
+            color = if (partialText.isEmpty()) Ink.ink.copy(alpha = 0.5f) else Ink.ink,
             minScale = 0.5f,
             maxLines = 2,
             textAlign = TextAlign.Center,
@@ -293,7 +297,7 @@ private fun RecordingContent(partialText: String) {
         Text(
             text = stringResource(R.string.recording_tap_stop),
             style = monoLabel(12.sp, 1.sp),
-            color = Ink.vermilion
+            color = Ink.vermilionText
         )
     }
 }
@@ -312,7 +316,7 @@ private fun ProcessingContent() {
         Text(
             text = stringResource(R.string.recording_recognizing),
             style = monoLabel(13.sp, 1.sp),
-            color = Ink.ink.copy(alpha = 0.6f)
+            color = Ink.ink.copy(alpha = SecondaryOpacity)
         )
     }
 }

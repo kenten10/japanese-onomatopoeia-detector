@@ -24,8 +24,18 @@ enum Ink {
             : UIColor(red: 0.078, green: 0.078, blue: 0.078, alpha: 1) // #141414
     })
 
-    /// 朱。効果音のエネルギーを担う唯一のアクセント。
+    /// 朱。効果音のエネルギーを担う唯一のアクセント。塗りに使う。
     static let vermilion = Color(red: 0.910, green: 0.255, blue: 0.180) // #E8412E
+
+    /// 文字に使う朱。紙の上で 4.5:1 を満たすよう、ライトでは一段暗いトーンにする。
+    static let vermilionText = Color(uiColor: UIColor { tc in
+        tc.userInterfaceStyle == .dark
+            ? UIColor(red: 0.910, green: 0.255, blue: 0.180, alpha: 1) // #E8412E
+            : UIColor(red: 0.839, green: 0.208, blue: 0.137, alpha: 1) // #D63523
+    })
+
+    /// 二次情報の文字に使う不透明度。これを下回るとライトで 4.5:1 を割る。
+    static let secondaryOpacity: Double = 0.6
 
     /// パネルの下地（紙よりわずかに浮いた面）。
     static let panel = Color(uiColor: UIColor { tc in

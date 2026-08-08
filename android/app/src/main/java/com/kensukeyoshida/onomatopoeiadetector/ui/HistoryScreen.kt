@@ -33,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -45,6 +46,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kensukeyoshida.onomatopoeiadetector.R
 import com.kensukeyoshida.onomatopoeiadetector.model.HistoryItem
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Ink
+import com.kensukeyoshida.onomatopoeiadetector.ui.theme.SecondaryOpacity
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaHeading
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaPanel
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.monoLabel
@@ -66,7 +68,7 @@ fun HistoryScreen(viewModel: AppViewModel) {
                 TextButton(onClick = { showClearConfirm = true }) {
                     Text(
                         text = stringResource(R.string.history_clear_all),
-                        color = Ink.vermilion,
+                        color = Ink.vermilionText,
                         fontSize = 13.sp,
                         fontWeight = FontWeight.Bold
                     )
@@ -108,7 +110,7 @@ fun HistoryScreen(viewModel: AppViewModel) {
                     showClearConfirm = false
                     viewModel.clearAllHistory()
                 }) {
-                    Text(stringResource(R.string.history_clear_yes), color = Ink.vermilion)
+                    Text(stringResource(R.string.history_clear_yes), color = Ink.vermilionText)
                 }
             },
             dismissButton = {
@@ -152,13 +154,15 @@ private fun EmptyState() {
             text = "がらーん",
             style = sfx(52.sp),
             color = Ink.ink.copy(alpha = 0.16f),
-            modifier = Modifier.rotate(-5f)
+            modifier = Modifier
+                .rotate(-5f)
+                .clearAndSetSemantics { }
         )
         Spacer(Modifier.size(12.dp))
         Text(
             text = stringResource(R.string.history_empty),
             style = mangaHeading(16.sp),
-            color = Ink.ink.copy(alpha = 0.5f)
+            color = Ink.ink.copy(alpha = SecondaryOpacity)
         )
     }
 }
@@ -227,7 +231,7 @@ private fun HistoryRow(item: HistoryItem, onDelete: () -> Unit) {
                     Text(
                         text = timestamp,
                         style = monoLabel(11.sp),
-                        color = Ink.ink.copy(alpha = 0.45f),
+                        color = Ink.ink.copy(alpha = SecondaryOpacity),
                         modifier = Modifier.padding(start = 6.dp)
                     )
                 }
@@ -241,13 +245,13 @@ private fun HistoryRow(item: HistoryItem, onDelete: () -> Unit) {
         ) {
             DropdownMenuItem(
                 text = {
-                    Text(stringResource(R.string.history_delete), color = Ink.vermilion)
+                    Text(stringResource(R.string.history_delete), color = Ink.vermilionText)
                 },
                 leadingIcon = {
                     Icon(
                         imageVector = Icons.Filled.DeleteOutline,
                         contentDescription = null,
-                        tint = Ink.vermilion
+                        tint = Ink.vermilionText
                     )
                 },
                 onClick = {

@@ -48,6 +48,7 @@ import com.kensukeyoshida.onomatopoeiadetector.BuildConfig
 import com.kensukeyoshida.onomatopoeiadetector.R
 import com.kensukeyoshida.onomatopoeiadetector.model.AppLanguage
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Ink
+import com.kensukeyoshida.onomatopoeiadetector.ui.theme.SecondaryOpacity
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaHeading
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.monoLabel
 
@@ -93,7 +94,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                             Spacer(Modifier.weight(1f))
                             Text(
                                 text = stringResource(language.displayNameRes()),
-                                color = Ink.vermilion
+                                color = Ink.vermilionText
                             )
                         }
                     }
@@ -107,7 +108,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                                 text = {
                                     Text(
                                         text = stringResource(option.displayNameRes()),
-                                        color = if (option == language) Ink.vermilion else Ink.ink
+                                        color = if (option == language) Ink.vermilionText else Ink.ink
                                     )
                                 },
                                 onClick = {
@@ -126,14 +127,14 @@ fun SettingsScreen(viewModel: AppViewModel) {
                 FormRow(onClick = { showClearConfirm = true }) {
                     IconLabel(
                         text = stringResource(R.string.settings_history_clear),
-                        color = Ink.vermilion,
+                        color = Ink.vermilionText,
                         spacing = 10.dp,
                         style = androidx.compose.ui.text.TextStyle(fontSize = 17.sp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.DeleteOutline,
                             contentDescription = null,
-                            tint = Ink.vermilion,
+                            tint = Ink.vermilionText,
                             modifier = Modifier.size(20.dp)
                         )
                     }
@@ -153,7 +154,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                         Text(
                             text = BuildConfig.VERSION_NAME,
                             style = monoLabel(17.sp),
-                            color = Ink.ink.copy(alpha = 0.5f)
+                            color = Ink.ink.copy(alpha = SecondaryOpacity)
                         )
                     }
                 }
@@ -174,7 +175,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                     Text(
                         text = stringResource(R.string.settings_about_desc),
                         fontSize = 12.sp,
-                        color = Ink.ink.copy(alpha = 0.6f)
+                        color = Ink.ink.copy(alpha = SecondaryOpacity)
                     )
                 }
 
@@ -220,7 +221,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                     showClearConfirm = false
                     viewModel.clearAllHistory()
                 }) {
-                    Text(stringResource(R.string.history_clear_yes), color = Ink.vermilion)
+                    Text(stringResource(R.string.history_clear_yes), color = Ink.vermilionText)
                 }
             },
             dismissButton = {
@@ -243,7 +244,7 @@ private fun SectionHeader(title: String) {
     Text(
         text = title.uppercase(),
         style = monoLabel(11.sp, 1.5.sp),
-        color = Ink.ink.copy(alpha = 0.5f),
+        color = Ink.ink.copy(alpha = SecondaryOpacity),
         modifier = Modifier.padding(start = 14.dp, top = 18.dp, bottom = 8.dp)
     )
 }

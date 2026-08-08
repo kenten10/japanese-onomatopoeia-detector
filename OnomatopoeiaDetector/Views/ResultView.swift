@@ -84,7 +84,7 @@ struct ResultView: View {
             Text(String(localized: "result.score.label").uppercased())
                 .font(.system(size: 11, weight: .bold, design: .monospaced))
                 .tracking(2)
-                .foregroundStyle(Ink.ink.opacity(0.5))
+                .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
 
             HStack(spacing: 6) {
                 ForEach(1...5, id: \.self) { i in
@@ -103,7 +103,7 @@ struct ResultView: View {
                     .foregroundStyle(Ink.score(result.score))
                 Text("/ 5")
                     .font(.mangaHeading(22))
-                    .foregroundStyle(Ink.ink.opacity(0.4))
+                    .foregroundStyle(Ink.ink.opacity(0.5))
             }
 
             Text(result.scoreComment)
@@ -215,7 +215,7 @@ struct SimilarEntryCard: View {
 
                 Text("（\(entry.reading)）")
                     .font(.caption)
-                    .foregroundStyle(Ink.ink.opacity(0.5))
+                    .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
 
                 Spacer()
 
@@ -224,7 +224,7 @@ struct SimilarEntryCard: View {
                     .padding(.horizontal, 8)
                     .padding(.vertical, 3)
                     .foregroundStyle(Ink.paper)
-                    .background(Ink.vermilion, in: Capsule())
+                    .background(Ink.vermilionText, in: Capsule())
             }
 
             Rectangle().fill(Ink.ink.opacity(0.15)).frame(height: 1)
@@ -237,7 +237,7 @@ struct SimilarEntryCard: View {
             VStack(alignment: .leading, spacing: 4) {
                 Label(String(localized: "result.similar.example"), systemImage: "text.bubble")
                     .font(.system(size: 11, weight: .bold, design: .monospaced))
-                    .foregroundStyle(Ink.ink.opacity(0.5))
+                    .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
 
                 Text("・\(entry.example_ja)")
                     .font(.caption)

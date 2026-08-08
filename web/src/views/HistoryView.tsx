@@ -31,11 +31,11 @@ export function HistoryView() {
 
   return <main className="screen list-screen">
     <header className="navigation-header"><h1>{t('history.title')}</h1>{history.length > 0 && <button onClick={() => setConfirmClear(true)}>{t('history.clear.all')}</button>}</header>
-    {history.length === 0 ? <div className="empty-history"><div>がらーん</div><p>{t('history.empty')}</p></div> : <div className="history-list">
+    {history.length === 0 ? <div className="empty-history"><div aria-hidden="true">がらーん</div><p>{t('history.empty')}</p></div> : <div className="history-list">
       {history.map((item) => <HistoryRow key={item.id} item={item} locale={locale} onDelete={() => setDeleteTarget(item)} />)}
     </div>}
     <ConfirmDialog open={confirmClear} onCancel={() => setConfirmClear(false)} onConfirm={() => { setConfirmClear(false); void clearHistory() }} />
-    {deleteTarget && <ModalPortal onClose={() => setDeleteTarget(undefined)} dismissOnBackdrop><section className="context-dialog" role="dialog" aria-modal="true">
+    {deleteTarget && <ModalPortal onClose={() => setDeleteTarget(undefined)} dismissOnBackdrop><section className="context-dialog" role="dialog" aria-modal="true" aria-label={t('history.delete')}>
       <button data-autofocus className="destructive" onClick={() => { void deleteHistory(deleteTarget.id); setDeleteTarget(undefined) }}><TrashIcon />{t('history.delete')}</button>
       <button onClick={() => setDeleteTarget(undefined)}>{t('history.clear.cancel')}</button>
     </section></ModalPortal>}

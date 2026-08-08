@@ -43,16 +43,22 @@ data class MangaColors(
     val paper: Color,
     /** インク。線と文字の主色。 */
     val ink: Color,
-    /** 朱。効果音のエネルギーを担う唯一のアクセント。 */
+    /** 朱。効果音のエネルギーを担う唯一のアクセント。塗りに使う。 */
     val vermilion: Color,
+    /** 文字に使う朱。紙の上で 4.5:1 を満たすよう、ライトでは一段暗いトーンにする。 */
+    val vermilionText: Color,
     /** パネルの下地（紙よりわずかに浮いた面）。 */
     val panel: Color
 )
+
+/** 二次情報の文字に使う不透明度。これを下回るとライトで 4.5:1 を割る。 */
+const val SecondaryOpacity = 0.6f
 
 private val LightColors = MangaColors(
     paper = Color(0xFFFBFAF6),
     ink = Color(0xFF141414),
     vermilion = Color(0xFFE8412E),
+    vermilionText = Color(0xFFD63523),
     panel = Color(0xFFFFFFFE)
 )
 
@@ -60,6 +66,7 @@ private val DarkColors = MangaColors(
     paper = Color(0xFF17150F),
     ink = Color(0xFFF2EEE4),
     vermilion = Color(0xFFE8412E),
+    vermilionText = Color(0xFFE8412E),
     panel = Color(0xFF211E19)
 )
 
@@ -69,6 +76,7 @@ object Ink {
     val paper: Color @Composable @ReadOnlyComposable get() = LocalMangaColors.current.paper
     val ink: Color @Composable @ReadOnlyComposable get() = LocalMangaColors.current.ink
     val vermilion: Color @Composable @ReadOnlyComposable get() = LocalMangaColors.current.vermilion
+    val vermilionText: Color @Composable @ReadOnlyComposable get() = LocalMangaColors.current.vermilionText
     val panel: Color @Composable @ReadOnlyComposable get() = LocalMangaColors.current.panel
 
     /** スコアに応じたインクの「熱量」。高いほど朱に近づき、低いほど淡い墨になる。 */

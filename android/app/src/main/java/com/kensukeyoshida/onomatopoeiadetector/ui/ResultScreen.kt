@@ -61,6 +61,7 @@ import com.kensukeyoshida.onomatopoeiadetector.model.EvaluationResult
 import com.kensukeyoshida.onomatopoeiadetector.model.OnomatopoeiaEntry
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Halftone
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Ink
+import com.kensukeyoshida.onomatopoeiadetector.ui.theme.SecondaryOpacity
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.SpeedLines
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaHeading
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaPanel
@@ -233,7 +234,7 @@ private fun ScoreCard(result: EvaluationResult) {
         Text(
             text = stringResource(R.string.result_score_label).uppercase(),
             style = monoLabel(11.sp, 2.sp),
-            color = Ink.ink.copy(alpha = 0.5f)
+            color = Ink.ink.copy(alpha = SecondaryOpacity)
         )
 
         StarRow(
@@ -255,7 +256,7 @@ private fun ScoreCard(result: EvaluationResult) {
             Text(
                 text = "/ 5",
                 style = mangaHeading(22.sp),
-                color = Ink.ink.copy(alpha = 0.4f),
+                color = Ink.ink.copy(alpha = 0.5f),
                 modifier = Modifier.alignByBaseline()
             )
         }
@@ -346,7 +347,7 @@ private fun SimilarEntryCard(entry: OnomatopoeiaEntry) {
             Text(
                 text = "（${entry.reading}）",
                 fontSize = 12.sp,
-                color = Ink.ink.copy(alpha = 0.5f),
+                color = Ink.ink.copy(alpha = SecondaryOpacity),
                 modifier = Modifier.alignByBaseline()
             )
             Spacer(Modifier.weight(1f))
@@ -357,7 +358,7 @@ private fun SimilarEntryCard(entry: OnomatopoeiaEntry) {
                 modifier = Modifier
                     .alignByBaseline()
                     .clip(CircleShape)
-                    .background(Ink.vermilion)
+                    .background(Ink.vermilionText)
                     .padding(horizontal = 8.dp, vertical = 3.dp)
             )
         }
@@ -372,14 +373,14 @@ private fun SimilarEntryCard(entry: OnomatopoeiaEntry) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             IconLabel(
                 text = stringResource(R.string.result_similar_example),
-                color = Ink.ink.copy(alpha = 0.5f),
+                color = Ink.ink.copy(alpha = SecondaryOpacity),
                 spacing = 6.dp,
                 style = monoLabel(11.sp)
             ) {
                 Icon(
                     imageVector = Icons.Filled.ChatBubbleOutline,
                     contentDescription = null,
-                    tint = Ink.ink.copy(alpha = 0.5f),
+                    tint = Ink.ink.copy(alpha = SecondaryOpacity),
                     modifier = Modifier.size(13.dp)
                 )
             }

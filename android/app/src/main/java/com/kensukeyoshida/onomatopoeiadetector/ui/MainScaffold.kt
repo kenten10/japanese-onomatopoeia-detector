@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kensukeyoshida.onomatopoeiadetector.R
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Ink
+import com.kensukeyoshida.onomatopoeiadetector.ui.theme.SecondaryOpacity
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaHeading
 
 private enum class MainTab(val labelRes: Int) {
@@ -73,11 +74,11 @@ fun MainScaffold(viewModel: AppViewModel) {
                             Text(text = stringResource(tab.labelRes), fontSize = 10.sp)
                         },
                         colors = NavigationBarItemDefaults.colors(
-                            selectedIconColor = Ink.vermilion,
-                            selectedTextColor = Ink.vermilion,
+                            selectedIconColor = Ink.vermilionText,
+                            selectedTextColor = Ink.vermilionText,
                             indicatorColor = Color.Transparent,
-                            unselectedIconColor = Ink.ink.copy(alpha = 0.55f),
-                            unselectedTextColor = Ink.ink.copy(alpha = 0.55f)
+                            unselectedIconColor = Ink.ink.copy(alpha = SecondaryOpacity),
+                            unselectedTextColor = Ink.ink.copy(alpha = SecondaryOpacity)
                         )
                     )
                 }
@@ -114,7 +115,7 @@ fun MainScaffold(viewModel: AppViewModel) {
             text = { Text(stringResource(messageRes)) },
             confirmButton = {
                 TextButton(onClick = viewModel::dismissPersistenceError) {
-                    Text(stringResource(R.string.error_ok), color = Ink.vermilion)
+                    Text(stringResource(R.string.error_ok), color = Ink.vermilionText)
                 }
             }
         )

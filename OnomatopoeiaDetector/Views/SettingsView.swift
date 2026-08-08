@@ -18,7 +18,7 @@ struct SettingsView: View {
                         }
                     }
                     .pickerStyle(.menu)
-                    .tint(Ink.vermilion)
+                    .tint(Ink.vermilionText)
                     .onChange(of: vm.appLanguage) { _, newValue in
                         vm.setLanguage(newValue)
                     }
@@ -33,7 +33,7 @@ struct SettingsView: View {
                     } label: {
                         Label(String(localized: "settings.history.clear"), systemImage: "trash")
                     }
-                    .tint(Ink.vermilion)
+                    .tint(Ink.vermilionText)
                 } header: {
                     sectionHeader("history.title")
                 }
@@ -46,7 +46,7 @@ struct SettingsView: View {
                         Spacer()
                         Text(appVersion)
                             .font(.system(.body, design: .monospaced))
-                            .foregroundStyle(Ink.ink.opacity(0.5))
+                            .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
                     }
 
                     VStack(alignment: .leading, spacing: 6) {
@@ -55,7 +55,7 @@ struct SettingsView: View {
                             .foregroundStyle(Ink.ink)
                         Text(String(localized: "settings.about.desc"))
                             .font(.caption)
-                            .foregroundStyle(Ink.ink.opacity(0.6))
+                            .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
                     }
                     .padding(.vertical, 4)
 
@@ -88,6 +88,6 @@ struct SettingsView: View {
         Text(String(localized: key).uppercased())
             .font(.system(size: 11, weight: .bold, design: .monospaced))
             .tracking(1.5)
-            .foregroundStyle(Ink.ink.opacity(0.5))
+            .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
     }
 }
