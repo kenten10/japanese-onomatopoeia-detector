@@ -20,6 +20,9 @@ actor OnoEngine {
         let reading: String
     }
 
+    /// 辞書と部分一致で照合する最小の文字数。
+    private static let minMatchLength = 2
+
     private let normalizedDictionary: [NormalizedEntry]
     private static let log = Logger(subsystem: "OnomatopoeiaDetector", category: "OnoEngine")
 
@@ -88,6 +91,11 @@ actor OnoEngine {
         // 完全一致
         if isDictionaryExactMatch(text) {
             return 1.0
+        }
+        // 1文字以下は語として照合しない。空文字はあらゆる見出しの部分文字列になり、
+        // 「ん」「ー」のような1文字も辞書のどこかに必ず含まれてしまうため。
+        guard text.count >= Self.minMatchLength else {
+            return 0.0
         }
         // 部分一致
         let partials = normalizedDictionary.filter {

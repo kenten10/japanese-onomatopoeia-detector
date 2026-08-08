@@ -67,6 +67,9 @@ class OnoEngine(
 
     private fun dictionaryScore(text: String): Double = when {
         isExactMatch(text) -> 1.0
+        // 1文字以下は語として照合しない。空文字はあらゆる見出しの部分文字列になり、
+        // 「ん」「ー」のような1文字も辞書のどこかに必ず含まれてしまうため。
+        text.length < MIN_MATCH_LENGTH -> 0.0
         // 部分一致
         normalizedDictionary.any { text.contains(it.word) || it.word.contains(text) } -> 0.7
         // 読みレベルの部分一致
@@ -165,6 +168,9 @@ class OnoEngine(
     companion object {
         private const val VOICED = "がぎぐげござじずぜぞだぢづでどばびぶべぼ"
         private const val PLOSIVE = "ぱぴぷぺぽ"
+
+        /** 辞書と部分一致で照合する最小の文字数。 */
+        private const val MIN_MATCH_LENGTH = 2
 
         /** カタカナ→ひらがな正規化＋空白・記号除去 */
         fun normalize(text: String): String = buildString(text.length) {

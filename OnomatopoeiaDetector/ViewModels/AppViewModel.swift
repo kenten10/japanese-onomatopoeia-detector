@@ -83,7 +83,8 @@ final class AppViewModel {
     // MARK: - Evaluation
 
     private func evaluateText(_ text: String) {
-        guard !text.trimmingCharacters(in: .whitespaces).isEmpty else {
+        // 句読点だけの認識結果は空白除去では落ちないため、正規化して中身の有無を見る
+        guard !OnoEngine.normalize(text).isEmpty else {
             recordingState = .idle
             return
         }

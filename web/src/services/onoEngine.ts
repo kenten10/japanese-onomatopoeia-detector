@@ -11,6 +11,9 @@ export function normalize(text: string): string {
   }).join('').replace(/[\p{White_Space}\p{P}]/gu, '')
 }
 
+/** 辞書と部分一致で照合する最小の文字数。 */
+const MIN_MATCH_LENGTH = 2
+
 const normalizedDictionary = dictionary.map((entry) => ({
   entry,
   word: normalize(entry.word),
@@ -23,6 +26,9 @@ function exactMatch(text: string): boolean {
 
 function dictionaryScore(text: string): number {
   if (exactMatch(text)) return 1
+  // 1文字以下は語として照合しない。空文字はあらゆる見出しの部分文字列になり、
+  // 「ん」「ー」のような1文字も辞書のどこかに必ず含まれてしまうため。
+  if (text.length < MIN_MATCH_LENGTH) return 0
   if (normalizedDictionary.some(({ word }) => text.includes(word) || word.includes(text))) return 0.7
   return normalizedDictionary.some(({ reading }) => text.includes(reading) || reading.includes(text)) ? 0.4 : 0
 }

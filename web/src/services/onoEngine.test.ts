@@ -49,4 +49,12 @@ describe('OnoEngine parity', () => {
     expect((await evaluate('どーん')).score).toBe(3)
     expect((await evaluate('がーん')).score).toBe(3)
   })
+
+  // 記号だけの認識結果は正規化すると空になり、あらゆる見出しの部分文字列として
+  // 一致してしまっていた。1文字も辞書のどこかに必ず含まれる。
+  it.each(['。', '、。', 'ん', 'あ', 'っ'])('does not reward the empty or single character input: %s', async (input) => {
+    const result = await evaluate(input)
+    expect(result.score).toBeLessThan(3)
+    expect(result.similarEntries).toHaveLength(0)
+  })
 })

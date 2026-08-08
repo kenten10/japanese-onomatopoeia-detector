@@ -87,4 +87,17 @@ class OnoEngineTest {
         assertEquals(3, engine.evaluate("どーん").score)
         assertEquals(3, engine.evaluate("がーん").score)
     }
+
+    /**
+     * 記号だけの認識結果は正規化すると空になり、あらゆる見出しの部分文字列として
+     * 一致してしまっていた。1文字も辞書のどこかに必ず含まれる。
+     */
+    @Test
+    fun `does not reward empty or single character input`() = runBlocking {
+        for (input in listOf("。", "、。", "ん", "あ", "っ")) {
+            val result = engine.evaluate(input)
+            assertTrue("input=$input score=${result.score}", result.score < 3)
+            assertTrue("input=$input", result.similarEntries.isEmpty())
+        }
+    }
 }

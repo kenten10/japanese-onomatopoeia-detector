@@ -1,6 +1,6 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import type { HistoryItem, RecordingState } from './types'
-import { evaluate } from './services/onoEngine'
+import { evaluate, normalize } from './services/onoEngine'
 import { hiraganaText } from './services/japaneseText'
 import { HistoryRepository } from './services/historyRepository'
 import { WebSpeechService } from './services/speechService'
@@ -62,7 +62,8 @@ export function AppProvider({ children }: { children: ReactNode }) {
         setRecordingState({ kind: 'recognizing' })
         void hiraganaText(raw).then(async (text) => {
           if (session !== sessionGeneration.current) return
-          if (!text.trim()) { setRecordingState({ kind: 'idle' }); return }
+          // 句読点だけの認識結果は trim では落ちないため、正規化して中身の有無を見る
+          if (!normalize(text)) { setRecordingState({ kind: 'idle' }); return }
           setPartialText(text)
           setRecordingState({ kind: 'evaluating' })
           const result = await evaluate(text)

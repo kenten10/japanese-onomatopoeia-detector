@@ -149,7 +149,8 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // MARK: - Evaluation
 
     private suspend fun evaluateText(text: String) {
-        if (text.isBlank()) {
+        // 句読点だけの認識結果は isBlank では落ちないため、正規化して中身の有無を見る
+        if (OnoEngine.normalize(text).isEmpty()) {
             resetToIdle()
             return
         }
