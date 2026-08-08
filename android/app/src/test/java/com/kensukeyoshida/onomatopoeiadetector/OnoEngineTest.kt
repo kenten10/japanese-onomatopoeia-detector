@@ -63,4 +63,28 @@ class OnoEngineTest {
         assertTrue(result.score < 3)
         assertTrue(result.similarEntries.isEmpty())
     }
+
+    /**
+     * iOS 版・Web 版と同じ点数になることを確かめる。3 実装で同じ表を持ち、
+     * どれかの評価だけが動いたときに気付けるようにしている。
+     */
+    @Test
+    fun `matches the score table shared with the other platforms`() = runBlocking {
+        val expected = mapOf(
+            "ふわふわ" to 5, "しーん" to 5, "ドキドキ" to 5, "どきどき" to 5,
+            "キラキラ" to 5, "きらきら" to 5, "ぐるぐる" to 5,
+            "ざーざー" to 3, "どーん" to 3,
+            "ふわふわと" to 2, "わくわくする" to 2, "ごはんをたべる" to 2
+        )
+        for ((input, score) in expected) {
+            assertEquals("input=$input", score, engine.evaluate(input).score)
+        }
+    }
+
+    /** 撥音止めのオノマトペは「ん」を助詞と解析されるが、そこで減点しない。 */
+    @Test
+    fun `does not penalise onomatopoeia ending with a syllabic nasal`() = runBlocking {
+        assertEquals(3, engine.evaluate("どーん").score)
+        assertEquals(3, engine.evaluate("がーん").score)
+    }
 }

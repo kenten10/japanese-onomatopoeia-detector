@@ -71,6 +71,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     include: ['src/**/*.test.{ts,tsx}'],
-    coverage: { reporter: ['text', 'html'] }
+    coverage: { reporter: ['text', 'html'] },
+    // ブラウザ版の kuromoji は XHR で辞書を取りに行き jsdom では解決できないため、
+    // テストのときだけ Node 版と実辞書に差し替えて形態素解析を通す
+    alias: { 'kuromoji/build/kuromoji.js': 'kuromoji' },
+    env: { VITE_KUROMOJI_DICT: 'node_modules/kuromoji/dict/' }
   }
 })

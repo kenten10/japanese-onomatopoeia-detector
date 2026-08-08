@@ -67,7 +67,9 @@ object JapaneseAnalyzer {
     suspend fun morphemeScore(text: String): Double = withContext(Dispatchers.Default) {
         val tokens = tokenize(text) ?: return@withContext 1.0
         when {
-            tokens.any { it.partOfSpeechLevel1 == "助詞" } -> 0.0
+            // 撥音止めのオノマトペ（どーん・がーん など）は「ん」を助詞と解析されるため除く。
+            // 音象徴スコア側では撥音止めを加点しており、ここで減点すると評価が食い違う。
+            tokens.any { it.partOfSpeechLevel1 == "助詞" && it.surface != "ん" } -> 0.0
             tokens.any { it.partOfSpeechLevel1 == "動詞" } -> 0.3
             else -> 1.0
         }
