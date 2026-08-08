@@ -34,6 +34,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -131,7 +132,7 @@ fun ScreenHeader(
             .padding(start = 18.dp, end = 18.dp, top = 14.dp, bottom = 10.dp),
         verticalAlignment = Alignment.Bottom
     ) {
-        Text(text = title, style = mangaHeading(30.sp), color = Ink.ink)
+        Text(text = title, style = mangaHeading(34.sp), color = Ink.ink)
         Spacer(Modifier.weight(1f))
         trailing()
     }
@@ -169,7 +170,8 @@ private fun EmptyState() {
 private fun HistoryRow(item: HistoryItem, onDelete: () -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
     val context = LocalContext.current
-    val timestamp = remember(item.date) {
+    // 表示言語を切り替えたときに日時表記も追従させる
+    val timestamp = remember(item.date, LocalConfiguration.current) {
         DateUtils.formatDateTime(
             context,
             item.date,

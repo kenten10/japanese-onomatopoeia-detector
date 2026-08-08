@@ -3,6 +3,7 @@ package com.kensukeyoshida.onomatopoeiadetector.data
 import android.content.Context
 import android.util.Log
 import androidx.annotation.StringRes
+import androidx.room.withTransaction
 import com.kensukeyoshida.onomatopoeiadetector.R
 import com.kensukeyoshida.onomatopoeiadetector.model.HistoryItem
 import kotlinx.coroutines.Dispatchers
@@ -20,19 +21,23 @@ class PersistenceException(
  */
 class HistoryRepository(context: Context) {
 
-    private val dao = HistoryDatabase.get(context).historyDao()
+    private val database = HistoryDatabase.get(context)
+    private val dao = database.historyDao()
 
     suspend fun add(inputText: String, score: Int): Unit = withContext(Dispatchers.IO) {
         try {
-            dao.insert(
-                HistoryRecord(
-                    id = UUID.randomUUID().toString(),
-                    inputText = inputText,
-                    score = score,
-                    date = System.currentTimeMillis()
+            // 追加と間引きは一体で扱う（間引きだけ失敗して「保存できていない」ように見せない）
+            database.withTransaction {
+                dao.insert(
+                    HistoryRecord(
+                        id = UUID.randomUUID().toString(),
+                        inputText = inputText,
+                        score = score,
+                        date = System.currentTimeMillis()
+                    )
                 )
-            )
-            dao.prune()
+                dao.prune()
+            }
         } catch (error: Exception) {
             Log.e(TAG, "insert failed", error)
             throw PersistenceException(R.string.error_persistence_save, error)

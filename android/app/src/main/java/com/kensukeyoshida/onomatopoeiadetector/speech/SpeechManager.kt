@@ -9,11 +9,13 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.os.SystemClock
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.util.Log
 import androidx.core.content.ContextCompat
+import com.kensukeyoshida.onomatopoeiadetector.R
 
 /**
  * 音声認識のラッパー。1 回の録音につき、確定テキストかキャンセルのどちらかを一度だけ配送する。
@@ -32,6 +34,9 @@ class SpeechManager(private val context: Context) {
     /** 結果を得ずに録音が終了したとき（無音・キャンセル）、一度だけ呼ばれる。 */
     var onCancelled: (() -> Unit)? = null
 
+    /** 上限時間に達して自動停止したとき、確定を待ち始める前に呼ばれる。 */
+    var onAutoStopped: (() -> Unit)? = null
+
     /** 録音を継続できないエラー。引数は表示する文字列リソース。 */
     var onError: ((Int) -> Unit)? = null
 
@@ -39,11 +44,17 @@ class SpeechManager(private val context: Context) {
     private var recognizer: SpeechRecognizer? = null
     private var latestPartial: String = ""
     private var hasFinished = false
+    /** 停止操作の後は、認識サービスの切り替えではなく確定処理へ進む。 */
+    private var isStopping = false
     private var usingOnDevice = false
     private var didFallBackToService = false
-    private var maxSeconds: Double = DEFAULT_MAX_SECONDS
+    private var maxMillis: Long = (DEFAULT_MAX_SECONDS * 1000).toLong()
+    private var startedAtUptime: Long = 0
 
-    private val autoStop = Runnable { stopAndFinalize() }
+    private val autoStop = Runnable {
+        if (!hasFinished && !isStopping) onAutoStopped?.invoke()
+        stopAndFinalize()
+    }
     private val finalizeFallback = Runnable { finalizeWithPartial() }
 
     val isRecognitionAvailable: Boolean
@@ -58,11 +69,13 @@ class SpeechManager(private val context: Context) {
     // MARK: - Recording
 
     fun startRecordingWithAutoStop(maxSeconds: Double = DEFAULT_MAX_SECONDS) {
-        this.maxSeconds = maxSeconds
         teardown()
         latestPartial = ""
         hasFinished = false
+        isStopping = false
         didFallBackToService = false
+        maxMillis = (maxSeconds * 1000).toLong()
+        startedAtUptime = SystemClock.uptimeMillis()
         startListening(preferOnDevice = true)
     }
 
@@ -89,26 +102,36 @@ class SpeechManager(private val context: Context) {
 
         usingOnDevice = onDevice
         recognizer = created
-        created.setRecognitionListener(listener)
-        created.startListening(recognitionIntent())
+        try {
+            created.setRecognitionListener(listener)
+            created.startListening(recognitionIntent(preferOffline = onDevice))
+        } catch (error: Exception) {
+            Log.e(TAG, "startListening failed", error)
+            deliverError()
+            return
+        }
 
-        handler.postDelayed(autoStop, (maxSeconds * 1000).toLong())
+        // 認識サービスを切り替えた場合も、録音全体の上限は最初の開始時刻から数える
+        val remaining = maxMillis - (SystemClock.uptimeMillis() - startedAtUptime)
+        handler.postDelayed(autoStop, remaining.coerceAtLeast(MIN_REMAINING_MS))
     }
 
-    private fun recognitionIntent(): Intent =
+    private fun recognitionIntent(preferOffline: Boolean): Intent =
         Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE, JAPANESE_TAG)
             putExtra(RecognizerIntent.EXTRA_LANGUAGE_PREFERENCE, JAPANESE_TAG)
             putExtra(RecognizerIntent.EXTRA_PARTIAL_RESULTS, true)
             putExtra(RecognizerIntent.EXTRA_MAX_RESULTS, 1)
-            putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, true)
+            // 端末上のモデルが無くて切り替えた後は、オフライン優先を外して再試行する
+            putExtra(RecognizerIntent.EXTRA_PREFER_OFFLINE, preferOffline)
             putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, context.packageName)
         }
 
     /** 手動／自動停止。確定結果が届かない場合は認識途中のテキストを確定として扱う。 */
     fun stopAndFinalize() {
         if (hasFinished) return
+        isStopping = true
         handler.removeCallbacks(autoStop)
         try {
             recognizer?.stopListening()
@@ -152,9 +175,12 @@ class SpeechManager(private val context: Context) {
             Log.w(TAG, "recognition error: $error")
 
             // 端末上の日本語モデルが無い場合は、通常の認識サービスへ一度だけ切り替える。
+            // 停止操作の後は録音を再開せず、そのまま確定処理へ進む。
             val languageUnavailable = error == SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE ||
                 error == SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED
-            if (usingOnDevice && languageUnavailable && !didFallBackToService && !hasFinished) {
+            if (usingOnDevice && languageUnavailable && !didFallBackToService &&
+                !hasFinished && !isStopping
+            ) {
                 didFallBackToService = true
                 teardown()
                 startListening(preferOnDevice = false)
@@ -203,7 +229,7 @@ class SpeechManager(private val context: Context) {
         if (hasFinished) return
         hasFinished = true
         teardown()
-        onError?.invoke(com.kensukeyoshida.onomatopoeiadetector.R.string.error_recognizer_unavailable)
+        onError?.invoke(R.string.error_recognizer_unavailable)
     }
 
     // MARK: - Teardown（冪等・コールバックを発火しない）
@@ -228,5 +254,6 @@ class SpeechManager(private val context: Context) {
         const val JAPANESE_TAG = "ja-JP"
         const val DEFAULT_MAX_SECONDS = 10.0
         const val FINALIZE_TIMEOUT_MS = 1500L
+        const val MIN_REMAINING_MS = 500L
     }
 }

@@ -10,7 +10,7 @@ import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -168,7 +168,7 @@ fun SpeedLines(
                 color = color,
                 start = Offset(center.x + dx * inner, center.y + dy * inner),
                 end = Offset(center.x + dx * maxRadius, center.y + dy * maxRadius),
-                strokeWidth = if (i % 2 == 0) 2f else 0.8f
+                strokeWidth = if (i % 2 == 0) 2.dp.toPx() else 0.8.dp.toPx()
             )
         }
     }
@@ -185,23 +185,21 @@ fun Modifier.mangaPanel(
 ): Modifier {
     val inkColor = Ink.ink
     val panelColor = Ink.panel
-    return drawBehind {
+    return drawWithCache {
         val corner = CornerRadius(radius.toPx())
         val shift = offset.toPx()
-        // 印刷のズレを思わせるハードなオフセット影
-        drawRoundRect(
-            color = inkColor,
-            topLeft = Offset(shift, shift),
-            size = size,
-            cornerRadius = corner
-        )
-        drawRoundRect(color = panelColor, size = size, cornerRadius = corner)
-        drawRoundRect(
-            color = inkColor,
-            size = size,
-            cornerRadius = corner,
-            style = Stroke(width = border.toPx())
-        )
+        val stroke = Stroke(width = border.toPx())
+        onDrawBehind {
+            // 印刷のズレを思わせるハードなオフセット影
+            drawRoundRect(
+                color = inkColor,
+                topLeft = Offset(shift, shift),
+                size = size,
+                cornerRadius = corner
+            )
+            drawRoundRect(color = panelColor, size = size, cornerRadius = corner)
+            drawRoundRect(color = inkColor, size = size, cornerRadius = corner, style = stroke)
+        }
     }
 }
 

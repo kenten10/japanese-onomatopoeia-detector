@@ -18,7 +18,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -99,6 +101,42 @@ fun IconLabel(
         Text(text = text, style = style, color = color)
     }
 }
+
+/**
+ * 収まらないときだけ字を縮める文字表示（SwiftUI の `minimumScaleFactor` 相当）。
+ * 描き文字は長さが読めないため、切り落とさずに縮めて見せる。
+ */
+@Composable
+fun AutoShrinkText(
+    text: String,
+    style: androidx.compose.ui.text.TextStyle,
+    color: Color,
+    minScale: Float,
+    maxLines: Int,
+    modifier: Modifier = Modifier,
+    textAlign: androidx.compose.ui.text.style.TextAlign? = null
+) {
+    var scale by remember(text, style.fontSize) { mutableFloatStateOf(1f) }
+
+    Text(
+        text = text,
+        style = style.copy(
+            fontSize = style.fontSize * scale,
+            lineHeight = style.lineHeight * scale
+        ),
+        color = color,
+        maxLines = maxLines,
+        textAlign = textAlign,
+        modifier = modifier,
+        onTextLayout = { layout ->
+            if (layout.hasVisualOverflow && scale > minScale) {
+                scale = (scale - SHRINK_STEP).coerceAtLeast(minScale)
+            }
+        }
+    )
+}
+
+private const val SHRINK_STEP = 0.06f
 
 /**
  * リスト行として使う、余白と最小高さを揃えたタップ可能な行。

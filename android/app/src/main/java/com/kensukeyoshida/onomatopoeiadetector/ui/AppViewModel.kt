@@ -20,6 +20,8 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 
 class AppViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -50,6 +52,12 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     private val engine = OnoEngine(DictionaryLoader.load(application))
 
     private var savedFeedbackJob: Job? = null
+    /** 認識途中のテキスト変換は最新の 1 件だけを走らせ、表示が古い結果に巻き戻らないようにする。 */
+    private var partialJob: Job? = null
+    /** 履歴の読み書きを直列化し、削除直後に古い一覧で上書きされないようにする。 */
+    private val historyMutex = Mutex()
+    /** 同じ結果を二重に保存しない。 */
+    private var savedResultId: String? = null
 
     // MARK: - Init
 
@@ -68,12 +76,21 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     private fun setupSpeechCallback() {
         speech.onPartial = { raw ->
-            viewModelScope.launch {
+            partialJob?.cancel()
+            partialJob = viewModelScope.launch {
                 val hiragana = JapaneseAnalyzer.hiraganaText(raw)
                 if (_recordingState.value is RecordingState.Recording) _partialText.value = hiragana
             }
         }
+        speech.onAutoStopped = {
+            // 上限時間で自動停止したときも、手動停止と同じく認識中の表示へ切り替える
+            if (_recordingState.value is RecordingState.Recording) {
+                _recordingState.value = RecordingState.Recognizing
+            }
+        }
         speech.onFinalResult = { raw ->
+            partialJob?.cancel()
+            partialJob = null
             viewModelScope.launch {
                 val hiragana = JapaneseAnalyzer.hiraganaText(raw)
                 _partialText.value = hiragana
@@ -88,7 +105,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
             }
         }
         speech.onError = { messageRes ->
-            _recordingState.value = RecordingState.Error(getString(messageRes))
+            _recordingState.value = RecordingState.Error(messageRes)
         }
     }
 
@@ -97,7 +114,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     /** マイク権限が許可されている前提で録音を始める。 */
     fun startRecording() {
         if (!speech.isRecognitionAvailable) {
-            _recordingState.value = RecordingState.Error(getString(R.string.error_recognizer_unavailable))
+            _recordingState.value = RecordingState.Error(R.string.error_recognizer_unavailable)
             return
         }
         _partialText.value = ""
@@ -107,7 +124,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
 
     fun showPermissionDenied() {
         _recordingState.value = RecordingState.Error(
-            message = getString(R.string.permission_mic_deny),
+            messageRes = R.string.permission_mic_deny,
             permissionsDenied = true
         )
     }
@@ -116,6 +133,17 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         if (_recordingState.value !is RecordingState.Recording) return
         _recordingState.value = RecordingState.Recognizing
         speech.stopAndFinalize()
+    }
+
+    /** 画面が背面に回ったら録音を畳む（マイクを掴んだままにしない）。 */
+    fun stopRecordingOnBackground() {
+        when (_recordingState.value) {
+            is RecordingState.Recording -> {
+                _recordingState.value = RecordingState.Recognizing
+                speech.stopAndFinalize()
+            }
+            else -> Unit
+        }
     }
 
     // MARK: - Evaluation
@@ -135,10 +163,14 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     fun saveCurrentResult() {
         val state = _recordingState.value
         if (state !is RecordingState.Result) return
+        if (savedResultId == state.result.id) return
+        savedResultId = state.result.id
         viewModelScope.launch {
             try {
-                persistence.add(state.result.inputText, state.result.score)
-                loadHistory()
+                historyMutex.withLock {
+                    persistence.add(state.result.inputText, state.result.score)
+                    _history.value = persistence.fetch()
+                }
                 _savedFeedback.value = true
                 savedFeedbackJob?.cancel()
                 savedFeedbackJob = viewModelScope.launch {
@@ -146,6 +178,7 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
                     _savedFeedback.value = false
                 }
             } catch (error: PersistenceException) {
+                savedResultId = null
                 _persistenceErrorMessage.value = error.messageRes
             }
         }
@@ -154,41 +187,47 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
     // MARK: - History
 
     fun loadHistory() {
-        viewModelScope.launch {
-            try {
-                _history.value = persistence.fetch()
-            } catch (error: PersistenceException) {
-                _history.value = emptyList()
-                _persistenceErrorMessage.value = error.messageRes
-            }
-        }
+        viewModelScope.launch { reloadHistory() }
     }
 
     fun deleteHistoryItem(item: HistoryItem) {
         viewModelScope.launch {
-            try {
-                persistence.delete(item)
-                loadHistory()
-            } catch (error: PersistenceException) {
-                _persistenceErrorMessage.value = error.messageRes
-            }
+            runHistoryUpdate { persistence.delete(item) }
         }
     }
 
     fun clearAllHistory() {
         viewModelScope.launch {
-            try {
-                persistence.deleteAll()
-                loadHistory()
-            } catch (error: PersistenceException) {
-                _persistenceErrorMessage.value = error.messageRes
+            runHistoryUpdate { persistence.deleteAll() }
+        }
+    }
+
+    /** 更新と再取得を同じロックの中で行い、一覧が古いスナップショットに戻らないようにする。 */
+    private suspend fun runHistoryUpdate(update: suspend () -> Unit) {
+        try {
+            historyMutex.withLock {
+                update()
+                _history.value = persistence.fetch()
             }
+        } catch (error: PersistenceException) {
+            _persistenceErrorMessage.value = error.messageRes
+        }
+    }
+
+    private suspend fun reloadHistory() {
+        try {
+            historyMutex.withLock { _history.value = persistence.fetch() }
+        } catch (error: PersistenceException) {
+            _history.value = emptyList()
+            _persistenceErrorMessage.value = error.messageRes
         }
     }
 
     // MARK: - Reset
 
     fun resetToIdle() {
+        partialJob?.cancel()
+        partialJob = null
         _recordingState.value = RecordingState.Idle
         _partialText.value = ""
         _savedFeedback.value = false
@@ -209,6 +248,4 @@ class AppViewModel(application: Application) : AndroidViewModel(application) {
         speech.release()
         super.onCleared()
     }
-
-    private fun getString(resId: Int): String = getApplication<Application>().getString(resId)
 }

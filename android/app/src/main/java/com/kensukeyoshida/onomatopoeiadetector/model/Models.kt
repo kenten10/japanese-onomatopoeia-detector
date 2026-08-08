@@ -50,7 +50,9 @@ sealed interface RecordingState {
     data object Recognizing : RecordingState
     data object Evaluating : RecordingState
     data class Result(val result: EvaluationResult) : RecordingState
-    data class Error(val message: String, val permissionsDenied: Boolean = false) : RecordingState
+
+    /** 表示中に言語が切り替わっても追従できるよう、文字列は解決せず ID のまま持つ。 */
+    data class Error(val messageRes: Int, val permissionsDenied: Boolean = false) : RecordingState
 }
 
 // MARK: - App Language

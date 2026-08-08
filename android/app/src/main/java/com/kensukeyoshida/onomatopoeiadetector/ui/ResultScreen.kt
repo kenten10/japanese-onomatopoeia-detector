@@ -154,11 +154,16 @@ private fun SheetHeader(onDismiss: () -> Unit) {
 
 @Composable
 private fun SfxBurst(result: EvaluationResult) {
-    var appeared by remember { mutableStateOf(false) }
+    var appeared by remember(result.id) { mutableStateOf(false) }
     val burst by animateFloatAsState(
         targetValue = if (appeared) 1f else 0.4f,
         animationSpec = spring(dampingRatio = 0.55f, stiffness = Spring.StiffnessMediumLow),
         label = "burst"
+    )
+    val burstAlpha by animateFloatAsState(
+        targetValue = if (appeared) 1f else 0f,
+        animationSpec = spring(dampingRatio = 0.55f, stiffness = Spring.StiffnessMediumLow),
+        label = "burstAlpha"
     )
     LaunchedEffect(result.id) { appeared = true }
 
@@ -175,17 +180,18 @@ private fun SfxBurst(result: EvaluationResult) {
         SpeedLines(Modifier.fillMaxSize(), color = Ink.ink.copy(alpha = 0.18f))
         Halftone(Modifier.fillMaxSize(), color = Ink.vermilion.copy(alpha = 0.10f))
 
-        Text(
+        AutoShrinkText(
             text = result.inputText,
             style = sfx(fontSize),
             color = Ink.ink,
-            textAlign = TextAlign.Center,
+            minScale = 0.4f,
             maxLines = 2,
+            textAlign = TextAlign.Center,
             modifier = Modifier
                 .padding(horizontal = 12.dp)
                 .rotate(-4f)
                 .scale(burst)
-                .alpha(if (appeared) 1f else 0f)
+                .alpha(burstAlpha)
         )
 
         Text(
@@ -330,12 +336,18 @@ private fun SimilarEntryCard(entry: OnomatopoeiaEntry) {
             .padding(16.dp),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
-        Row(verticalAlignment = Alignment.Bottom) {
-            Text(text = entry.word, style = sfx(24.sp), color = Ink.ink)
+        Row {
+            Text(
+                text = entry.word,
+                style = sfx(24.sp),
+                color = Ink.ink,
+                modifier = Modifier.alignByBaseline()
+            )
             Text(
                 text = "（${entry.reading}）",
                 fontSize = 12.sp,
-                color = Ink.ink.copy(alpha = 0.5f)
+                color = Ink.ink.copy(alpha = 0.5f),
+                modifier = Modifier.alignByBaseline()
             )
             Spacer(Modifier.weight(1f))
             Text(
@@ -343,6 +355,7 @@ private fun SimilarEntryCard(entry: OnomatopoeiaEntry) {
                 style = monoLabel(11.sp),
                 color = Ink.paper,
                 modifier = Modifier
+                    .alignByBaseline()
                     .clip(CircleShape)
                     .background(Ink.vermilion)
                     .padding(horizontal = 8.dp, vertical = 3.dp)
@@ -379,7 +392,7 @@ private fun SimilarEntryCard(entry: OnomatopoeiaEntry) {
 @Composable
 private fun MeaningRow(flag: String, text: String) {
     Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
-        Text(text = flag, fontSize = 15.sp)
+        Text(text = flag, fontSize = 17.sp)
         Text(text = text, fontSize = 15.sp, color = Ink.ink)
     }
 }

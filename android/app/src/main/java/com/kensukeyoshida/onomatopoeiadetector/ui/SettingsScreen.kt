@@ -34,13 +34,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -49,22 +49,22 @@ import com.kensukeyoshida.onomatopoeiadetector.R
 import com.kensukeyoshida.onomatopoeiadetector.model.AppLanguage
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.Ink
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaHeading
-import com.kensukeyoshida.onomatopoeiadetector.ui.theme.mangaPanel
 import com.kensukeyoshida.onomatopoeiadetector.ui.theme.monoLabel
 
 @Composable
 fun SettingsScreen(viewModel: AppViewModel) {
-    var showPrivacy by remember { mutableStateOf(false) }
+    var showPrivacy by rememberSaveable { mutableStateOf(false) }
+    val language by viewModel.appLanguage.collectAsStateWithLifecycle()
+    var showClearConfirm by remember { mutableStateOf(false) }
+    var showLanguageMenu by remember { mutableStateOf(false) }
+    // プライバシーポリシーから戻ったときにスクロール位置を保つ
+    val scrollState = rememberScrollState()
 
     if (showPrivacy) {
         BackHandler { showPrivacy = false }
         PrivacyPolicyScreen(onBack = { showPrivacy = false })
         return
     }
-
-    val language by viewModel.appLanguage.collectAsStateWithLifecycle()
-    var showClearConfirm by remember { mutableStateOf(false) }
-    var showLanguageMenu by remember { mutableStateOf(false) }
 
     Column(
         Modifier
@@ -77,7 +77,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp, vertical = 4.dp)
         ) {
             // Language
@@ -128,7 +128,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                         text = stringResource(R.string.settings_history_clear),
                         color = Ink.vermilion,
                         spacing = 10.dp,
-                        style = androidx.compose.ui.text.TextStyle(fontSize = 16.sp)
+                        style = androidx.compose.ui.text.TextStyle(fontSize = 17.sp)
                     ) {
                         Icon(
                             imageVector = Icons.Filled.DeleteOutline,
@@ -152,7 +152,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
                         Spacer(Modifier.weight(1f))
                         Text(
                             text = BuildConfig.VERSION_NAME,
-                            style = monoLabel(15.sp),
+                            style = monoLabel(17.sp),
                             color = Ink.ink.copy(alpha = 0.5f)
                         )
                     }
@@ -316,28 +316,24 @@ private fun PrivacyPolicyScreen(onBack: () -> Unit) {
                 title = stringResource(R.string.privacy_control_title),
                 body = stringResource(R.string.privacy_control_body)
             )
-            Spacer(Modifier.size(12.dp))
+            Spacer(Modifier.size(32.dp))
         }
     }
 }
 
+/** 設定画面と同じセクション表現。iOS 版の `List` + `Section` に対応する。 */
 @Composable
 private fun PrivacySection(title: String? = null, body: String) {
-    Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .mangaPanel(radius = 8.dp, offset = 3.dp)
-            .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(10.dp)
-    ) {
-        title?.let {
+    Column(Modifier.fillMaxWidth()) {
+        title?.let { SectionHeader(it) }
+        SettingsSection {
             Text(
-                text = it,
-                style = mangaHeading(17.sp),
+                text = body,
+                fontSize = 17.sp,
                 color = Ink.ink,
-                fontWeight = FontWeight.ExtraBold
+                lineHeight = 25.sp,
+                modifier = Modifier.padding(16.dp)
             )
         }
-        Text(text = body, fontSize = 15.sp, color = Ink.ink, lineHeight = 23.sp)
     }
 }

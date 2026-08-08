@@ -6,7 +6,7 @@ import android.net.Uri
 import android.provider.Settings
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.RepeatMode
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.animateFloatAsState
@@ -43,6 +43,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
@@ -60,6 +61,9 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.kensukeyoshida.onomatopoeiadetector.R
 import com.kensukeyoshida.onomatopoeiadetector.model.RecordingState
@@ -86,6 +90,16 @@ fun HomeScreen(viewModel: AppViewModel) {
         ActivityResultContracts.RequestPermission()
     ) { granted ->
         if (granted) viewModel.startRecording() else viewModel.showPermissionDenied()
+    }
+
+    // 画面が背面に回ったらマイクを掴んだままにしない
+    val lifecycleOwner = LocalLifecycleOwner.current
+    DisposableEffect(lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP) viewModel.stopRecordingOnBackground()
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
     }
 
     Box(
@@ -143,7 +157,7 @@ fun HomeScreen(viewModel: AppViewModel) {
             titleContentColor = Ink.ink,
             textContentColor = Ink.ink,
             title = { Text(stringResource(R.string.error_title), style = mangaHeading(17.sp)) },
-            text = { Text(errorState.message) },
+            text = { Text(stringResource(errorState.messageRes)) },
             confirmButton = {
                 if (errorState.permissionsDenied) {
                     TextButton(onClick = {
@@ -266,12 +280,13 @@ private fun RecordingContent(partialText: String) {
                 .padding(horizontal = 40.dp)
         )
 
-        Text(
+        AutoShrinkText(
             text = partialText.ifEmpty { stringResource(R.string.recording_listening) },
             style = sfx(if (partialText.isEmpty()) 24.sp else 40.sp),
             color = if (partialText.isEmpty()) Ink.ink.copy(alpha = 0.4f) else Ink.ink,
-            textAlign = TextAlign.Center,
+            minScale = 0.5f,
             maxLines = 2,
+            textAlign = TextAlign.Center,
             modifier = Modifier.padding(horizontal = 28.dp)
         )
 
@@ -290,7 +305,7 @@ private fun ProcessingContent() {
         verticalArrangement = Arrangement.spacedBy(18.dp)
     ) {
         CircularProgressIndicator(
-            modifier = Modifier.size(42.dp),
+            modifier = Modifier.size(28.dp),
             color = Ink.vermilion,
             strokeWidth = 3.dp
         )
@@ -399,7 +414,7 @@ fun WaveformView(modifier: Modifier = Modifier) {
         bars.forEachIndexed { index, target ->
             val height by animateFloatAsState(
                 targetValue = target,
-                animationSpec = tween(180, easing = LinearEasing),
+                animationSpec = tween(180, easing = FastOutSlowInEasing),
                 label = "bar$index"
             )
             Box(

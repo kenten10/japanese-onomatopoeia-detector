@@ -4,9 +4,9 @@ import com.kensukeyoshida.onomatopoeiadetector.model.EvaluationResult
 import com.kensukeyoshida.onomatopoeiadetector.model.OnomatopoeiaEntry
 import com.kensukeyoshida.onomatopoeiadetector.model.SimilarEntry
 import com.kensukeyoshida.onomatopoeiadetector.text.JapaneseAnalyzer
+import kotlin.math.floor
 import kotlin.math.max
 import kotlin.math.min
-import kotlin.math.round
 
 /**
  * オノマトペらしさを評価するエンジン。
@@ -42,8 +42,8 @@ class OnoEngine(
                 phoneticPatternScore(normalized) * 0.30 +
                 soundSymbolScore(normalized) * 0.20 +
                 morphemeScore(normalized) * 0.10
-            // 1〜5 に正規化
-            max(1, min(5, round(raw * 4).toInt() + 1))
+            // 1〜5 に正規化。iOS/Web と同じく 0.5 は切り上げる（JVM の round は偶数丸めのため使わない）
+            max(1, min(5, floor(raw * 4 + 0.5).toInt() + 1))
         }
 
         return EvaluationResult(
