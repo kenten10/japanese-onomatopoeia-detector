@@ -1,0 +1,3 @@
+/* Shown in the permission prompts. Keep in sync with permission.*.message in Localizable.strings */
+"NSMicrophoneUsageDescription" = "Microphone is used to record your voice and evaluate onomatopoeia";
+"NSSpeechRecognitionUsageDescription" = "Used to convert your recorded voice to text";
