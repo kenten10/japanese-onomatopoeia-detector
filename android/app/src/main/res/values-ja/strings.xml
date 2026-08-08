@@ -8,8 +8,6 @@
     <!-- Home -->
     <string name="home_tab">ホーム</string>
     <string name="home_record_button">録音する</string>
-    <string name="home_record_hint">タップして音声を入力</string>
-    <string name="home_last_result">最新の判定結果</string>
     <string name="home_no_result">録音してみよう！</string>
     <string name="home_no_result_sub">マイクボタンをタップして\n音声を入力してください</string>
 
@@ -28,7 +26,6 @@
     <string name="result_comment_2">あまりオノマトペではないようです</string>
     <string name="result_comment_1">オノマトペではないようです</string>
     <string name="result_similar_title">類似オノマトペ</string>
-    <string name="result_similar_meaning">意味</string>
     <string name="result_similar_example">使用例</string>
     <string name="result_again">もう一度</string>
     <string name="result_save">履歴に保存</string>
@@ -66,11 +63,8 @@
     <string name="privacy_control_body">判定履歴は設定画面からいつでも削除できます。マイクの権限はAndroidの設定アプリからいつでも変更できます。</string>
 
     <!-- Permissions -->
-    <string name="permission_mic_title">マイクへのアクセス</string>
-    <string name="permission_mic_message">音声を録音してオノマトペを判定するためにマイクを使用します</string>
     <string name="permission_mic_deny">マイクへのアクセスが拒否されています。設定アプリから許可してください。</string>
     <string name="permission_mic_open_settings">設定を開く</string>
-    <string name="permission_denied_title">録音するには権限が必要です</string>
 
     <!-- Score accessibility -->
     <string name="score_stars">%1$d つ星</string>

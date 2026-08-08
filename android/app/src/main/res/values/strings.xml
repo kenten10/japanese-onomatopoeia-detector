@@ -8,8 +8,6 @@
     <!-- Home -->
     <string name="home_tab">Home</string>
     <string name="home_record_button">Record</string>
-    <string name="home_record_hint">Tap to speak</string>
-    <string name="home_last_result">Latest Result</string>
     <string name="home_no_result">Say a Japanese sound word</string>
     <string name="home_no_result_sub">Tap the mic and try one —\nlike ふわふわ or きらきら</string>
 
@@ -28,7 +26,6 @@
     <string name="result_comment_2">A little onomatopoeic</string>
     <string name="result_comment_1">Not onomatopoeia yet — try another!</string>
     <string name="result_similar_title">Similar Onomatopoeia</string>
-    <string name="result_similar_meaning">Meaning</string>
     <string name="result_similar_example">Example</string>
     <string name="result_again">Try Again</string>
     <string name="result_save">Save to History</string>
@@ -66,11 +63,8 @@
     <string name="privacy_control_body">You can delete evaluation history from Settings at any time. You can change microphone access at any time in the Android Settings app.</string>
 
     <!-- Permissions -->
-    <string name="permission_mic_title">Microphone Access</string>
-    <string name="permission_mic_message">Microphone is used to record your voice and evaluate onomatopoeia</string>
     <string name="permission_mic_deny">Microphone access is off. Turn it on in Settings to record.</string>
     <string name="permission_mic_open_settings">Open Settings</string>
-    <string name="permission_denied_title">Permission Required to Record</string>
 
     <!-- Score accessibility -->
     <string name="score_stars">%1$d stars</string>

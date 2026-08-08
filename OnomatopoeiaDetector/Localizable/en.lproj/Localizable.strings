@@ -5,8 +5,6 @@
 /* Home */
 "home.tab" = "Home";
 "home.record.button" = "Record";
-"home.record.hint" = "Tap to speak";
-"home.last.result" = "Latest Result";
 "home.no.result" = "Say a Japanese sound word";
 "home.no.result.sub" = "Tap the mic and try one —\nlike ふわふわ or きらきら";
 
@@ -25,7 +23,6 @@
 "result.comment.2" = "A little onomatopoeic";
 "result.comment.1" = "Not onomatopoeia yet — try another!";
 "result.similar.title" = "Similar Onomatopoeia";
-"result.similar.meaning" = "Meaning";
 "result.similar.example" = "Example";
 "result.again" = "Try Again";
 "result.save" = "Save to History";
@@ -62,13 +59,8 @@
 "privacy.control.body" = "You can delete evaluation history from Settings at any time. You can change microphone and speech recognition access at any time in the iOS Settings app.";
 
 /* Permissions */
-"permission.mic.title" = "Microphone Access";
-"permission.mic.message" = "Microphone is used to record your voice and evaluate onomatopoeia";
 "permission.mic.deny" = "Microphone access is off. Turn it on in Settings to record.";
 "permission.mic.open.settings" = "Open Settings";
-"permission.denied.title" = "Permission Required to Record";
-"permission.speech.title" = "Speech Recognition";
-"permission.speech.message" = "Used to convert your recorded voice to text";
 
 /* Score accessibility */
 "score.stars" = "%d stars";

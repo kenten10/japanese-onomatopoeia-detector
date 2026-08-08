@@ -5,8 +5,6 @@
 /* Home */
 "home.tab" = "ホーム";
 "home.record.button" = "録音する";
-"home.record.hint" = "タップして音声を入力";
-"home.last.result" = "最新の判定結果";
 "home.no.result" = "録音してみよう！";
 "home.no.result.sub" = "マイクボタンをタップして\n音声を入力してください";
 
@@ -25,7 +23,6 @@
 "result.comment.2" = "あまりオノマトペではないようです";
 "result.comment.1" = "オノマトペではないようです";
 "result.similar.title" = "類似オノマトペ";
-"result.similar.meaning" = "意味";
 "result.similar.example" = "使用例";
 "result.again" = "もう一度";
 "result.save" = "履歴に保存";
@@ -62,13 +59,8 @@
 "privacy.control.body" = "判定履歴は設定画面からいつでも削除できます。マイクと音声認識の権限はiOSの設定アプリからいつでも変更できます。";
 
 /* Permissions */
-"permission.mic.title" = "マイクへのアクセス";
-"permission.mic.message" = "音声を録音してオノマトペを判定するためにマイクを使用します";
 "permission.mic.deny" = "マイクへのアクセスが拒否されています。設定アプリから許可してください。";
 "permission.mic.open.settings" = "設定を開く";
-"permission.denied.title" = "録音するには権限が必要です";
-"permission.speech.title" = "音声認識へのアクセス";
-"permission.speech.message" = "録音した音声をテキストに変換するために使用します";
 
 /* Score accessibility */
 "score.stars" = "%d つ星";
