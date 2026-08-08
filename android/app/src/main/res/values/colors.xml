@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- 紙。ライトは温かみのある白。 -->
+    <color name="paper">#FBFAF6</color>
+    <!-- 朱。効果音のエネルギーを担う唯一のアクセント。 -->
+    <color name="vermilion">#E8412E</color>
+</resources>

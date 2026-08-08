@@ -1,6 +1,77 @@
 # オノマトペ判定アプリ / Onomatopoeia Detector
 
-iOSアプリとPWA。音声入力された日本語をひらがな表記に整え、オノマトペらしさを5段階で評価します。
+iOSアプリ、Androidアプリ、PWA。音声入力された日本語をひらがな表記に整え、オノマトペらしさを5段階で評価します。
+
+## Android版
+
+Kotlin、Jetpack Composeで実装したAndroid版は `android/` にあります。iOS版と同じ3タブ、マンガの描き文字を基調としたデザイン、判定アルゴリズム、最大100件の端末内履歴、日本語・英語UIを備えています。判定辞書はiOS版の `OnomatopoeiaDetector/Resources/onomatopoeia_dict.json` をビルド時にassetsへ取り込むため、辞書の正はiOS版と共通です。
+
+### 必要環境
+
+- JDK 17以上（Gradle Wrapperは8.9を使用）
+- Android SDK 35 / Build-Tools 35.0.0
+- Android 8.0（API 26）以上の端末（実機推奨 — エミュレータでは音声認識が制限されます）
+
+`android/local.properties` にAndroid SDKの場所を書きます。
+
+```
+sdk.dir=/Users/<ユーザー名>/Library/Android/sdk
+```
+
+### ビルドと実行
+
+```sh
+cd android
+./gradlew assembleDebug          # デバッグAPKを生成
+./gradlew installDebug           # 接続中の端末へインストール
+```
+
+生成物は `android/app/build/outputs/apk/` に出力されます。
+
+### Android版のテスト
+
+```sh
+cd android
+./gradlew testDebugUnitTest
+```
+
+判定エンジンとひらがな変換について、iOS版・Web版と同じ期待値のテストを実行します。
+
+### 構成
+
+```
+android/app/src/main/java/com/kensukeyoshida/onomatopoeiadetector/
+├── MainActivity.kt                     # エントリーポイント
+├── OnomatopoeiaApplication.kt          # 起動時の言語適用
+├── ui/
+│   ├── MainScaffold.kt                 # タブナビゲーション
+│   ├── HomeScreen.kt                   # メイン画面（録音ボタン・波形）
+│   ├── ResultScreen.kt                 # 評価結果＋類似オノマトペカード
+│   ├── HistoryScreen.kt                # 判定履歴
+│   ├── SettingsScreen.kt               # 設定・プライバシーポリシー
+│   ├── Components.kt                   # マンガ調ボタンなどの共通部品
+│   ├── AppViewModel.kt                 # 画面状態
+│   └── theme/Theme.kt                  # 網点・集中線・コマ枠・書体
+├── engine/OnoEngine.kt                 # 評価エンジン（辞書照合・音韻解析）
+├── speech/SpeechManager.kt             # 音声認識
+├── text/JapaneseAnalyzer.kt            # 読み推定・品詞判定（kuromoji）
+├── data/                               # 辞書読み込み・Room・言語設定
+└── model/Models.kt                     # データモデル
+```
+
+### iOS版との違い
+
+同じデザイン・機能を目指していますが、プラットフォームの制約から次の点が異なります。
+
+| 項目 | Android版 | iOS版 |
+|------|-----------|-------|
+| 辞書照合 | 見出し語・読みを正規化してから照合（Web版と同じ） | 見出し語をそのまま照合するため、`ドキドキ` などカタカナ表記の語は完全一致しない |
+| 音声認識 | `SpeechRecognizer`。端末上のエンジンを優先し、日本語モデルが無い端末では端末の音声認識サービスへフォールバック | `SFSpeechRecognizer`（オンデバイス指定） |
+| 読み推定・品詞判定 | kuromoji（IPADIC、Web版と同じ辞書） | NaturalLanguage・CFStringTokenizer |
+| 表示言語の切替 | 即時反映 | 次回起動時に反映 |
+| 書体 | M PLUS Rounded 1c を同梱（SIL Open Font License 1.1） | SF Rounded |
+
+音声認識がオンデバイスに限られないため、プライバシーポリシーの記述もWeb版と同じ表現に合わせています。
 
 ## PWA（Web版）
 
