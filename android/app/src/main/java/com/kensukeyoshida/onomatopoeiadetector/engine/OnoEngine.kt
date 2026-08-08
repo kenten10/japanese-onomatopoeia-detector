@@ -19,14 +19,15 @@ class OnoEngine(
     private val morphemeScore: suspend (String) -> Double = JapaneseAnalyzer::morphemeScore
 ) {
 
+    // entry.reading は "fuwafuwa" のようなローマ字表記で、入力は常にひらがなへ揃えられる。
+    // 照合には使えないため、ここでは見出し語だけを正規化して持つ（reading は結果表示に使う）。
     private class NormalizedEntry(
         val entry: OnomatopoeiaEntry,
-        val word: String,
-        val reading: String
+        val word: String
     )
 
     private val normalizedDictionary = dictionary.map {
-        NormalizedEntry(it, normalize(it.word), normalize(it.reading))
+        NormalizedEntry(it, normalize(it.word))
     }
 
     // MARK: - Public API
@@ -63,7 +64,7 @@ class OnoEngine(
     // MARK: - Dictionary Score
 
     private fun isExactMatch(text: String): Boolean =
-        normalizedDictionary.any { it.word == text || it.reading == text }
+        normalizedDictionary.any { it.word == text }
 
     private fun dictionaryScore(text: String): Double = when {
         isExactMatch(text) -> 1.0
@@ -72,8 +73,6 @@ class OnoEngine(
         text.length < MIN_MATCH_LENGTH -> 0.0
         // 部分一致
         normalizedDictionary.any { text.contains(it.word) || it.word.contains(text) } -> 0.7
-        // 読みレベルの部分一致
-        normalizedDictionary.any { text.contains(it.reading) || it.reading.contains(text) } -> 0.4
         else -> 0.0
     }
 

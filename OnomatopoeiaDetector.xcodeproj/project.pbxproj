@@ -63,7 +63,7 @@
 		B010 /* HistoryEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryEntity.swift; sourceTree = "<group>"; };
 		B011 /* OnoEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnoEngine.swift; sourceTree = "<group>"; };
 		B012 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
-		B013 /* onomatopoeia_dict.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = onomatopoeia_dict.json; sourceTree = "<group>"; };
+		B013 /* onomatopoeia_dict.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = onomatopoeia_dict.json; path = shared/onomatopoeia_dict.json; sourceTree = SOURCE_ROOT; };
 		B014 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B015 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B016 /* OnomatopoeiaDetector.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OnomatopoeiaDetector.xcdatamodeld; sourceTree = "<group>"; };

@@ -28,8 +28,11 @@ final class SpeechManager: NSObject {
     // MARK: Callbacks
     /// 確定テキストが得られたとき、1録音につき一度だけ呼ばれる。
     var onFinalResult: ((String) -> Void)?
-    /// 結果を得ずに録音が終了したとき（無音・エラー・キャンセル）、一度だけ呼ばれる。
+    /// 結果を得ずに録音が終了したとき（無音・キャンセル）、一度だけ呼ばれる。
     var onCancelled: (() -> Void)?
+
+    /// 認識そのものが失敗したとき、一度だけ呼ばれる。無音での終了とは区別する。
+    var onFailed: (() -> Void)?
 
     // MARK: - Auth
 
@@ -62,6 +65,10 @@ final class SpeechManager: NSObject {
             throw SpeechError.recognizerUnavailable
         }
 
+        // 途中で失敗したときにセッションやタップを掴んだままにしない
+        var didStart = false
+        defer { if !didStart { teardownAudio() } }
+
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.record, mode: .measurement, options: .duckOthers)
         try session.setActive(true)
@@ -91,7 +98,13 @@ final class SpeechManager: NSObject {
                     let isBenign = nsError.domain == "kAFAssistantErrorDomain" && nsError.code == 216
                     if !isBenign {
                         self.log.error("recognition failed: \(nsError.domain, privacy: .public) (\(nsError.code))")
-                        self.finishCancelled()
+                        // 認識途中の言葉があればそれを確定として扱い、
+                        // 何も得られていなければ黙って戻さずエラーとして伝える
+                        if self.partialText.isEmpty {
+                            self.finishFailed()
+                        } else {
+                            self.finish(with: self.partialText)
+                        }
                     }
                 }
             }
@@ -108,11 +121,14 @@ final class SpeechManager: NSObject {
         }
 
         inputNode.removeTap(onBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
-            self?.recognitionRequest?.append(buffer)
+        // タップはオーディオスレッドで呼ばれる。MainActor 隔離のプロパティを触らずに済むよう、
+        // リクエストはここで捕まえておく（append 自体はスレッドセーフ）。
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+            request.append(buffer)
         }
 
         try audioEngine.start()
+        didStart = true
     }
 
     func startRecordingWithAutoStop(maxSeconds: Double = 10) throws {
@@ -150,6 +166,14 @@ final class SpeechManager: NSObject {
         hasFinished = true
         teardownAudio()
         onCancelled?()
+    }
+
+    /// 認識そのものが失敗したとき。無音での終了と区別してユーザーに伝える。
+    private func finishFailed() {
+        guard !hasFinished else { return }
+        hasFinished = true
+        teardownAudio()
+        onFailed?()
     }
 
     // MARK: - Teardown（冪等・コールバックを発火しない）

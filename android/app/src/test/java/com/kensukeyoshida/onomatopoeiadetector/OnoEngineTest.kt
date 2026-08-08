@@ -16,7 +16,7 @@ class OnoEngineTest {
 
     private val engine: OnoEngine by lazy {
         val path = System.getProperty("dictionary.path")
-            ?: "../../OnomatopoeiaDetector/Resources/onomatopoeia_dict.json"
+            ?: "../../shared/onomatopoeia_dict.json"
         val entries = Json { ignoreUnknownKeys = true }
             .decodeFromString<List<OnomatopoeiaEntry>>(File(path).readText())
         OnoEngine(entries)

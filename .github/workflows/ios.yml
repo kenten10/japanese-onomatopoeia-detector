@@ -8,6 +8,7 @@ on:
       - 'OnomatopoeiaDetector/**'
       - 'OnomatopoeiaDetectorTests/**'
       - 'OnomatopoeiaDetector.xcodeproj/**'
+      - 'shared/onomatopoeia_dict.json'
       - '.github/workflows/ios.yml'
   workflow_dispatch:
 

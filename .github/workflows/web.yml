@@ -5,12 +5,12 @@ on:
     paths:
       - 'web/**'
       # 判定辞書は web からも直接 import している
-      - 'OnomatopoeiaDetector/Resources/onomatopoeia_dict.json'
+      - 'shared/onomatopoeia_dict.json'
       - '.github/workflows/web.yml'
   pull_request:
     paths:
       - 'web/**'
-      - 'OnomatopoeiaDetector/Resources/onomatopoeia_dict.json'
+      - 'shared/onomatopoeia_dict.json'
       - '.github/workflows/web.yml'
 
 jobs:

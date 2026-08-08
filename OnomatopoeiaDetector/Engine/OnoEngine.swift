@@ -10,14 +10,16 @@ actor OnoEngine {
 
     static let shared = OnoEngine()
 
-    /// 照合用に見出し語・読みを正規化して保持したエントリ。
+    /// 照合用に見出し語を正規化して保持したエントリ。
     ///
     /// 辞書には `ドキドキ` のようなカタカナ表記の見出しがあり、入力側だけを正規化すると
     /// 一致しない。辞書側も同じ正規化を通してから比較する。
+    ///
+    /// `reading` は `fuwafuwa` のようなローマ字表記で、入力は常にひらがなへ揃えられる。
+    /// 照合には使えないためここでは持たない（読みは結果表示にだけ使う）。
     private struct NormalizedEntry {
         let entry: OnomatopoeiaEntry
         let word: String
-        let reading: String
     }
 
     /// 辞書と部分一致で照合する最小の文字数。
@@ -28,7 +30,7 @@ actor OnoEngine {
 
     private init() {
         normalizedDictionary = Self.loadDictionary().map {
-            NormalizedEntry(entry: $0, word: Self.normalize($0.word), reading: Self.normalize($0.reading))
+            NormalizedEntry(entry: $0, word: Self.normalize($0.word))
         }
     }
 
@@ -84,7 +86,7 @@ actor OnoEngine {
     // MARK: - Dictionary Score
 
     private func isDictionaryExactMatch(_ text: String) -> Bool {
-        normalizedDictionary.contains { $0.word == text || $0.reading == text }
+        normalizedDictionary.contains { $0.word == text }
     }
 
     private func dictionaryScore(_ text: String) -> Double {
@@ -101,14 +103,7 @@ actor OnoEngine {
         let partials = normalizedDictionary.filter {
             text.contains($0.word) || $0.word.contains(text)
         }
-        if !partials.isEmpty {
-            return 0.7
-        }
-        // 読みレベルの部分一致
-        let readingPartials = normalizedDictionary.filter {
-            text.contains($0.reading) || $0.reading.contains(text)
-        }
-        return readingPartials.isEmpty ? 0.0 : 0.4
+        return partials.isEmpty ? 0.0 : 0.7
     }
 
     // MARK: - Phonetic Pattern Score

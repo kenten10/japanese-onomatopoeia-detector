@@ -6,9 +6,9 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
-/** 辞書は iOS 版の Resources を単一の正とし、ビルド時に assets へ取り込む。 */
+/** 辞書は shared/ を単一の正とし、ビルド時に assets へ取り込む。 */
 val copyDictionary = tasks.register<Copy>("copyDictionary") {
-    from(rootProject.file("../OnomatopoeiaDetector/Resources/onomatopoeia_dict.json"))
+    from(rootProject.file("../shared/onomatopoeia_dict.json"))
     into(layout.buildDirectory.dir("generated/dictionaryAssets"))
 }
 
@@ -64,10 +64,10 @@ android {
         unitTests {
             isReturnDefaultValues = true
             all { test ->
-                // 辞書は iOS 版と共有しているものをそのまま読む
+                // 3 プラットフォームで共有している辞書をそのまま読む
                 test.systemProperty(
                     "dictionary.path",
-                    rootProject.file("../OnomatopoeiaDetector/Resources/onomatopoeia_dict.json").absolutePath
+                    rootProject.file("../shared/onomatopoeia_dict.json").absolutePath
                 )
             }
         }

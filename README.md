@@ -4,7 +4,7 @@ iOSアプリ、Androidアプリ、PWA。音声入力された日本語をひら�
 
 ## Android版
 
-Kotlin、Jetpack Composeで実装したAndroid版は `android/` にあります。iOS版と同じ3タブ、マンガの描き文字を基調としたデザイン、判定アルゴリズム、最大100件の端末内履歴、日本語・英語UIを備えています。判定辞書はiOS版の `OnomatopoeiaDetector/Resources/onomatopoeia_dict.json` をビルド時にassetsへ取り込むため、辞書の正はiOS版と共通です。
+Kotlin、Jetpack Composeで実装したAndroid版は `android/` にあります。iOS版と同じ3タブ、マンガの描き文字を基調としたデザイン、判定アルゴリズム、最大100件の端末内履歴、日本語・英語UIを備えています。判定辞書は3プラットフォームで共有している `shared/onomatopoeia_dict.json` をビルド時にassetsへ取り込みます。
 
 ### 必要環境
 
@@ -61,13 +61,12 @@ android/app/src/main/java/com/kensukeyoshida/onomatopoeiadetector/
 
 ### iOS版との違い
 
-同じデザイン・機能を目指していますが、プラットフォームの制約から次の点が異なります。
+同じデザイン・機能を目指していますが、プラットフォームの制約から次の点が異なります。判定結果そのものは3実装で一致し、同じ点数表のテストで担保しています。
 
 | 項目 | Android版 | iOS版 |
 |------|-----------|-------|
-| 辞書照合 | 見出し語・読みを正規化してから照合（Web版と同じ） | 見出し語をそのまま照合するため、`ドキドキ` などカタカナ表記の語は完全一致しない |
 | 音声認識 | `SpeechRecognizer`。端末上のエンジンを優先し、日本語モデルが無い端末では端末の音声認識サービスへフォールバック | `SFSpeechRecognizer`（オンデバイス指定） |
-| 読み推定・品詞判定 | kuromoji（IPADIC、Web版と同じ辞書） | NaturalLanguage・CFStringTokenizer |
+| 読み推定・品詞判定 | kuromoji（IPADIC、Web版と同じ辞書） | NLTaggerの単語分割＋助詞・動詞の一覧照合。NLTaggerは日本語の品詞を返さないため |
 | 表示言語の切替 | 即時反映 | 次回起動時に反映 |
 | 書体 | M PLUS Rounded 1c を同梱（SIL Open Font License 1.1） | SF Rounded |
 
@@ -148,6 +147,8 @@ Web版は利用可能な場合にオンデバイス音声認識を優先しま�
 
 ## プロジェクト構成
 
+判定辞書 `shared/onomatopoeia_dict.json`（51語、日英の意味付き）は3プラットフォームで共有します。iOS版はXcodeのリソースとして、PWA版はimportで、Android版はビルド時のコピーで取り込みます。
+
 ```
 OnomatopoeiaDetector/
 ├── OnomatopoeiaDetectorApp.swift     # エントリーポイント
@@ -167,8 +168,6 @@ OnomatopoeiaDetector/
 ├── Engine/
 │   ├── OnoEngine.swift                # 評価エンジン（辞書照合・音韻解析）
 │   └── SpeechManager.swift            # AVFoundation + Speech Framework・音声認識結果のひらがな変換
-├── Resources/
-│   └── onomatopoeia_dict.json         # オノマトペ辞書（51語、日英意味付き）
 ├── Localizable/
 │   ├── ja.lproj/Localizable.strings   # 日本語UI文字列
 │   └── en.lproj/Localizable.strings   # 英語UI文字列
@@ -220,11 +219,11 @@ xcodebuild test \
 
 入力は評価前にカタカナをひらがなへ正規化し、空白・記号を除去します。
 
-1. 辞書完全一致: 51語の辞書の `word` または `reading` と一致した場合は評価5
-2. 辞書照合スコア（40%）: 完全一致以外の辞書との一致度・部分一致度
+1. 辞書完全一致: 51語の辞書の `word`（カタカナ見出しも正規化して比較）と一致した場合は評価5
+2. 辞書照合スコア（40%）: 完全一致以外の部分一致度。2文字以上のときだけ照合します（`reading` はローマ字表記のため照合には使いません）
 3. 音韻パターンスコア（30%）: ABAB反復・促音・長音・撥音などの検出
 4. 音象徴スコア（20%）: 濁音率・半濁音・長音マーカーなどの割合
-5. 形態素解析スコア（10%）: 助詞・動詞を含まない独立語らしさ
+5. 形態素解析スコア（10%）: 助詞・動詞を含まない独立語らしさ。撥音止めのオノマトペを助詞込みの文と誤判定しないよう、単独の「ん」は助詞として数えません
 
 類似オノマトペはLevenshtein距離 + 文字重複率で算出。
 
@@ -261,7 +260,7 @@ xcodebuild test \
 
 ## CI
 
-GitHub Actionsで3プラットフォームを検証します。判定辞書 `OnomatopoeiaDetector/Resources/onomatopoeia_dict.json` はPWA版・Android版の双方が参照するため、辞書を変更した場合も両方のワークフローが起動します。
+GitHub Actionsで3プラットフォームを検証します。判定辞書 `shared/onomatopoeia_dict.json` は3プラットフォームすべてが参照するため、辞書を変更した場合はすべてのワークフローが起動します。
 
 | ワークフロー | 実行契機 | 内容 |
 |-------------|---------|------|

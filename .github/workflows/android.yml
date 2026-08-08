@@ -5,12 +5,12 @@ on:
     paths:
       - 'android/**'
       # 判定辞書はビルド時に assets へ取り込み、ユニットテストからも直接読む
-      - 'OnomatopoeiaDetector/Resources/onomatopoeia_dict.json'
+      - 'shared/onomatopoeia_dict.json'
       - '.github/workflows/android.yml'
   pull_request:
     paths:
       - 'android/**'
-      - 'OnomatopoeiaDetector/Resources/onomatopoeia_dict.json'
+      - 'shared/onomatopoeia_dict.json'
       - '.github/workflows/android.yml'
 
 jobs:

@@ -47,6 +47,17 @@ final class AppViewModel {
                 }
             }
         }
+        speech.onFailed = { [weak self] in
+            Task { @MainActor in
+                guard let self else { return }
+                switch self.recordingState {
+                case .recording, .recognizing:
+                    self.recordingState = .error(String(localized: "error.recognition.failed"))
+                default:
+                    break
+                }
+            }
+        }
     }
 
     // MARK: - Permissions

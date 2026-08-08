@@ -62,7 +62,8 @@ export default defineConfig({
     })
   ],
   server: {
-    fs: { allow: ['..'] }
+    // 共有辞書だけを web の外から読む。リポジトリ全体は開放しない
+    fs: { allow: ['.', '../shared'] }
   },
   preview: {
     headers: securityHeaders

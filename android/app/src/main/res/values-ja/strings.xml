@@ -79,6 +79,7 @@
     <string name="error_title">エラー</string>
     <string name="error_ok">OK</string>
     <string name="error_recognizer_unavailable">音声認識が利用できません。しばらくしてからもう一度お試しください。</string>
+    <string name="error_recognition_failed">音声認識に失敗しました。もう一度お試しください。</string>
     <string name="error_persistence_load">判定履歴を読み込めませんでした。アプリを再起動してください。</string>
     <string name="error_persistence_save">判定履歴を保存できませんでした。空き容量を確認して、もう一度お試しください。</string>
     <string name="error_persistence_delete">判定履歴を削除できませんでした。もう一度お試しください。</string>

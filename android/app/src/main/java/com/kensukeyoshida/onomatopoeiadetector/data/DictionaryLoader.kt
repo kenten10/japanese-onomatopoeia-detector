@@ -6,8 +6,9 @@ import com.kensukeyoshida.onomatopoeiadetector.model.OnomatopoeiaEntry
 import kotlinx.serialization.json.Json
 
 /**
- * オノマトペ辞書のローダー。辞書は iOS 版と共有している `onomatopoeia_dict.json` を
- * ビルド時に assets へ取り込んだもので、起動時に一度だけ読み込む不変データ。
+ * オノマトペ辞書のローダー。辞書は 3 プラットフォームで共有している
+ * `shared/onomatopoeia_dict.json` をビルド時に assets へ取り込んだもので、
+ * 起動時に一度だけ読み込む不変データ。
  */
 object DictionaryLoader {
 

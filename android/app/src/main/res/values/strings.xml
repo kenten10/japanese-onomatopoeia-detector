@@ -79,6 +79,7 @@
     <string name="error_title">Error</string>
     <string name="error_ok">OK</string>
     <string name="error_recognizer_unavailable">Speech recognition is unavailable. Please try again in a moment.</string>
+    <string name="error_recognition_failed">Speech recognition failed. Please try again.</string>
     <string name="error_persistence_load">Your history could not be loaded. Please restart the app.</string>
     <string name="error_persistence_save">Your history could not be saved. Check available storage and try again.</string>
     <string name="error_persistence_delete">Your history could not be deleted. Please try again.</string>
