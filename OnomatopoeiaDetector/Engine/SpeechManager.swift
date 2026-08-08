@@ -141,7 +141,8 @@ final class SpeechManager: NSObject {
         guard !hasFinished else { return }
         hasFinished = true
         teardownAudio()
-        onFinalResult?(SpeechTextConverter.hiraganaText(from: text))
+        // text は認識結果を受け取った時点でひらがな化済みのため、ここでは変換し直さない
+        onFinalResult?(text)
     }
 
     private func finishCancelled() {
@@ -189,6 +190,12 @@ enum SpeechTextConverter {
     }
 
     static func hiraganaText(from text: String) -> String {
+        // かなだけの文字列は読み推定に通さない。トークナイザのラテン転写を経由すると
+        // 長音符が母音へ置き換わり、「どーん」が「どおん」になってしまうため。
+        guard containsKanji(text) else {
+            return applyOnomatopoeiaLongSoundCorrections(katakanaToHiragana(text))
+        }
+
         let nsText = text as NSString
         let tokenizer = CFStringTokenizerCreate(
             kCFAllocatorDefault,
@@ -242,6 +249,14 @@ enum SpeechTextConverter {
         return (mutable as String).filter { !$0.isWhitespace }
     }
 
+    private static func containsKanji(_ text: String) -> Bool {
+        text.unicodeScalars.contains { scalar in
+            (0x4E00...0x9FFF).contains(scalar.value)
+                || (0x3400...0x4DBF).contains(scalar.value)
+                || (0xF900...0xFAFF).contains(scalar.value)
+        }
+    }
+
     private static func isKanaText(_ text: String) -> Bool {
         var hasKana = false
         for scalar in text.unicodeScalars {
@@ -257,10 +272,21 @@ enum SpeechTextConverter {
         return hasKana
     }
 
+    /// カタカナをひらがなへ。長音符（ー）は母音へ展開せずそのまま残す。
+    ///
+    /// `CFStringTransform` の Katakana-Hiragana は長音符を直前の母音に置き換えるため
+    /// （ドーン → どおん）、オノマトペの表記が崩れる。コードポイント演算に揃えている。
     private static func katakanaToHiragana(_ text: String) -> String {
-        let mutable = NSMutableString(string: text)
-        CFStringTransform(mutable as CFMutableString, nil, "Katakana-Hiragana" as CFString, false)
-        return mutable as String
+        var result = String.UnicodeScalarView()
+        for scalar in text.unicodeScalars {
+            if scalar.value >= 0x30A1 && scalar.value <= 0x30F6,
+               let converted = UnicodeScalar(scalar.value - 0x60) {
+                result.append(converted)
+            } else {
+                result.append(scalar)
+            }
+        }
+        return String(result)
     }
 
     private static func applyOnomatopoeiaLongSoundCorrections(_ text: String) -> String {

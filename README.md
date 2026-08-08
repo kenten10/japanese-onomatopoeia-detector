@@ -239,6 +239,34 @@ xcodebuild test \
 
 ## 注意事項
 
+以下はiOS版についての記述です。Android版とPWA版は端末上の認識を優先しつつ、利用できない場合は端末・ブラウザの音声認識サービスへフォールバックします。
+
 - 音声認識はインターネット不要（オンデバイス処理）
 - 音声データは端末内でのみ処理され、外部送信されません
 - シミュレータでは音声入力機能が制限されるため、音声入力の確認は実機推奨です
+
+## サードパーティ
+
+| 対象 | ライセンス | 利用箇所 |
+|------|-----------|---------|
+| kuromoji.js / kuromoji | Apache License 2.0 | 読み推定・品詞判定（PWA版・Android版） |
+| mecab-ipadic-2.7.0-20070801 | NAIST（著作権表示と免責条項の再掲が必要） | kuromojiが使う形態素解析辞書 |
+| M PLUS Rounded 1c | SIL Open Font License 1.1 | Android版の書体 |
+
+告知文は次の場所にあり、いずれも配布物へ同梱されます。
+
+- PWA版: `web/public/licenses/`（`npm install` のpostinstallで生成し、ビルド時に `dist/licenses/` へ出力）
+- Android版: APK内の `META-INF/NOTICE.md` と `META-INF/LICENSE.md`。フォントは `android/licenses/OFL-MPLUSRounded1c.txt`
+- iOS版は形態素解析にOS標準のNaturalLanguageを使うため、同梱している第三者ソフトウェアはありません
+
+## CI
+
+GitHub Actionsで3プラットフォームを検証します。判定辞書 `OnomatopoeiaDetector/Resources/onomatopoeia_dict.json` はPWA版・Android版の双方が参照するため、辞書を変更した場合も両方のワークフローが起動します。
+
+| ワークフロー | 実行契機 | 内容 |
+|-------------|---------|------|
+| `web.yml` | push / PR（`web/**`、辞書） | ユニットテスト、ビルド、Playwright E2E |
+| `android.yml` | push / PR（`android/**`、辞書） | ユニットテスト、lint、デバッグビルド |
+| `ios.yml` | PR（iOS関連）と手動実行のみ | シミュレータでのユニットテスト |
+
+`ios.yml` はmacOSランナーがLinuxの10倍の分数を消費するため、pushでは起動しません。

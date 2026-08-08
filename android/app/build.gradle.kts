@@ -50,12 +50,13 @@ android {
     }
 
     packaging {
-        resources.excludes += setOf(
-            "/META-INF/{AL2.0,LGPL2.1}",
-            // kuromoji-core と kuromoji-ipadic が同じ名前で同梱している
-            "META-INF/CONTRIBUTORS.md",
+        resources.excludes += setOf("/META-INF/{AL2.0,LGPL2.1}")
+        // kuromoji-core と kuromoji-ipadic が同名で同梱している告知類。
+        // Apache-2.0 と IPADIC は再頒布時の表示を求めるため、除外せず結合して APK に残す。
+        resources.merges += setOf(
             "META-INF/LICENSE.md",
-            "META-INF/NOTICE.md"
+            "META-INF/NOTICE.md",
+            "META-INF/CONTRIBUTORS.md"
         )
     }
 

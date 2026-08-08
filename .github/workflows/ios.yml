@@ -1,0 +1,39 @@
+name: iOS
+
+# macOS ランナーは Linux の 10 倍の分数を消費する（このリポジトリは private）。
+# そのため push では走らせず、iOS に触れた Pull Request と手動実行だけに絞っている。
+on:
+  pull_request:
+    paths:
+      - 'OnomatopoeiaDetector/**'
+      - 'OnomatopoeiaDetectorTests/**'
+      - 'OnomatopoeiaDetector.xcodeproj/**'
+      - '.github/workflows/ios.yml'
+  workflow_dispatch:
+
+jobs:
+  test:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Show toolchain
+        run: |
+          xcodebuild -version
+          xcrun simctl list devices available | grep -i iphone
+
+      - name: Unit tests
+        run: |
+          xcodebuild test \
+            -project OnomatopoeiaDetector.xcodeproj \
+            -scheme OnomatopoeiaDetector \
+            -destination 'platform=iOS Simulator,name=iPhone 16' \
+            CODE_SIGNING_ALLOWED=NO
+
+      - name: Upload results
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-test-results
+          path: ~/Library/Developer/Xcode/DerivedData/**/Logs/Test/*.xcresult
+          retention-days: 7
