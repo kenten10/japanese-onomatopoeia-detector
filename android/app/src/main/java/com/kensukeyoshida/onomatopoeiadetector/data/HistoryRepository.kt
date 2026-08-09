@@ -23,6 +23,7 @@ class HistoryRepository(context: Context) {
 
     private val database = HistoryDatabase.get(context)
     private val dao = database.historyDao()
+    private val clock = MonotonicClock()
 
     suspend fun add(inputText: String, score: Int): Unit = withContext(Dispatchers.IO) {
         try {
@@ -33,7 +34,7 @@ class HistoryRepository(context: Context) {
                         id = UUID.randomUUID().toString(),
                         inputText = inputText,
                         score = score,
-                        date = System.currentTimeMillis()
+                        date = clock.next()
                     )
                 )
                 dao.prune()
