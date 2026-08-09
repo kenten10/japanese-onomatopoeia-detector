@@ -28,6 +28,24 @@ cd android
 
 生成物は `android/app/build/outputs/apk/` に出力されます。
 
+### 配布用のビルド
+
+Google Playへ出す場合はApp Bundleを作ります。署名鍵はリポジトリに置かず、環境変数から渡します。
+
+```sh
+export ANDROID_KEYSTORE_PATH=/path/to/release.keystore
+export ANDROID_KEYSTORE_PASSWORD=...
+export ANDROID_KEY_ALIAS=...
+export ANDROID_KEY_PASSWORD=...
+./gradlew bundleRelease
+```
+
+環境変数を設定しない場合は署名なしで組み上がります（CIのビルド確認はこの経路です）。
+
+表示言語はアプリ内で切り替えるため、`bundle` の言語分割は無効にしています。有効にすると端末の言語ぶんしか配信されず、切り替え先の文言が無くなります。
+
+なお配信サイズは約19MBで、その大半をkuromojiの辞書が占めます。App Bundleの分割配信で減るのは画面密度やABIに依存する部分だけなので、**App Bundleにしてもサイズはほとんど変わりません**（bundletoolでの実測値: 分割後も19.3MB）。サイズを削るなら辞書そのものの見直しが必要です。
+
 ### Android版のテスト
 
 ```sh

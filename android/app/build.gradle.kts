@@ -27,12 +27,35 @@ android {
         resourceConfigurations += listOf("en", "ja")
     }
 
+    signingConfigs {
+        create("release") {
+            // 鍵はリポジトリに置かず、環境変数から受け取る。
+            // 未設定のときは署名なしで組み上がる（CI のビルド確認はこの経路）。
+            val keystore = System.getenv("ANDROID_KEYSTORE_PATH")
+            if (keystore != null) {
+                storeFile = file(keystore)
+                storePassword = System.getenv("ANDROID_KEYSTORE_PASSWORD")
+                keyAlias = System.getenv("ANDROID_KEY_ALIAS")
+                keyPassword = System.getenv("ANDROID_KEY_PASSWORD")
+            }
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            if (System.getenv("ANDROID_KEYSTORE_PATH") != null) {
+                signingConfig = signingConfigs.getByName("release")
+            }
         }
+    }
+
+    bundle {
+        // 表示言語はアプリ内で切り替えるため、言語ごとの分割はしない。
+        // 分割すると端末の言語ぶんしか配信されず、切り替え先の文言が無くなる。
+        language { enableSplit = false }
     }
 
     compileOptions {
