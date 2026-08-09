@@ -103,7 +103,9 @@ npm run preview
 
 ビルド成果物にはCloudflare PagesとNetlifyが認識する `dist/_headers` が含まれます。CSP、クリックジャッキング対策、MIMEスニッフィング対策、リファラー制限、HSTS、Permissions Policyを設定し、マイクは同一オリジンのPWAだけに許可しています。`npm run preview` でも同じヘッダーを返します。
 
-`_headers` に対応しないホスティングを利用する場合は、`web/public/_headers` の設定をそのサービスのレスポンスヘッダー設定へ移してください。HSTSを有効にするため、本番環境は必ずHTTPSで配信してください。
+ヘッダーの定義は `web/security-headers.ts` の1箇所にまとめ、`npm run preview` の応答と `dist/_headers` の両方をそこから生成します。両者が一致することはE2Eで検証しています。Service Workerは `Cache-Control: no-cache` を指定し、新しい版が滞留しないようにしています。
+
+`_headers` に対応しないホスティングを利用する場合は、`web/security-headers.ts` の内容をそのサービスのレスポンスヘッダー設定へ移してください。HSTSを有効にするため、本番環境は必ずHTTPSで配信してください。
 
 ### Web版のテスト
 

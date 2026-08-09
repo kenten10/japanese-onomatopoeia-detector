@@ -1,31 +1,17 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, type Plugin } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { buildHeadersFile, securityHeaders } from './security-headers'
 
-const securityHeaders = {
-  'Content-Security-Policy': [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "connect-src 'self'",
-    "font-src 'self'",
-    "form-action 'none'",
-    "frame-ancestors 'none'",
-    "img-src 'self' data:",
-    "manifest-src 'self'",
-    "media-src 'self'",
-    "object-src 'none'",
-    "script-src 'self'",
-    "style-src 'self'",
-    "worker-src 'self'"
-  ].join('; '),
-  'Cross-Origin-Opener-Policy': 'same-origin',
-  'Cross-Origin-Resource-Policy': 'same-origin',
-  'Permissions-Policy': 'camera=(), geolocation=(), microphone=(self), payment=(), usb=()',
-  'Referrer-Policy': 'no-referrer',
-  'Strict-Transport-Security': 'max-age=31536000',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-Permitted-Cross-Domain-Policies': 'none'
+/** ホスティングが読む _headers を、上のヘッダー定義から書き出す。 */
+function emitHeadersFile(): Plugin {
+  return {
+    name: 'emit-headers-file',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: '_headers', source: buildHeadersFile() })
+    }
+  }
 }
 
 export default defineConfig({
@@ -59,7 +45,8 @@ export default defineConfig({
         navigateFallback: 'index.html',
         cleanupOutdatedCaches: true
       }
-    })
+    }),
+    emitHeadersFile()
   ],
   server: {
     // 共有辞書だけを web の外から読む。リポジトリ全体は開放しない

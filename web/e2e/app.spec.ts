@@ -1,4 +1,6 @@
+import { readFileSync } from 'node:fs'
 import { expect, test, type Page } from '@playwright/test'
+import { securityHeaders } from '../security-headers'
 
 async function installFakeSpeech(page: Page, mode: 'automatic' | 'on-stop' | 'denied' | 'standalone-error' = 'automatic') {
   await page.addInitScript((selectedMode) => {
@@ -35,14 +37,23 @@ test('serves the PWA with restrictive security headers', async ({ request }) => 
   const response = await request.get('/')
   expect(response.ok()).toBe(true)
 
+  // preview の応答が定義どおりであること
   const headers = response.headers()
-  expect(headers['content-security-policy']).toContain("default-src 'self'")
-  expect(headers['content-security-policy']).toContain("frame-ancestors 'none'")
-  expect(headers['permissions-policy']).toContain('microphone=(self)')
-  expect(headers['referrer-policy']).toBe('no-referrer')
-  expect(headers['strict-transport-security']).toBe('max-age=31536000')
-  expect(headers['x-content-type-options']).toBe('nosniff')
-  expect(headers['x-frame-options']).toBe('DENY')
+  for (const [name, value] of Object.entries(securityHeaders)) {
+    expect(headers[name.toLowerCase()], name).toBe(value)
+  }
+})
+
+test('emits a _headers file that matches the served headers', async () => {
+  // ホスティングが読む _headers は preview と同じ定義から作る。
+  // 片方だけ直しても気付けるよう、両方を突き合わせる。
+  const emitted = readFileSync('dist/_headers', 'utf8')
+  for (const [name, value] of Object.entries(securityHeaders)) {
+    expect(emitted, name).toContain(`${name}: ${value}`)
+  }
+  // Service Worker はホスティングのキャッシュに載せない
+  expect(emitted).toContain('/sw.js')
+  expect(emitted).toContain('Cache-Control: no-cache')
 })
 
 test('shows the three-tab app and changes language', async ({ page }) => {
