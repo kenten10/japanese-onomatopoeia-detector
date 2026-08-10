@@ -13,12 +13,14 @@ final class AppViewModel {
 
     // MARK: - Sub-managers
     let speech = SpeechManager()
-    private let persistence = PersistenceController.shared
+    private let persistence: PersistenceController
     private let engine = OnoEngine.shared
 
     // MARK: - Init
 
-    init() {
+    /// - Parameter persistence: 既定は共有ストア。テストではメモリ上のストアを渡す。
+    init(persistence: PersistenceController = .shared) {
+        self.persistence = persistence
         loadHistory()
         setupSpeechCallback()
 
@@ -110,11 +112,16 @@ final class AppViewModel {
 
     // MARK: - Save to History
 
+    /// 同じ結果を二重に保存しない。保存済みの判定 ID を覚えておく。
+    private var savedResultID: UUID?
+
     @discardableResult
     func saveCurrentResult() -> Bool {
         guard case .result(let r) = recordingState else { return false }
+        guard savedResultID != r.id else { return false }
         do {
             try persistence.addHistory(inputText: r.inputText, score: r.score)
+            savedResultID = r.id
             loadHistory()
             return true
         } catch {

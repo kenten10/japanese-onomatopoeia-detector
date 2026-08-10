@@ -36,6 +36,7 @@
 		AT01 /* SpeechTextConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT01 /* SpeechTextConverterTests.swift */; };
 		AT02 /* OnoEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT02 /* OnoEngineTests.swift */; };
 		AT03 /* PersistenceControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT03 /* PersistenceControllerTests.swift */; };
+		AT05 /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT05 /* AppViewModelTests.swift */; };
 		AT04 /* AppLanguageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT04 /* AppLanguageTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -79,6 +80,7 @@
 		BT01 /* SpeechTextConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTextConverterTests.swift; sourceTree = "<group>"; };
 		BT02 /* OnoEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnoEngineTests.swift; sourceTree = "<group>"; };
 		BT03 /* PersistenceControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceControllerTests.swift; sourceTree = "<group>"; };
+		BT05 /* AppViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelTests.swift; sourceTree = "<group>"; };
 		BT04 /* AppLanguageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageTests.swift; sourceTree = "<group>"; };
 		C001 /* OnomatopoeiaDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnomatopoeiaDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -212,6 +214,7 @@
 				BT01 /* SpeechTextConverterTests.swift */,
 				BT02 /* OnoEngineTests.swift */,
 				BT03 /* PersistenceControllerTests.swift */,
+				BT05 /* AppViewModelTests.swift */,
 				BT04 /* AppLanguageTests.swift */,
 			);
 			path = OnomatopoeiaDetectorTests;
@@ -357,6 +360,7 @@
 				AT01 /* SpeechTextConverterTests.swift in Sources */,
 				AT02 /* OnoEngineTests.swift in Sources */,
 				AT03 /* PersistenceControllerTests.swift in Sources */,
+				AT05 /* AppViewModelTests.swift in Sources */,
 				AT04 /* AppLanguageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
