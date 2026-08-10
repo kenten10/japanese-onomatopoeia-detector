@@ -1,7 +1,6 @@
 package com.kensukeyoshida.onomatopoeiadetector.speech
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -169,33 +168,26 @@ class SpeechManager(private val context: Context) {
             if (text.isEmpty()) finishCancelled() else finish(text)
         }
 
-        // API 31 以降の定数だが、値の比較にしか使わないため古い端末でも安全（該当コードが来ないだけ）
-        @SuppressLint("InlinedApi")
         override fun onError(error: Int) {
             Log.w(TAG, "recognition error: $error")
+            if (hasFinished) return
 
-            // 端末上の日本語モデルが無い場合は、通常の認識サービスへ一度だけ切り替える。
-            // 停止操作の後は録音を再開せず、そのまま確定処理へ進む。
-            val languageUnavailable = error == SpeechRecognizer.ERROR_LANGUAGE_UNAVAILABLE ||
-                error == SpeechRecognizer.ERROR_LANGUAGE_NOT_SUPPORTED
-            if (usingOnDevice && languageUnavailable && !didFallBackToService &&
-                !hasFinished && !isStopping
-            ) {
-                didFallBackToService = true
-                teardown()
-                startListening(preferOnDevice = false)
-                return
-            }
+            val action = RecognitionErrorPolicy.decide(
+                error = error,
+                usingOnDevice = usingOnDevice,
+                isStopping = isStopping,
+                didFallBackToService = didFallBackToService,
+                hasPartialText = latestPartial.isNotEmpty()
+            )
 
-            when (error) {
-                // 無音・打ち切りは正常終了として扱う
-                SpeechRecognizer.ERROR_NO_MATCH,
-                SpeechRecognizer.ERROR_SPEECH_TIMEOUT,
-                SpeechRecognizer.ERROR_CLIENT -> finalizeWithPartial()
-
-                else -> {
-                    if (latestPartial.isNotEmpty()) finalizeWithPartial() else deliverError()
+            when (action) {
+                ErrorAction.SwitchToService -> {
+                    didFallBackToService = true
+                    teardown()
+                    startListening(preferOnDevice = false)
                 }
+                ErrorAction.FinalizeWithPartial -> finalizeWithPartial()
+                ErrorAction.Fail -> deliverError()
             }
         }
     }
