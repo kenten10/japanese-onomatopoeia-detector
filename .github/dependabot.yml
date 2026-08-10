@@ -1,5 +1,9 @@
 version: 2
 
+# 方針
+# - メジャー更新は自動で上げない。壊れ方が大きく、CI（ビルドとユニットテスト）では
+#   UI の崩れまで見られないため、人が確認して上げる。
+# - 連動して動くものはグループにまとめる。ばらばらに上がると版の噛み合わせが崩れる。
 updates:
   # PWA 版の npm 依存
   - package-ecosystem: npm
@@ -8,13 +12,21 @@ updates:
       interval: monthly
     open-pull-requests-limit: 5
     groups:
-      # 開発まわりは個別に上げても意味が薄いのでまとめる
+      react:
+        patterns:
+          - react
+          - react-dom
+          - '@types/react'
+          - '@types/react-dom'
       dev-dependencies:
         dependency-type: development
     ignore:
-      # kuromoji の辞書は public/ へ複製して配信しているため、
-      # 上げるときは辞書の入れ替えと動作確認を伴う。手動で行う。
+      # 辞書を public/ へ複製して配信しており、上げると判定結果が変わりうる。
+      # 辞書の入れ替えと点数表の確認を伴うため手動で行う。
       - dependency-name: kuromoji
+      - dependency-name: '*'
+        update-types:
+          - version-update:semver-major
 
   # Android 版の Gradle 依存
   - package-ecosystem: gradle
@@ -22,9 +34,25 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 5
+    groups:
+      # Compose と足並みを揃える必要があるものはまとめて上げる
+      androidx:
+        patterns:
+          - 'androidx.*'
+      kotlin:
+        patterns:
+          - 'org.jetbrains.kotlin*'
+          - 'com.google.devtools.ksp*'
     ignore:
       # 形態素解析の辞書。判定結果が変わりうるので手動で確認する
       - dependency-name: com.atilika.kuromoji:*
+      # Gradle 本体は Android Gradle Plugin と対応関係がある。
+      # 実際、AGP 8.7.3 のまま Gradle 9 系へ上げるとビルドが通らない。
+      - dependency-name: gradle
+      - dependency-name: gradle-wrapper
+      - dependency-name: '*'
+        update-types:
+          - version-update:semver-major
 
   # 各ワークフローが使う actions
   - package-ecosystem: github-actions
@@ -32,3 +60,7 @@ updates:
     schedule:
       interval: monthly
     open-pull-requests-limit: 3
+    ignore:
+      - dependency-name: '*'
+        update-types:
+          - version-update:semver-major
