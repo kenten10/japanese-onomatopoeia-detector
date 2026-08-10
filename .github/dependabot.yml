@@ -1,0 +1,34 @@
+version: 2
+
+updates:
+  # PWA 版の npm 依存
+  - package-ecosystem: npm
+    directory: /web
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    groups:
+      # 開発まわりは個別に上げても意味が薄いのでまとめる
+      dev-dependencies:
+        dependency-type: development
+    ignore:
+      # kuromoji の辞書は public/ へ複製して配信しているため、
+      # 上げるときは辞書の入れ替えと動作確認を伴う。手動で行う。
+      - dependency-name: kuromoji
+
+  # Android 版の Gradle 依存
+  - package-ecosystem: gradle
+    directory: /android
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 5
+    ignore:
+      # 形態素解析の辞書。判定結果が変わりうるので手動で確認する
+      - dependency-name: com.atilika.kuromoji:*
+
+  # 各ワークフローが使う actions
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
