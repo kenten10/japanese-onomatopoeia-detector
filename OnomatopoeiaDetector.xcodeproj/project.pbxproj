@@ -32,7 +32,7 @@
 		A017 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B017 /* Speech.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A018 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B018 /* AVFoundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A019 /* NaturalLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B019 /* NaturalLanguage.framework */; settings = {ATTRIBUTES = (Required, ); }; };
-		A030 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = Q001 /* Sentry */; };
+		A030 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = PD01 /* Sentry */; };
 		A020 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B020 /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A021 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B021 /* Theme.swift */; };
 		AT01 /* SpeechTextConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT01 /* SpeechTextConverterTests.swift */; };
@@ -89,25 +89,6 @@
 		C002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C003 /* OnomatopoeiaDetectorTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = OnomatopoeiaDetectorTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
-
-/* Begin XCRemoteSwiftPackageReference section */
-		P001 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 9.25.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
-/* Begin XCSwiftPackageProductDependency section */
-		Q001 /* Sentry */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = P001 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
-			productName = Sentry;
-		};
-/* End XCSwiftPackageProductDependency section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		D001 /* Frameworks */ = {
@@ -269,7 +250,7 @@
 			dependencies = (
 			);
 			packageProductDependencies = (
-				Q001 /* Sentry */,
+				PD01 /* Sentry */,
 			);
 			name = OnomatopoeiaDetector;
 			productName = OnomatopoeiaDetector;
@@ -324,7 +305,7 @@
 			);
 			mainGroup = E000;
 			packageReferences = (
-				P001 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+				PK01 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
 			);
 			productRefGroup = F001 /* Products */;
 			projectDirPath = "";
@@ -650,6 +631,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		PK01 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.25.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		PD01 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PK01 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = P001 /* Project object */;
 }
