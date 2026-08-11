@@ -25,6 +25,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.OnomatopoeiaDetector">
 
+        <!-- 送信先が設定されているときだけアプリ側から始めるため、自動初期化は切る -->
+        <meta-data
+            android:name="io.sentry.auto-init"
+            android:value="false" />
+
         <activity
             android:name=".MainActivity"
             android:exported="true"

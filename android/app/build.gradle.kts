@@ -25,6 +25,9 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         resourceConfigurations += listOf("en", "ja")
+
+        // 不具合の送信先。設定しなければ報告は行わない。
+        buildConfigField("String", "SENTRY_DSN", "\"${System.getenv("SENTRY_DSN") ?: ""}\"")
     }
 
     signingConfigs {
@@ -126,6 +129,9 @@ dependencies {
 
     // 形態素解析（読み推定・品詞判定）。Web 版の kuromoji と同じ IPADIC を使う。
     implementation("com.atilika.kuromoji:kuromoji-ipadic:0.9.0")
+
+    // 不具合の報告
+    implementation("io.sentry:sentry-android:8.52.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")

@@ -23,6 +23,9 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<!-- 不具合の送信先。ビルド設定から埋める。空なら報告は行わない -->
+	<key>SentryDSN</key>
+	<string>$(SENTRY_DSN)</string>
 	<!-- 実際に表示される文言は Localizable/{ja,en}.lproj/InfoPlist.strings 側。ここは既定の英語 -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is used to record your voice and evaluate onomatopoeia</string>
