@@ -133,6 +133,12 @@ npx playwright install chromium webkit  # 初回のみ
 npm run test:e2e
 ```
 
+### プライバシーポリシーの公開
+
+ストアの審査や配布ページからは、アプリの外から読めるURLを求められます。`dist/privacy/` に単体で開けるページを出力しており、配信URLの `/privacy/`（言語で自動振り分け）、`/privacy/ja.html`、`/privacy/en.html` で読めます。
+
+文言はアプリ内の表示と同じ翻訳から生成しているため、書き写しによるずれが起きません。生成は `npm install` と `npm run build` のたびに走ります。
+
 ### iPhoneへのインストール
 
 1. Safariで配信URLを開く

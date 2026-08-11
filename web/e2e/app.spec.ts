@@ -163,3 +163,21 @@ test('matches the home screen visual baseline in light and dark mode', async ({ 
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })
   await expect(page).toHaveScreenshot('home-dark.png', { animations: 'disabled', maxDiffPixelRatio: 0.04 })
 })
+
+test('publishes a standalone privacy policy in both languages', async ({ page, request }) => {
+  // ストアの審査や配布ページからは、アプリの外から読める URL を求められる
+  for (const [path, heading] of [['/privacy/ja.html', 'プライバシーポリシー'], ['/privacy/en.html', 'Privacy Policy']]) {
+    const response = await request.get(path)
+    expect(response.ok(), path).toBe(true)
+    const html = await response.text()
+    expect(html).toContain(heading)
+  }
+
+  // アプリ内の文言と食い違っていないこと
+  const inApp = await request.get('/privacy/ja.html').then((response) => response.text())
+  expect(inApp).toContain('このアプリは、個人情報や利用状況データを収集せず、広告やトラッキングも行いません。')
+
+  // Service Worker のフォールバックでアプリ画面に差し替わらないこと
+  await page.goto('/privacy/ja.html')
+  await expect(page.locator('h1')).toHaveText('プライバシーポリシー')
+})

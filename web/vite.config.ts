@@ -43,6 +43,8 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,json,png,bin,gz,dat}'],
         maximumFileSizeToCacheInBytes: 25 * 1024 * 1024,
         navigateFallback: 'index.html',
+        // 単体で開くプライバシーポリシーはアプリ画面に差し替えない
+        navigateFallbackDenylist: [/^\/privacy\//],
         cleanupOutdatedCaches: true
       }
     }),

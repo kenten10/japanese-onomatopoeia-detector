@@ -84,4 +84,5 @@ web/playwright-report/
 web/test-results/
 web/public/dict/
 web/public/licenses/
+web/public/privacy/
 web/*.tsbuildinfo
