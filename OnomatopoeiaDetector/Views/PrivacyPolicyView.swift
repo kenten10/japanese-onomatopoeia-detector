@@ -15,6 +15,14 @@ struct PrivacyPolicyView: View {
                 Text(String(localized: "privacy.storage.body"))
             }
 
+            Section(String(localized: "privacy.diagnostics.title")) {
+                Text(String(localized: "privacy.diagnostics.body"))
+            }
+
+            Section(String(localized: "privacy.feedback.title")) {
+                Text(String(localized: "privacy.feedback.body"))
+            }
+
             Section(String(localized: "privacy.control.title")) {
                 Text(String(localized: "privacy.control.body"))
             }

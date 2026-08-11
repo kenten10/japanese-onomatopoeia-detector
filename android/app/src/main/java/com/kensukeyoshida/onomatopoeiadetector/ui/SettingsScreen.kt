@@ -314,6 +314,14 @@ private fun PrivacyPolicyScreen(onBack: () -> Unit) {
                 body = stringResource(R.string.privacy_storage_body)
             )
             PrivacySection(
+                title = stringResource(R.string.privacy_diagnostics_title),
+                body = stringResource(R.string.privacy_diagnostics_body)
+            )
+            PrivacySection(
+                title = stringResource(R.string.privacy_feedback_title),
+                body = stringResource(R.string.privacy_feedback_body)
+            )
+            PrivacySection(
                 title = stringResource(R.string.privacy_control_title),
                 body = stringResource(R.string.privacy_control_body)
             )

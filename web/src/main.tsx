@@ -5,7 +5,9 @@ import { AppProvider } from './AppContext'
 import { I18nProvider } from './i18n/I18nContext'
 import './styles.css'
 import { initializePwaUpdates } from './services/pwaUpdate'
+import { initializeErrorReporting } from './services/errorReporting'
 
+initializeErrorReporting()
 initializePwaUpdates()
 
 createRoot(document.getElementById('root')!).render(

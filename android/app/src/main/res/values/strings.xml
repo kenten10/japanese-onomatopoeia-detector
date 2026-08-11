@@ -54,11 +54,15 @@
     <string name="settings_privacy">Privacy Policy</string>
 
     <!-- Privacy -->
-    <string name="privacy_summary">This app does not collect personal or usage data, serve advertising, or track you.</string>
+    <string name="privacy_summary">This app does not serve advertising or track you. The only data collected is what is needed to fix problems.</string>
     <string name="privacy_audio_title">Audio Data</string>
     <string name="privacy_audio_body">Microphone audio is used only to recognize spoken Japanese. On-device recognition is preferred when available; otherwise your device\'s speech recognition service may process it. Neither recordings nor recognized text are sent to or stored on the developer\'s servers. Recordings are not saved by this app.</string>
     <string name="privacy_storage_title">Data Stored on Your Device</string>
     <string name="privacy_storage_body">Only saved evaluation history and your display language preference are stored on your device. This data is not shared with third parties.</string>
+    <string name="privacy_diagnostics_title">Problem Reports</string>
+    <string name="privacy_diagnostics_body">When the app crashes or an operation fails, the following is sent so the cause can be fixed: the error and where it happened, the app version, the OS and its version, and the device model. Audio, recognized words, and saved history are never sent. Neither is anything that identifies you, such as a name, email address, or advertising ID.</string>
+    <string name="privacy_feedback_title">Sending Feedback</string>
+    <string name="privacy_feedback_body">You can send feedback from the form in Settings. The form is hosted on Google Forms, and what you submit is stored on Google servers. Sending is optional — nothing is submitted unless you open the form and send it.</string>
     <string name="privacy_control_title">Deletion and Permissions</string>
     <string name="privacy_control_body">You can delete evaluation history from Settings at any time. You can change microphone access at any time in the Android Settings app.</string>
 

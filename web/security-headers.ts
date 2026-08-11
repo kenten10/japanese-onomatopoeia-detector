@@ -5,11 +5,20 @@
  * `dist/_headers` の両方をこの値から作る。二重に書くと、片方だけ直したときに
  * 本番の配信内容が静かにずれてしまう。
  */
+
+/**
+ * 不具合の送信先。DSN を設定したときだけ、その宛先への通信を許可する。
+ * 設定しなければ自オリジン以外へは一切つながらない。
+ */
+const reportingOrigin = process.env.VITE_SENTRY_DSN
+  ? new URL(process.env.VITE_SENTRY_DSN).origin
+  : undefined
+
 export const securityHeaders: Record<string, string> = {
   'Content-Security-Policy': [
     "default-src 'self'",
     "base-uri 'self'",
-    "connect-src 'self'",
+    ["connect-src 'self'", reportingOrigin].filter(Boolean).join(' '),
     "font-src 'self'",
     "form-action 'none'",
     "frame-ancestors 'none'",

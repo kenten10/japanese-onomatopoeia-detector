@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs'
 import { expect, test, type Page } from '@playwright/test'
 import { securityHeaders } from '../security-headers'
+import { messages } from '../src/i18n/messages'
 
 async function installFakeSpeech(page: Page, mode: 'automatic' | 'on-stop' | 'denied' | 'standalone-error' = 'automatic') {
   await page.addInitScript((selectedMode) => {
@@ -173,9 +174,12 @@ test('publishes a standalone privacy policy in both languages', async ({ page, r
     expect(html).toContain(heading)
   }
 
-  // アプリ内の文言と食い違っていないこと
+  // アプリ内の文言と食い違っていないこと。書き写さず翻訳そのものと突き合わせる
   const inApp = await request.get('/privacy/ja.html').then((response) => response.text())
-  expect(inApp).toContain('このアプリは、個人情報や利用状況データを収集せず、広告やトラッキングも行いません。')
+  expect(inApp).toContain(messages.ja['privacy.summary'])
+  expect(inApp).toContain(messages.ja['privacy.diagnostics.body'])
+  expect(inApp).toContain(messages.ja['privacy.feedback.body'])
+  expect(inApp).toContain(messages.ja['privacy.control.body'])
 
   // Service Worker のフォールバックでアプリ画面に差し替わらないこと
   await page.goto('/privacy/ja.html')

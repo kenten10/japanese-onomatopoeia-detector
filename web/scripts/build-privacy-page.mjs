@@ -60,6 +60,8 @@ function page(messages, lang, otherLang, otherLabel) {
       <p class="lead">${escape(messages['privacy.summary'])}</p>
 ${section(messages, 'audio')}
 ${section(messages, 'storage')}
+${section(messages, 'diagnostics')}
+${section(messages, 'feedback')}
 ${section(messages, 'control')}
     </main>
     <footer>

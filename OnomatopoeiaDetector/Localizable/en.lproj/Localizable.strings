@@ -50,11 +50,15 @@
 "settings.privacy" = "Privacy Policy";
 
 /* Privacy */
-"privacy.summary" = "This app does not collect personal or usage data, serve advertising, or track you.";
+"privacy.summary" = "This app does not serve advertising or track you. The only data collected is what is needed to fix problems.";
 "privacy.audio.title" = "Audio Data";
 "privacy.audio.body" = "Microphone audio is used only to recognize spoken Japanese. Recognition runs on your device, and neither recordings nor recognized text are sent to the developer's servers. Recordings are not saved.";
 "privacy.storage.title" = "Data Stored on Your Device";
 "privacy.storage.body" = "Only saved evaluation history and your display language preference are stored on your device. This data is not shared with third parties.";
+"privacy.diagnostics.title" = "Problem Reports";
+"privacy.diagnostics.body" = "When the app crashes or an operation fails, the following is sent so the cause can be fixed: the error and where it happened, the app version, the OS and its version, and the device model. Audio, recognized words, and saved history are never sent. Neither is anything that identifies you, such as a name, email address, or advertising ID.";
+"privacy.feedback.title" = "Sending Feedback";
+"privacy.feedback.body" = "You can send feedback from the form in Settings. The form is hosted on Google Forms, and what you submit is stored on Google servers. Sending is optional — nothing is submitted unless you open the form and send it.";
 "privacy.control.title" = "Deletion and Permissions";
 "privacy.control.body" = "You can delete evaluation history from Settings at any time. You can change microphone and speech recognition access at any time in the iOS Settings app.";
 

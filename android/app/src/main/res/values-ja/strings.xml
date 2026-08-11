@@ -54,11 +54,15 @@
     <string name="settings_privacy">プライバシーポリシー</string>
 
     <!-- Privacy -->
-    <string name="privacy_summary">このアプリは、個人情報や利用状況データを収集せず、広告やトラッキングも行いません。</string>
+    <string name="privacy_summary">このアプリは、広告やトラッキングを行いません。収集するのは、不具合を直すために必要な情報だけです。</string>
     <string name="privacy_audio_title">音声データ</string>
     <string name="privacy_audio_body">マイク音声は日本語の音声認識にのみ使用します。利用可能な場合は端末上で処理し、それ以外では端末の音声認識サービスが処理することがあります。録音や認識結果を開発者のサーバーへ送信・保存せず、このアプリが録音を保存することもありません。</string>
     <string name="privacy_storage_title">端末内に保存するデータ</string>
     <string name="privacy_storage_body">判定履歴と表示言語の設定だけを端末内に保存します。これらのデータを第三者と共有しません。</string>
+    <string name="privacy_diagnostics_title">不具合の報告</string>
+    <string name="privacy_diagnostics_body">アプリが落ちたり処理に失敗したりしたとき、原因を直すために次の情報を送信します。エラーの内容と発生箇所、アプリのバージョン、OSとその版、端末の機種名です。音声、認識したことば、判定履歴は送信しません。氏名やメールアドレス、広告IDのような個人を識別する情報も送信しません。</string>
+    <string name="privacy_feedback_title">ご意見の送信</string>
+    <string name="privacy_feedback_body">設定画面のフォームからご意見を送れます。フォームはGoogleフォームで提供しており、送信いただいた内容はGoogleのサーバーに保存されます。送信は任意で、フォームを開かなければ何も送信されません。</string>
     <string name="privacy_control_title">削除と権限</string>
     <string name="privacy_control_body">判定履歴は設定画面からいつでも削除できます。マイクの権限はAndroidの設定アプリからいつでも変更できます。</string>
 
