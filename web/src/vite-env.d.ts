@@ -12,3 +12,6 @@ interface ImportMetaEnv {
 interface ImportMeta {
   readonly env: ImportMetaEnv
 }
+
+/** ご意見フォームの URL。ビルド時に埋め込む。空なら導線を出さない。 */
+declare const __FEEDBACK_FORM_URL__: string

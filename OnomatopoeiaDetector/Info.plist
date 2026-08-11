@@ -26,6 +26,9 @@
 	<!-- 不具合の送信先。ビルド設定から埋める。空なら報告は行わない -->
 	<key>SentryDSN</key>
 	<string>$(SENTRY_DSN)</string>
+	<!-- ご意見フォーム。shared/feedback-form-url.txt から埋める。空なら導線を出さない -->
+	<key>FeedbackFormURL</key>
+	<string>$(FEEDBACK_FORM_URL)</string>
 	<!-- 実際に表示される文言は Localizable/{ja,en}.lproj/InfoPlist.strings 側。ここは既定の英語 -->
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone is used to record your voice and evaluate onomatopoeia</string>

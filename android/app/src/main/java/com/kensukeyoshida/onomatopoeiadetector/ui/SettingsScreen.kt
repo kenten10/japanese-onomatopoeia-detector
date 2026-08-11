@@ -1,5 +1,7 @@
 package com.kensukeyoshida.onomatopoeiadetector.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -19,6 +21,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material.icons.filled.PrivacyTip
@@ -40,6 +43,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -58,6 +62,7 @@ fun SettingsScreen(viewModel: AppViewModel) {
     val language by viewModel.appLanguage.collectAsStateWithLifecycle()
     var showClearConfirm by remember { mutableStateOf(false) }
     var showLanguageMenu by remember { mutableStateOf(false) }
+    val context = LocalContext.current
     // プライバシーポリシーから戻ったときにスクロール位置を保つ
     val scrollState = rememberScrollState()
 
@@ -180,6 +185,38 @@ fun SettingsScreen(viewModel: AppViewModel) {
                 }
 
                 HorizontalDivider(color = Ink.ink.copy(alpha = 0.12f))
+
+                if (BuildConfig.FEEDBACK_FORM_URL.isNotEmpty()) {
+                    FormRow(onClick = {
+                        runCatching {
+                            context.startActivity(
+                                Intent(Intent.ACTION_VIEW, Uri.parse(BuildConfig.FEEDBACK_FORM_URL))
+                            )
+                        }
+                    }) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Icon(
+                                imageVector = Icons.AutoMirrored.Filled.Chat,
+                                contentDescription = null,
+                                tint = Ink.ink,
+                                modifier = Modifier.size(20.dp)
+                            )
+                            Spacer(Modifier.size(10.dp))
+                            Text(stringResource(R.string.settings_feedback), color = Ink.ink)
+                            Spacer(Modifier.weight(1f))
+                            Icon(
+                                imageVector = Icons.Filled.ChevronRight,
+                                contentDescription = null,
+                                tint = Ink.ink.copy(alpha = 0.35f)
+                            )
+                        }
+                    }
+
+                    HorizontalDivider(color = Ink.ink.copy(alpha = 0.12f))
+                }
 
                 FormRow(onClick = { showPrivacy = true }) {
                     Row(

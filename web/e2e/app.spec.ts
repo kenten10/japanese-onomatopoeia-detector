@@ -185,3 +185,20 @@ test('publishes a standalone privacy policy in both languages', async ({ page, r
   await page.goto('/privacy/ja.html')
   await expect(page.locator('h1')).toHaveText('プライバシーポリシー')
 })
+
+test('shows the feedback link only when a form URL is configured', async ({ page }) => {
+  // URL は shared/feedback-form-url.txt から埋め込む。空のままなら導線を出さない。
+  const configured = readFileSync('../shared/feedback-form-url.txt', 'utf8').trim()
+
+  await page.goto('/')
+  await page.getByRole('button', { name: messages.en['settings.title'] }).click()
+  const link = page.getByRole('link', { name: messages.en['settings.feedback'] })
+
+  if (configured) {
+    await expect(link).toHaveAttribute('href', configured)
+    // 外部サイトを開くので、開いた先からこのページを触れないようにする
+    await expect(link).toHaveAttribute('rel', /noopener/)
+  } else {
+    await expect(link).toHaveCount(0)
+  }
+})

@@ -48,6 +48,7 @@
 "settings.about" = "About";
 "settings.about.desc" = "Rate how onomatopoeic your spoken Japanese is, on a scale of 1 to 5.";
 "settings.privacy" = "Privacy Policy";
+"settings.feedback" = "Send Feedback";
 
 /* Privacy */
 "privacy.summary" = "This app does not serve advertising or track you. The only data collected is what is needed to fix problems.";

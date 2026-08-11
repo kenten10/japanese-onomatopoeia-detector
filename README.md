@@ -270,6 +270,33 @@ xcodebuild test \
 - 音声データは端末内でのみ処理され、外部送信されません
 - シミュレータでは音声入力機能が制限されるため、音声入力の確認は実機推奨です
 
+## ご意見フォーム
+
+設定画面の「ご意見を送る」は、`shared/feedback-form-url.txt` に書いたURLを開きます。**空のままなら3実装とも導線を出しません。**
+
+```
+https://docs.google.com/forms/d/e/xxxxxxxx/viewform
+```
+
+PWA版はビルド時に、iOS版とAndroid版もビルド時に読み込むため、変更後は再ビルドが必要です。
+
+## 不具合の報告
+
+送信先（Sentryのdsn）を渡したときだけ有効になります。渡さなければ初期化そのものを行わず、PWA版ではSDKのコードがバンドルから消え、CSPも自オリジンのみのままです。
+
+```sh
+# PWA
+VITE_SENTRY_DSN=https://... npm run build
+
+# Android
+SENTRY_DSN=https://... ./gradlew assembleRelease
+
+# iOS
+xcodebuild -project OnomatopoeiaDetector.xcodeproj -scheme OnomatopoeiaDetector SENTRY_DSN=https://... build
+```
+
+送るのはエラーの内容と発生箇所、アプリのバージョン、OSとその版、端末の機種名だけです。音声・認識したことば・判定履歴は送りません。IPアドレスや利用者情報、画面の写し、操作の記録も採らない設定にしています。詳細はプライバシーポリシーに明記しています。
+
 ## サードパーティ
 
 | 対象 | ライセンス | 利用箇所 |

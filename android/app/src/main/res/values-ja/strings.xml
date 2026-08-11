@@ -52,6 +52,7 @@
     <string name="settings_about">このアプリについて</string>
     <string name="settings_about_desc">音声入力した言葉が日本語のオノマトペらしいかを1〜5段階で判定します。</string>
     <string name="settings_privacy">プライバシーポリシー</string>
+    <string name="settings_feedback">ご意見を送る</string>
 
     <!-- Privacy -->
     <string name="privacy_summary">このアプリは、広告やトラッキングを行いません。収集するのは、不具合を直すために必要な情報だけです。</string>

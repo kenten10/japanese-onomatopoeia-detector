@@ -48,6 +48,7 @@
 "settings.about" = "このアプリについて";
 "settings.about.desc" = "音声入力した言葉が日本語のオノマトペらしいかを1〜5段階で判定します。";
 "settings.privacy" = "プライバシーポリシー";
+"settings.feedback" = "ご意見を送る";
 
 /* Privacy */
 "privacy.summary" = "このアプリは、広告やトラッキングを行いません。収集するのは、不具合を直すために必要な情報だけです。";

@@ -6,6 +6,13 @@ struct SettingsView: View {
 
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
 
+    /// ご意見フォーム。設定していなければ導線を出さない。
+    private static var feedbackFormURL: URL? {
+        let value = (Bundle.main.object(forInfoDictionaryKey: "FeedbackFormURL") as? String ?? "")
+            .trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? nil : URL(string: value)
+    }
+
     var body: some View {
         @Bindable var vm = vm
         NavigationStack {
@@ -58,6 +65,13 @@ struct SettingsView: View {
                             .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
                     }
                     .padding(.vertical, 4)
+
+                    if let feedbackURL = Self.feedbackFormURL {
+                        Link(destination: feedbackURL) {
+                            Label(String(localized: "settings.feedback"), systemImage: "bubble.left.and.text.bubble.right")
+                        }
+                        .tint(Ink.ink)
+                    }
 
                     NavigationLink {
                         PrivacyPolicyView()

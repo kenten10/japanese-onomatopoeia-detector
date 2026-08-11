@@ -1,7 +1,11 @@
 import { defineConfig, type Plugin } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'node:fs'
 import { buildHeadersFile, securityHeaders } from './security-headers'
+
+/** ご意見フォームの URL。空なら設定画面に導線を出さない。 */
+const feedbackFormUrl = readFileSync('../shared/feedback-form-url.txt', 'utf8').trim()
 
 /** ホスティングが読む _headers を、上のヘッダー定義から書き出す。 */
 function emitHeadersFile(): Plugin {
@@ -16,6 +20,7 @@ function emitHeadersFile(): Plugin {
 
 export default defineConfig({
   base: './',
+  define: { __FEEDBACK_FORM_URL__: JSON.stringify(feedbackFormUrl) },
   plugins: [
     react(),
     VitePWA({

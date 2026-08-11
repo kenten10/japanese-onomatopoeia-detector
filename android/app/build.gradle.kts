@@ -28,6 +28,11 @@ android {
 
         // 不具合の送信先。設定しなければ報告は行わない。
         buildConfigField("String", "SENTRY_DSN", "\"${System.getenv("SENTRY_DSN") ?: ""}\"")
+
+        // ご意見フォーム。3 実装で同じファイルを見る。空なら導線を出さない。
+        val feedbackFormUrl = rootProject.file("../shared/feedback-form-url.txt")
+            .takeIf { it.exists() }?.readText()?.trim().orEmpty()
+        buildConfigField("String", "FEEDBACK_FORM_URL", "\"$feedbackFormUrl\"")
     }
 
     signingConfigs {
