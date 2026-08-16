@@ -1,8 +1,13 @@
 name: iOS
 
-# macOS ランナーは Linux の 10 倍の分数を消費する（このリポジトリは private）。
-# そのため push では走らせず、iOS に触れた Pull Request と手動実行だけに絞っている。
 on:
+  push:
+    paths:
+      - 'OnomatopoeiaDetector/**'
+      - 'OnomatopoeiaDetectorTests/**'
+      - 'OnomatopoeiaDetector.xcodeproj/**'
+      - 'shared/onomatopoeia_dict.json'
+      - '.github/workflows/ios.yml'
   pull_request:
     paths:
       - 'OnomatopoeiaDetector/**'
