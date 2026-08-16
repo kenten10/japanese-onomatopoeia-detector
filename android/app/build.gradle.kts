@@ -1,3 +1,5 @@
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -24,7 +26,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        resourceConfigurations += listOf("en", "ja")
 
         // 不具合の送信先。設定しなければ報告は行わない。
         buildConfigField("String", "SENTRY_DSN", "\"${System.getenv("SENTRY_DSN") ?: ""}\"")
@@ -66,13 +67,14 @@ android {
         language { enableSplit = false }
     }
 
+    androidResources {
+        // 同梱する言語。ここを絞らないと依存が持ち込む多数の言語まで抱え込む
+        localeFilters += listOf("en", "ja")
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
     }
 
     buildFeatures {
@@ -108,6 +110,12 @@ android {
     sourceSets["main"].assets.srcDir(copyDictionary)
 }
 
+kotlin {
+    compilerOptions {
+        jvmTarget = JvmTarget.JVM_17
+    }
+}
+
 dependencies {
     val composeBom = platform("androidx.compose:compose-bom:2024.12.01")
     implementation(composeBom)
@@ -126,11 +134,11 @@ dependencies {
     implementation("androidx.compose.material:material-icons-extended")
     debugImplementation("androidx.compose.ui:ui-tooling")
 
-    implementation("androidx.room:room-runtime:2.6.1")
-    implementation("androidx.room:room-ktx:2.6.1")
-    ksp("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-runtime:2.7.2")
+    implementation("androidx.room:room-ktx:2.7.2")
+    ksp("androidx.room:room-compiler:2.7.2")
 
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.11.0")
 
     // 形態素解析（読み推定・品詞判定）。Web 版の kuromoji と同じ IPADIC を使う。
     implementation("com.atilika.kuromoji:kuromoji-ipadic:0.9.0")
@@ -139,7 +147,7 @@ dependencies {
     implementation("io.sentry:sentry-android:8.52.0")
 
     testImplementation("junit:junit:4.13.2")
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.9.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test:runner:1.6.2")
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
