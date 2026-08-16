@@ -1,35 +1,26 @@
-import { defineConfig } from 'vitest/config'
+import { defineConfig, type Plugin } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import { VitePWA } from 'vite-plugin-pwa'
+import { readFileSync } from 'node:fs'
+import { buildHeadersFile, securityHeaders } from './security-headers'
 
-const securityHeaders = {
-  'Content-Security-Policy': [
-    "default-src 'self'",
-    "base-uri 'self'",
-    "connect-src 'self'",
-    "font-src 'self'",
-    "form-action 'none'",
-    "frame-ancestors 'none'",
-    "img-src 'self' data:",
-    "manifest-src 'self'",
-    "media-src 'self'",
-    "object-src 'none'",
-    "script-src 'self'",
-    "style-src 'self'",
-    "worker-src 'self'"
-  ].join('; '),
-  'Cross-Origin-Opener-Policy': 'same-origin',
-  'Cross-Origin-Resource-Policy': 'same-origin',
-  'Permissions-Policy': 'camera=(), geolocation=(), microphone=(self), payment=(), usb=()',
-  'Referrer-Policy': 'no-referrer',
-  'Strict-Transport-Security': 'max-age=31536000',
-  'X-Content-Type-Options': 'nosniff',
-  'X-Frame-Options': 'DENY',
-  'X-Permitted-Cross-Domain-Policies': 'none'
+/** ご意見フォームの URL。空なら設定画面に導線を出さない。 */
+const feedbackFormUrl = readFileSync('../shared/feedback-form-url.txt', 'utf8').trim()
+
+/** ホスティングが読む _headers を、上のヘッダー定義から書き出す。 */
+function emitHeadersFile(): Plugin {
+  return {
+    name: 'emit-headers-file',
+    apply: 'build',
+    generateBundle() {
+      this.emitFile({ type: 'asset', fileName: '_headers', source: buildHeadersFile() })
+    }
+  }
 }
 
 export default defineConfig({
   base: './',
+  define: { __FEEDBACK_FORM_URL__: JSON.stringify(feedbackFormUrl) },
   plugins: [
     react(),
     VitePWA({
@@ -57,12 +48,16 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,json,png,bin,gz,dat}'],
         maximumFileSizeToCacheInBytes: 25 * 1024 * 1024,
         navigateFallback: 'index.html',
+        // 単体で開くプライバシーポリシーはアプリ画面に差し替えない
+        navigateFallbackDenylist: [/^\/privacy\//],
         cleanupOutdatedCaches: true
       }
-    })
+    }),
+    emitHeadersFile()
   ],
   server: {
-    fs: { allow: ['..'] }
+    // 共有辞書だけを web の外から読む。リポジトリ全体は開放しない
+    fs: { allow: ['.', '../shared'] }
   },
   preview: {
     headers: securityHeaders
@@ -71,6 +66,10 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: './src/test/setup.ts',
     include: ['src/**/*.test.{ts,tsx}'],
-    coverage: { reporter: ['text', 'html'] }
+    coverage: { reporter: ['text', 'html'] },
+    // ブラウザ版の kuromoji は XHR で辞書を取りに行き jsdom では解決できないため、
+    // テストのときだけ Node 版と実辞書に差し替えて形態素解析を通す
+    alias: { 'kuromoji/build/kuromoji.js': 'kuromoji' },
+    env: { VITE_KUROMOJI_DICT: 'node_modules/kuromoji/dict/' }
   }
 })

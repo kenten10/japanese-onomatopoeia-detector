@@ -23,10 +23,14 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<!-- 不具合の送信先。ビルド設定から埋める。空なら報告は行わない -->
+	<key>SentryDSN</key>
+	<string>$(SENTRY_DSN)</string>
+	<!-- 実際に表示される文言は Localizable/{ja,en}.lproj/InfoPlist.strings 側。ここは既定の英語 -->
 	<key>NSMicrophoneUsageDescription</key>
-	<string>Used to record your voice and evaluate onomatopoeia / 音声を録音してオノマトペを判定するためにマイクを使用します</string>
+	<string>Microphone is used to record your voice and evaluate onomatopoeia</string>
 	<key>NSSpeechRecognitionUsageDescription</key>
-	<string>Used to convert your recorded voice to text / 録音した音声をテキストに変換するために使用します</string>
+	<string>Used to convert your recorded voice to text</string>
 	<key>UILaunchScreen</key>
 	<dict/>
 	<key>UIRequiresFullScreen</key>

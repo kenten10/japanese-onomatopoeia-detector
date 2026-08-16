@@ -34,13 +34,13 @@ export default function App() {
       <span>{t('update.available')}</span><button onClick={() => void applyPwaUpdate()}>{t('update.action')}</button>
     </aside>}
     {recordingState.kind === 'result' && <ResultView result={recordingState.result} onDismiss={resetToIdle} />}
-    {recordingState.kind === 'error' && <ModalPortal onClose={resetToIdle}><section className="alert-dialog" role="alertdialog" aria-modal="true">
-      <h2>{t('error.title')}</h2><p>{recordingState.message}</p>
+    {recordingState.kind === 'error' && <ModalPortal onClose={resetToIdle}><section className="alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="error-title">
+      <h2 id="error-title">{t('error.title')}</h2><p>{recordingState.message}</p>
       {recordingState.code === 'standalone-unsupported' && <a className="alert-action" href={window.location.href} target="_blank" rel="noreferrer">{t('permission.open.safari')}</a>}
       <button data-autofocus onClick={resetToIdle}>{t('error.ok')}</button>
     </section></ModalPortal>}
-    {persistenceError && <ModalPortal onClose={dismissPersistenceError}><section className="alert-dialog" role="alertdialog" aria-modal="true">
-      <h2>{t('error.title')}</h2><p>{persistenceError}</p><button data-autofocus onClick={dismissPersistenceError}>{t('error.ok')}</button>
+    {persistenceError && <ModalPortal onClose={dismissPersistenceError}><section className="alert-dialog" role="alertdialog" aria-modal="true" aria-labelledby="persistence-error-title">
+      <h2 id="persistence-error-title">{t('error.title')}</h2><p>{persistenceError}</p><button data-autofocus onClick={dismissPersistenceError}>{t('error.ok')}</button>
     </section></ModalPortal>}
   </div>
 }

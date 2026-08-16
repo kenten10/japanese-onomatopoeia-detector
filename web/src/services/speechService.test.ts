@@ -53,4 +53,27 @@ describe('WebSpeechService', () => {
     FakeRecognition.latest?.error('service-not-allowed')
     expect(onError.mock.calls[0][0].code).toBe('speech-service-disabled')
   })
+
+  it('keeps only one recognition when start is called twice while awaiting availability', async () => {
+    // processLocally の判定は await を挟むため、その間に 2 回目の start が走ると
+    // 認識が二重に動いてしまう。後から始めた側だけが残ることを確かめる。
+    const started: FakeRecognition[] = []
+    let release: (() => void) | undefined
+    class SlowRecognition extends FakeRecognition {
+      processLocally = false
+      static available = () => new Promise<string>((resolve) => { release = () => resolve('unavailable') })
+      override start() { started.push(this) }
+    }
+    window.SpeechRecognition = SlowRecognition as unknown as typeof window.SpeechRecognition
+
+    const service = new WebSpeechService({ onPartial: vi.fn(), onFinal: vi.fn(), onCancelled: vi.fn(), onError: vi.fn() })
+    const first = service.start()
+    const firstRelease = release
+    const second = service.start()
+    firstRelease?.()
+    release?.()
+    await Promise.all([first, second])
+
+    expect(started).toHaveLength(1)
+  })
 })

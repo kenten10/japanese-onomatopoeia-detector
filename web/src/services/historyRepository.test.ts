@@ -20,6 +20,27 @@ describe('HistoryRepository', () => {
     expect(await repository.fetch()).toHaveLength(100)
     expect(await rawHistoryCount()).toBe(100)
   })
+
+  it('keeps the newest entries when pruning', async () => {
+    for (let index = 0; index < 105; index += 1) await repository.add(`word-${index}`, 3)
+    const history = await repository.fetch()
+    expect(history).toHaveLength(100)
+    // 古い 5 件が落ち、新しい方が残る
+    expect(history[0].inputText).toBe('word-104')
+    expect(history.map((item) => item.inputText)).not.toContain('word-0')
+    expect(history.map((item) => item.inputText)).not.toContain('word-4')
+    expect(history.map((item) => item.inputText)).toContain('word-5')
+  })
+
+  it('returns entries in descending order of date', async () => {
+    await repository.add('ふわふわ', 5)
+    await repository.add('さらさら', 4)
+    await repository.add('どきどき', 3)
+    const history = await repository.fetch()
+    const dates = history.map((item) => item.date.getTime())
+    expect(dates).toEqual([...dates].sort((a, b) => b - a))
+    expect(history[0].inputText).toBe('どきどき')
+  })
 })
 
 function rawHistoryCount(): Promise<number> {

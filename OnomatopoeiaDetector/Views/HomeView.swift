@@ -93,7 +93,7 @@ struct HomeView: View {
             Text(String(localized: "app.subtitle").uppercased())
                 .font(.system(size: 11, weight: .bold, design: .monospaced))
                 .tracking(2)
-                .foregroundStyle(Ink.ink.opacity(0.5))
+                .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
         }
         .padding(.top, 28)
     }
@@ -119,6 +119,7 @@ struct HomeView: View {
                 .font(.sfx(64))
                 .foregroundStyle(Ink.ink.opacity(0.16))
                 .rotationEffect(.degrees(-6))
+                .accessibilityHidden(true)
 
             VStack(spacing: 8) {
                 Text(String(localized: "home.no.result"))
@@ -127,7 +128,7 @@ struct HomeView: View {
 
                 Text(String(localized: "home.no.result.sub"))
                     .font(.subheadline)
-                    .foregroundStyle(Ink.ink.opacity(0.55))
+                    .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
                     .multilineTextAlignment(.center)
             }
         }
@@ -144,7 +145,7 @@ struct HomeView: View {
                  ? String(localized: "recording.listening")
                  : vm.speech.partialText)
                 .font(.sfx(vm.speech.partialText.isEmpty ? 24 : 40))
-                .foregroundStyle(vm.speech.partialText.isEmpty ? Ink.ink.opacity(0.4) : Ink.ink)
+                .foregroundStyle(vm.speech.partialText.isEmpty ? Ink.ink.opacity(0.5) : Ink.ink)
                 .multilineTextAlignment(.center)
                 .minimumScaleFactor(0.5)
                 .lineLimit(2)
@@ -154,7 +155,7 @@ struct HomeView: View {
             Text(String(localized: "recording.tap.stop"))
                 .font(.system(size: 12, weight: .bold, design: .monospaced))
                 .tracking(1)
-                .foregroundStyle(Ink.vermilion)
+                .foregroundStyle(Ink.vermilionText)
         }
     }
 
@@ -166,7 +167,7 @@ struct HomeView: View {
             Text(String(localized: "recording.recognizing"))
                 .font(.system(size: 13, weight: .bold, design: .monospaced))
                 .tracking(1)
-                .foregroundStyle(Ink.ink.opacity(0.6))
+                .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
         }
     }
 

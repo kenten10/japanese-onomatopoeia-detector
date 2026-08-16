@@ -20,6 +20,8 @@ export class WebSpeechService {
   private latestText = ''
   private finished = false
   private stopping = false
+  /** start() は途中で await するため、その間に始まった呼び出しに席を譲るための世代番号。 */
+  private generation = 0
 
   constructor(private readonly callbacks: SpeechCallbacks) {}
 
@@ -29,6 +31,7 @@ export class WebSpeechService {
 
   async start(): Promise<void> {
     this.abort()
+    const generation = this.generation
     const Constructor = window.SpeechRecognition ?? window.webkitSpeechRecognition
     if (!Constructor) throw new SpeechServiceError('unsupported')
 
@@ -46,6 +49,10 @@ export class WebSpeechService {
         recognition.processLocally = false
       }
     }
+
+    // await している間に stop/abort や次の start が走っていたら、この呼び出しは捨てる。
+    // 席を譲らないと認識セッションが二重に動き、タイマーも取り残される。
+    if (generation !== this.generation) return
 
     this.recognition = recognition
     this.latestText = ''
@@ -103,6 +110,7 @@ export class WebSpeechService {
   }
 
   abort(): void {
+    this.generation += 1
     if (this.recognition && !this.finished) {
       this.finished = true
       this.recognition.abort()

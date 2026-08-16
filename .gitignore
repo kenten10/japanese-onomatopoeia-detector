@@ -1,4 +1,4 @@
-.DS_store
+.DS_Store
 
 # Xcode
 #
@@ -63,6 +63,19 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
+# Android
+android/.gradle/
+android/build/
+android/app/build/
+android/local.properties
+android/.idea/
+android/*.iml
+android/captures/
+*.apk
+*.aab
+*.keystore
+*.jks
+
 # Web / PWA
 web/node_modules/
 web/dist/
@@ -70,4 +83,6 @@ web/coverage/
 web/playwright-report/
 web/test-results/
 web/public/dict/
+web/public/licenses/
+web/public/privacy/
 web/*.tsbuildinfo

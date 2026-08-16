@@ -54,9 +54,24 @@ final class PersistenceController {
         item.id = UUID()
         item.inputText = inputText
         item.score = Int16(score)
-        item.date = Date()
+        item.date = nextTimestamp()
         try save()
         try pruneIfNeeded()
+    }
+
+    /// 直近に発行した保存時刻。同じ値が並ぶのを避けるために覚えておく。
+    private var lastIssuedDate: Date = .distantPast
+
+    /// 保存時刻を単調増加で発行する。
+    ///
+    /// `Date()` は続けて呼ぶと同じ値を返すことがある（実測で 105 回中 13 種類）。
+    /// 日付が同値だと並び替えの順序が決まらず、新しい順に並べることも、
+    /// 古い方から間引くこともできなくなる。
+    private func nextTimestamp() -> Date {
+        let now = Date()
+        let issued = now > lastIssuedDate ? now : lastIssuedDate.addingTimeInterval(0.000_001)
+        lastIssuedDate = issued
+        return issued
     }
 
     func fetchHistory() throws -> [HistoryItem] {

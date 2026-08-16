@@ -30,7 +30,7 @@ export function HomeView() {
         <span className="spinner" aria-hidden="true" />
         <strong>{t('recording.recognizing')}</strong>
       </div> : <div className="idle-content">
-        <div className="quiet-sfx">シーン…</div>
+        <div className="quiet-sfx" aria-hidden="true">シーン…</div>
         <h2>{t('home.no.result')}</h2>
         <p>{t('home.no.result.sub')}</p>
       </div>}

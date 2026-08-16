@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">オノマトペ判定</string>
+    <string name="app_title">オノマトペ判定</string>
+    <string name="app_subtitle">Onomatopoeia Detector</string>
+
+    <!-- Home -->
+    <string name="home_tab">ホーム</string>
+    <string name="home_record_button">録音する</string>
+    <string name="home_no_result">録音してみよう！</string>
+    <string name="home_no_result_sub">マイクボタンをタップして\n音声を入力してください</string>
+
+    <!-- Recording -->
+    <string name="recording_listening">聞いています...</string>
+    <string name="recording_recognizing">認識中...</string>
+    <string name="recording_tap_stop">タップして停止</string>
+
+    <!-- Result -->
+    <string name="result_title">判定結果</string>
+    <string name="result_recognized">認識したことば</string>
+    <string name="result_score_label">オノマトペ度</string>
+    <string name="result_comment_5">完璧なオノマトペです！🎉</string>
+    <string name="result_comment_4">とてもオノマトペっぽいです！✨</string>
+    <string name="result_comment_3">オノマトペっぽいです😊</string>
+    <string name="result_comment_2">あまりオノマトペではないようです</string>
+    <string name="result_comment_1">オノマトペではないようです</string>
+    <string name="result_similar_title">類似オノマトペ</string>
+    <string name="result_similar_example">使用例</string>
+    <string name="result_again">もう一度</string>
+    <string name="result_save">履歴に保存</string>
+    <string name="result_saved">保存しました</string>
+    <string name="result_close">閉じる</string>
+
+    <!-- History -->
+    <string name="history_title">判定履歴</string>
+    <string name="history_empty">履歴がありません</string>
+    <string name="history_delete">削除</string>
+    <string name="history_clear_all">すべて削除</string>
+    <string name="history_clear_confirm">すべての履歴を削除しますか？</string>
+    <string name="history_clear_yes">削除する</string>
+    <string name="history_clear_cancel">キャンセル</string>
+
+    <!-- Settings -->
+    <string name="settings_title">設定</string>
+    <string name="settings_language">表示言語</string>
+    <string name="settings_language_auto">システム設定に従う</string>
+    <string name="settings_language_ja">日本語</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_history_clear">履歴をすべて削除</string>
+    <string name="settings_version">バージョン</string>
+    <string name="settings_about">このアプリについて</string>
+    <string name="settings_about_desc">音声入力した言葉が日本語のオノマトペらしいかを1〜5段階で判定します。</string>
+    <string name="settings_privacy">プライバシーポリシー</string>
+    <string name="settings_feedback">ご意見を送る</string>
+
+    <!-- Privacy -->
+    <string name="privacy_summary">このアプリは、広告やトラッキングを行いません。収集するのは、不具合を直すために必要な情報だけです。</string>
+    <string name="privacy_audio_title">音声データ</string>
+    <string name="privacy_audio_body">マイク音声は日本語の音声認識にのみ使用します。利用可能な場合は端末上で処理し、それ以外では端末の音声認識サービスが処理することがあります。録音や認識結果を開発者のサーバーへ送信・保存せず、このアプリが録音を保存することもありません。</string>
+    <string name="privacy_storage_title">端末内に保存するデータ</string>
+    <string name="privacy_storage_body">判定履歴と表示言語の設定だけを端末内に保存します。これらのデータを第三者と共有しません。</string>
+    <string name="privacy_diagnostics_title">不具合の報告</string>
+    <string name="privacy_diagnostics_body">アプリが落ちたり処理に失敗したりしたとき、原因を直すために次の情報を送信します。エラーの内容と発生箇所、アプリのバージョン、OSとその版、端末の機種名です。音声、認識したことば、判定履歴は送信しません。氏名やメールアドレス、広告IDのような個人を識別する情報も送信しません。</string>
+    <string name="privacy_feedback_title">ご意見の送信</string>
+    <string name="privacy_feedback_body">設定画面のフォームからご意見を送れます。フォームはGoogleフォームで提供しており、送信いただいた内容はGoogleのサーバーに保存されます。送信は任意で、フォームを開かなければ何も送信されません。</string>
+    <string name="privacy_control_title">削除と権限</string>
+    <string name="privacy_control_body">判定履歴は設定画面からいつでも削除できます。マイクの権限はAndroidの設定アプリからいつでも変更できます。</string>
+
+    <!-- Permissions -->
+    <string name="permission_mic_deny">マイクへのアクセスが拒否されています。設定アプリから許可してください。</string>
+    <string name="permission_mic_open_settings">設定を開く</string>
+
+    <!-- Score accessibility -->
+    <string name="score_stars">%1$d つ星</string>
+
+    <!-- Errors -->
+    <string name="error_title">エラー</string>
+    <string name="error_ok">OK</string>
+    <string name="error_recognizer_unavailable">音声認識が利用できません。しばらくしてからもう一度お試しください。</string>
+    <string name="error_recognition_failed">音声認識に失敗しました。もう一度お試しください。</string>
+    <string name="error_persistence_load">判定履歴を読み込めませんでした。アプリを再起動してください。</string>
+    <string name="error_persistence_save">判定履歴を保存できませんでした。空き容量を確認して、もう一度お試しください。</string>
+    <string name="error_persistence_delete">判定履歴を削除できませんでした。もう一度お試しください。</string>
+</resources>

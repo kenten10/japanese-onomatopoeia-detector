@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ダークは墨色の紙。 -->
+    <color name="paper">#17150F</color>
+</resources>

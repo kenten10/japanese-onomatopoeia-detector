@@ -28,8 +28,11 @@ final class SpeechManager: NSObject {
     // MARK: Callbacks
     /// 確定テキストが得られたとき、1録音につき一度だけ呼ばれる。
     var onFinalResult: ((String) -> Void)?
-    /// 結果を得ずに録音が終了したとき（無音・エラー・キャンセル）、一度だけ呼ばれる。
+    /// 結果を得ずに録音が終了したとき（無音・キャンセル）、一度だけ呼ばれる。
     var onCancelled: (() -> Void)?
+
+    /// 認識そのものが失敗したとき、一度だけ呼ばれる。無音での終了とは区別する。
+    var onFailed: (() -> Void)?
 
     // MARK: - Auth
 
@@ -62,6 +65,10 @@ final class SpeechManager: NSObject {
             throw SpeechError.recognizerUnavailable
         }
 
+        // 途中で失敗したときにセッションやタップを掴んだままにしない
+        var didStart = false
+        defer { if !didStart { teardownAudio() } }
+
         let session = AVAudioSession.sharedInstance()
         try session.setCategory(.record, mode: .measurement, options: .duckOthers)
         try session.setActive(true)
@@ -91,7 +98,13 @@ final class SpeechManager: NSObject {
                     let isBenign = nsError.domain == "kAFAssistantErrorDomain" && nsError.code == 216
                     if !isBenign {
                         self.log.error("recognition failed: \(nsError.domain, privacy: .public) (\(nsError.code))")
-                        self.finishCancelled()
+                        // 認識途中の言葉があればそれを確定として扱い、
+                        // 何も得られていなければ黙って戻さずエラーとして伝える
+                        if self.partialText.isEmpty {
+                            self.finishFailed()
+                        } else {
+                            self.finish(with: self.partialText)
+                        }
                     }
                 }
             }
@@ -108,11 +121,14 @@ final class SpeechManager: NSObject {
         }
 
         inputNode.removeTap(onBus: 0)
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { [weak self] buffer, _ in
-            self?.recognitionRequest?.append(buffer)
+        // タップはオーディオスレッドで呼ばれる。MainActor 隔離のプロパティを触らずに済むよう、
+        // リクエストはここで捕まえておく（append 自体はスレッドセーフ）。
+        inputNode.installTap(onBus: 0, bufferSize: 1024, format: format) { buffer, _ in
+            request.append(buffer)
         }
 
         try audioEngine.start()
+        didStart = true
     }
 
     func startRecordingWithAutoStop(maxSeconds: Double = 10) throws {
@@ -141,7 +157,8 @@ final class SpeechManager: NSObject {
         guard !hasFinished else { return }
         hasFinished = true
         teardownAudio()
-        onFinalResult?(SpeechTextConverter.hiraganaText(from: text))
+        // text は認識結果を受け取った時点でひらがな化済みのため、ここでは変換し直さない
+        onFinalResult?(text)
     }
 
     private func finishCancelled() {
@@ -149,6 +166,14 @@ final class SpeechManager: NSObject {
         hasFinished = true
         teardownAudio()
         onCancelled?()
+    }
+
+    /// 認識そのものが失敗したとき。無音での終了と区別してユーザーに伝える。
+    private func finishFailed() {
+        guard !hasFinished else { return }
+        hasFinished = true
+        teardownAudio()
+        onFailed?()
     }
 
     // MARK: - Teardown（冪等・コールバックを発火しない）
@@ -189,6 +214,12 @@ enum SpeechTextConverter {
     }
 
     static func hiraganaText(from text: String) -> String {
+        // かなだけの文字列は読み推定に通さない。トークナイザのラテン転写を経由すると
+        // 長音符が母音へ置き換わり、「どーん」が「どおん」になってしまうため。
+        guard containsKanji(text) else {
+            return applyOnomatopoeiaLongSoundCorrections(katakanaToHiragana(text))
+        }
+
         let nsText = text as NSString
         let tokenizer = CFStringTokenizerCreate(
             kCFAllocatorDefault,
@@ -242,6 +273,14 @@ enum SpeechTextConverter {
         return (mutable as String).filter { !$0.isWhitespace }
     }
 
+    private static func containsKanji(_ text: String) -> Bool {
+        text.unicodeScalars.contains { scalar in
+            (0x4E00...0x9FFF).contains(scalar.value)
+                || (0x3400...0x4DBF).contains(scalar.value)
+                || (0xF900...0xFAFF).contains(scalar.value)
+        }
+    }
+
     private static func isKanaText(_ text: String) -> Bool {
         var hasKana = false
         for scalar in text.unicodeScalars {
@@ -257,10 +296,21 @@ enum SpeechTextConverter {
         return hasKana
     }
 
+    /// カタカナをひらがなへ。長音符（ー）は母音へ展開せずそのまま残す。
+    ///
+    /// `CFStringTransform` の Katakana-Hiragana は長音符を直前の母音に置き換えるため
+    /// （ドーン → どおん）、オノマトペの表記が崩れる。コードポイント演算に揃えている。
     private static func katakanaToHiragana(_ text: String) -> String {
-        let mutable = NSMutableString(string: text)
-        CFStringTransform(mutable as CFMutableString, nil, "Katakana-Hiragana" as CFString, false)
-        return mutable as String
+        var result = String.UnicodeScalarView()
+        for scalar in text.unicodeScalars {
+            if scalar.value >= 0x30A1 && scalar.value <= 0x30F6,
+               let converted = UnicodeScalar(scalar.value - 0x60) {
+                result.append(converted)
+            } else {
+                result.append(scalar)
+            }
+        }
+        return String(result)
     }
 
     private static func applyOnomatopoeiaLongSoundCorrections(_ text: String) -> String {

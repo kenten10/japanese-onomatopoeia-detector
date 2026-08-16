@@ -6,6 +6,16 @@ struct SettingsView: View {
 
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
 
+    /// ご意見フォーム。設定していなければ導線を出さない。
+    /// URL は `shared/feedback-form-url.txt` を単一の正とし、辞書と同じくバンドルへ同梱している。
+    /// ビルド設定に持たせると 3 実装で二重管理になり、xcconfig では `//` がコメント扱いで URL が壊れる。
+    private static var feedbackFormURL: URL? {
+        guard let path = Bundle.main.url(forResource: "feedback-form-url", withExtension: "txt"),
+              let contents = try? String(contentsOf: path, encoding: .utf8) else { return nil }
+        let value = contents.trimmingCharacters(in: .whitespacesAndNewlines)
+        return value.isEmpty ? nil : URL(string: value)
+    }
+
     var body: some View {
         @Bindable var vm = vm
         NavigationStack {
@@ -18,7 +28,7 @@ struct SettingsView: View {
                         }
                     }
                     .pickerStyle(.menu)
-                    .tint(Ink.vermilion)
+                    .tint(Ink.vermilionText)
                     .onChange(of: vm.appLanguage) { _, newValue in
                         vm.setLanguage(newValue)
                     }
@@ -33,7 +43,7 @@ struct SettingsView: View {
                     } label: {
                         Label(String(localized: "settings.history.clear"), systemImage: "trash")
                     }
-                    .tint(Ink.vermilion)
+                    .tint(Ink.vermilionText)
                 } header: {
                     sectionHeader("history.title")
                 }
@@ -46,7 +56,7 @@ struct SettingsView: View {
                         Spacer()
                         Text(appVersion)
                             .font(.system(.body, design: .monospaced))
-                            .foregroundStyle(Ink.ink.opacity(0.5))
+                            .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
                     }
 
                     VStack(alignment: .leading, spacing: 6) {
@@ -55,9 +65,16 @@ struct SettingsView: View {
                             .foregroundStyle(Ink.ink)
                         Text(String(localized: "settings.about.desc"))
                             .font(.caption)
-                            .foregroundStyle(Ink.ink.opacity(0.6))
+                            .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
                     }
                     .padding(.vertical, 4)
+
+                    if let feedbackURL = Self.feedbackFormURL {
+                        Link(destination: feedbackURL) {
+                            Label(String(localized: "settings.feedback"), systemImage: "bubble.left.and.text.bubble.right")
+                        }
+                        .tint(Ink.ink)
+                    }
 
                     NavigationLink {
                         PrivacyPolicyView()
@@ -88,6 +105,6 @@ struct SettingsView: View {
         Text(String(localized: key).uppercased())
             .font(.system(size: 11, weight: .bold, design: .monospaced))
             .tracking(1.5)
-            .foregroundStyle(Ink.ink.opacity(0.5))
+            .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
     }
 }

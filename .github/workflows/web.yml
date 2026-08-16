@@ -2,9 +2,16 @@ name: Web PWA
 
 on:
   push:
-    paths: ['web/**', '.github/workflows/web.yml']
+    paths:
+      - 'web/**'
+      # 判定辞書は web からも直接 import している
+      - 'shared/onomatopoeia_dict.json'
+      - '.github/workflows/web.yml'
   pull_request:
-    paths: ['web/**', '.github/workflows/web.yml']
+    paths:
+      - 'web/**'
+      - 'shared/onomatopoeia_dict.json'
+      - '.github/workflows/web.yml'
 
 jobs:
   test:

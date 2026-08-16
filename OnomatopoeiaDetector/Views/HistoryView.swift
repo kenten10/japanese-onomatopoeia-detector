@@ -23,7 +23,7 @@ struct HistoryView: View {
                             showClearConfirm = true
                         }
                         .font(.system(size: 13, weight: .bold))
-                        .tint(Ink.vermilion)
+                        .tint(Ink.vermilionText)
                     }
                 }
             }
@@ -49,9 +49,10 @@ struct HistoryView: View {
                 .font(.sfx(52))
                 .foregroundStyle(Ink.ink.opacity(0.16))
                 .rotationEffect(.degrees(-5))
+                .accessibilityHidden(true)
             Text(String(localized: "history.empty"))
                 .font(.mangaHeading(16))
-                .foregroundStyle(Ink.ink.opacity(0.5))
+                .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
         }
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
@@ -108,7 +109,7 @@ struct HistoryRow: View {
                     }
                     Text(item.date.formatted(date: .abbreviated, time: .shortened))
                         .font(.system(size: 11, weight: .medium, design: .monospaced))
-                        .foregroundStyle(Ink.ink.opacity(0.45))
+                        .foregroundStyle(Ink.ink.opacity(Ink.secondaryOpacity))
                         .padding(.leading, 6)
                 }
             }

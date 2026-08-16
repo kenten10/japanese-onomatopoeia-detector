@@ -20,7 +20,7 @@ struct ContentView: View {
                     Label(String(localized: "settings.title"), systemImage: "gearshape.fill")
                 }
         }
-        .tint(Ink.vermilion)
+        .tint(Ink.vermilionText)
         .alert(
             String(localized: "error.title"),
             isPresented: Binding(

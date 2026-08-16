@@ -1,4 +1,7 @@
+import { readFileSync } from 'node:fs'
 import { expect, test, type Page } from '@playwright/test'
+import { securityHeaders } from '../security-headers'
+import { messages } from '../src/i18n/messages'
 
 async function installFakeSpeech(page: Page, mode: 'automatic' | 'on-stop' | 'denied' | 'standalone-error' = 'automatic') {
   await page.addInitScript((selectedMode) => {
@@ -35,14 +38,23 @@ test('serves the PWA with restrictive security headers', async ({ request }) => 
   const response = await request.get('/')
   expect(response.ok()).toBe(true)
 
+  // preview の応答が定義どおりであること
   const headers = response.headers()
-  expect(headers['content-security-policy']).toContain("default-src 'self'")
-  expect(headers['content-security-policy']).toContain("frame-ancestors 'none'")
-  expect(headers['permissions-policy']).toContain('microphone=(self)')
-  expect(headers['referrer-policy']).toBe('no-referrer')
-  expect(headers['strict-transport-security']).toBe('max-age=31536000')
-  expect(headers['x-content-type-options']).toBe('nosniff')
-  expect(headers['x-frame-options']).toBe('DENY')
+  for (const [name, value] of Object.entries(securityHeaders)) {
+    expect(headers[name.toLowerCase()], name).toBe(value)
+  }
+})
+
+test('emits a _headers file that matches the served headers', async () => {
+  // ホスティングが読む _headers は preview と同じ定義から作る。
+  // 片方だけ直しても気付けるよう、両方を突き合わせる。
+  const emitted = readFileSync('dist/_headers', 'utf8')
+  for (const [name, value] of Object.entries(securityHeaders)) {
+    expect(emitted, name).toContain(`${name}: ${value}`)
+  }
+  // Service Worker はホスティングのキャッシュに載せない
+  expect(emitted).toContain('/sw.js')
+  expect(emitted).toContain('Cache-Control: no-cache')
 })
 
 test('shows the three-tab app and changes language', async ({ page }) => {
@@ -151,4 +163,42 @@ test('matches the home screen visual baseline in light and dark mode', async ({ 
   await expect(page).toHaveScreenshot('home-light.png', { animations: 'disabled', maxDiffPixelRatio: 0.04 })
   await page.emulateMedia({ colorScheme: 'dark', reducedMotion: 'reduce' })
   await expect(page).toHaveScreenshot('home-dark.png', { animations: 'disabled', maxDiffPixelRatio: 0.04 })
+})
+
+test('publishes a standalone privacy policy in both languages', async ({ page, request }) => {
+  // ストアの審査や配布ページからは、アプリの外から読める URL を求められる
+  for (const [path, heading] of [['/privacy/ja.html', 'プライバシーポリシー'], ['/privacy/en.html', 'Privacy Policy']]) {
+    const response = await request.get(path)
+    expect(response.ok(), path).toBe(true)
+    const html = await response.text()
+    expect(html).toContain(heading)
+  }
+
+  // アプリ内の文言と食い違っていないこと。書き写さず翻訳そのものと突き合わせる
+  const inApp = await request.get('/privacy/ja.html').then((response) => response.text())
+  expect(inApp).toContain(messages.ja['privacy.summary'])
+  expect(inApp).toContain(messages.ja['privacy.diagnostics.body'])
+  expect(inApp).toContain(messages.ja['privacy.feedback.body'])
+  expect(inApp).toContain(messages.ja['privacy.control.body'])
+
+  // Service Worker のフォールバックでアプリ画面に差し替わらないこと
+  await page.goto('/privacy/ja.html')
+  await expect(page.locator('h1')).toHaveText('プライバシーポリシー')
+})
+
+test('shows the feedback link only when a form URL is configured', async ({ page }) => {
+  // URL は shared/feedback-form-url.txt から埋め込む。空のままなら導線を出さない。
+  const configured = readFileSync('../shared/feedback-form-url.txt', 'utf8').trim()
+
+  await page.goto('/')
+  await page.getByRole('button', { name: messages.en['settings.title'] }).click()
+  const link = page.getByRole('link', { name: messages.en['settings.feedback'] })
+
+  if (configured) {
+    await expect(link).toHaveAttribute('href', configured)
+    // 外部サイトを開くので、開いた先からこのページを触れないようにする
+    await expect(link).toHaveAttribute('rel', /noopener/)
+  } else {
+    await expect(link).toHaveCount(0)
+  }
 })

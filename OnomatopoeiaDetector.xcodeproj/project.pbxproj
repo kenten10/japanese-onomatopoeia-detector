@@ -19,21 +19,27 @@
 		A007 /* AppViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = B007 /* AppViewModel.swift */; };
 		A008 /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = B008 /* Models.swift */; };
 		A009 /* PersistenceController.swift in Sources */ = {isa = PBXBuildFile; fileRef = B009 /* PersistenceController.swift */; };
+		A031 /* ErrorReporting.swift in Sources */ = {isa = PBXBuildFile; fileRef = B031 /* ErrorReporting.swift */; };
 		A010 /* HistoryEntity.swift in Sources */ = {isa = PBXBuildFile; fileRef = B010 /* HistoryEntity.swift */; };
 		A011 /* OnoEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = B011 /* OnoEngine.swift */; };
 		A012 /* SpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = B012 /* SpeechManager.swift */; };
 		A013 /* onomatopoeia_dict.json in Resources */ = {isa = PBXBuildFile; fileRef = B013 /* onomatopoeia_dict.json */; };
+		A027 /* feedback-form-url.txt in Resources */ = {isa = PBXBuildFile; fileRef = B027 /* feedback-form-url.txt */; };
 		A014 /* ja in Resources */ = {isa = PBXBuildFile; fileRef = B014 /* ja */; };
 		A015 /* en in Resources */ = {isa = PBXBuildFile; fileRef = B015 /* en */; };
+		A025 /* ja in Resources */ = {isa = PBXBuildFile; fileRef = B025 /* ja */; };
+		A026 /* en in Resources */ = {isa = PBXBuildFile; fileRef = B026 /* en */; };
 		A016 /* OnomatopoeiaDetector.xcdatamodeld in Resources */ = {isa = PBXBuildFile; fileRef = B016 /* OnomatopoeiaDetector.xcdatamodeld */; };
 		A017 /* Speech.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B017 /* Speech.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A018 /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B018 /* AVFoundation.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A019 /* NaturalLanguage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B019 /* NaturalLanguage.framework */; settings = {ATTRIBUTES = (Required, ); }; };
+		A030 /* Sentry in Frameworks */ = {isa = PBXBuildFile; productRef = PD01 /* Sentry */; };
 		A020 /* CoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B020 /* CoreData.framework */; settings = {ATTRIBUTES = (Required, ); }; };
 		A021 /* Theme.swift in Sources */ = {isa = PBXBuildFile; fileRef = B021 /* Theme.swift */; };
 		AT01 /* SpeechTextConverterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT01 /* SpeechTextConverterTests.swift */; };
 		AT02 /* OnoEngineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT02 /* OnoEngineTests.swift */; };
 		AT03 /* PersistenceControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT03 /* PersistenceControllerTests.swift */; };
+		AT05 /* AppViewModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT05 /* AppViewModelTests.swift */; };
 		AT04 /* AppLanguageTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = BT04 /* AppLanguageTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -60,12 +66,16 @@
 		B007 /* AppViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModel.swift; sourceTree = "<group>"; };
 		B008 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 		B009 /* PersistenceController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceController.swift; sourceTree = "<group>"; };
+		B031 /* ErrorReporting.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ErrorReporting.swift; sourceTree = "<group>"; };
 		B010 /* HistoryEntity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoryEntity.swift; sourceTree = "<group>"; };
 		B011 /* OnoEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnoEngine.swift; sourceTree = "<group>"; };
 		B012 /* SpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechManager.swift; sourceTree = "<group>"; };
-		B013 /* onomatopoeia_dict.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = onomatopoeia_dict.json; sourceTree = "<group>"; };
+		B013 /* onomatopoeia_dict.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = onomatopoeia_dict.json; path = shared/onomatopoeia_dict.json; sourceTree = SOURCE_ROOT; };
+		B027 /* feedback-form-url.txt */ = {isa = PBXFileReference; lastKnownFileType = text; name = "feedback-form-url.txt"; path = "shared/feedback-form-url.txt"; sourceTree = SOURCE_ROOT; };
 		B014 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/Localizable.strings; sourceTree = "<group>"; };
 		B015 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		B025 /* ja */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ja; path = ja.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		B026 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		B016 /* OnomatopoeiaDetector.xcdatamodeld */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = OnomatopoeiaDetector.xcdatamodeld; sourceTree = "<group>"; };
 		B017 /* Speech.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Speech.framework; path = System/Library/Frameworks/Speech.framework; sourceTree = SDKROOT; };
 		B018 /* AVFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AVFoundation.framework; path = System/Library/Frameworks/AVFoundation.framework; sourceTree = SDKROOT; };
@@ -75,6 +85,7 @@
 		BT01 /* SpeechTextConverterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeechTextConverterTests.swift; sourceTree = "<group>"; };
 		BT02 /* OnoEngineTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnoEngineTests.swift; sourceTree = "<group>"; };
 		BT03 /* PersistenceControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PersistenceControllerTests.swift; sourceTree = "<group>"; };
+		BT05 /* AppViewModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppViewModelTests.swift; sourceTree = "<group>"; };
 		BT04 /* AppLanguageTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppLanguageTests.swift; sourceTree = "<group>"; };
 		C001 /* OnomatopoeiaDetector.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = OnomatopoeiaDetector.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C002 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -89,6 +100,7 @@
 				A017 /* Speech.framework in Frameworks */,
 				A018 /* AVFoundation.framework in Frameworks */,
 				A019 /* NaturalLanguage.framework in Frameworks */,
+				A030 /* Sentry in Frameworks */,
 				A020 /* CoreData.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -157,6 +169,7 @@
 			children = (
 				B008 /* Models.swift */,
 				B009 /* PersistenceController.swift */,
+				B031 /* ErrorReporting.swift */,
 				B010 /* HistoryEntity.swift */,
 				B016 /* OnomatopoeiaDetector.xcdatamodeld */,
 			);
@@ -176,6 +189,7 @@
 			isa = PBXGroup;
 			children = (
 				B013 /* onomatopoeia_dict.json */,
+				B027 /* feedback-form-url.txt */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -185,6 +199,8 @@
 			children = (
 				B014 /* ja */,
 				B015 /* en */,
+				B025 /* ja */,
+				B026 /* en */,
 			);
 			path = Localizable;
 			sourceTree = "<group>";
@@ -206,6 +222,7 @@
 				BT01 /* SpeechTextConverterTests.swift */,
 				BT02 /* OnoEngineTests.swift */,
 				BT03 /* PersistenceControllerTests.swift */,
+				BT05 /* AppViewModelTests.swift */,
 				BT04 /* AppLanguageTests.swift */,
 			);
 			path = OnomatopoeiaDetectorTests;
@@ -234,6 +251,9 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			packageProductDependencies = (
+				PD01 /* Sentry */,
 			);
 			name = OnomatopoeiaDetector;
 			productName = OnomatopoeiaDetector;
@@ -287,6 +307,9 @@
 				Base,
 			);
 			mainGroup = E000;
+			packageReferences = (
+				PK01 /* XCRemoteSwiftPackageReference "sentry-cocoa" */,
+			);
 			productRefGroup = F001 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -305,8 +328,11 @@
 				A022 /* Assets.xcassets in Resources */,
 				A023 /* PrivacyInfo.xcprivacy in Resources */,
 				A013 /* onomatopoeia_dict.json in Resources */,
+				A027 /* feedback-form-url.txt in Resources */,
 				A014 /* ja in Resources */,
 				A015 /* en in Resources */,
+				A025 /* ja in Resources */,
+				A026 /* en in Resources */,
 				A016 /* OnomatopoeiaDetector.xcdatamodeld in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -336,6 +362,7 @@
 				A007 /* AppViewModel.swift in Sources */,
 				A008 /* Models.swift in Sources */,
 				A009 /* PersistenceController.swift in Sources */,
+				A031 /* ErrorReporting.swift in Sources */,
 				A010 /* HistoryEntity.swift in Sources */,
 				A011 /* OnoEngine.swift in Sources */,
 				A012 /* SpeechManager.swift in Sources */,
@@ -349,6 +376,7 @@
 				AT01 /* SpeechTextConverterTests.swift in Sources */,
 				AT02 /* OnoEngineTests.swift in Sources */,
 				AT03 /* PersistenceControllerTests.swift in Sources */,
+				AT05 /* AppViewModelTests.swift in Sources */,
 				AT04 /* AppLanguageTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,6 +523,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kensukeyoshida.OnomatopoeiaDetector;
+				SENTRY_DSN = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -518,6 +547,7 @@
 				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kensukeyoshida.OnomatopoeiaDetector;
+				SENTRY_DSN = "";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -605,6 +635,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		PK01 /* XCRemoteSwiftPackageReference "sentry-cocoa" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/getsentry/sentry-cocoa";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 9.25.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		PD01 /* Sentry */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = PK01 /* XCRemoteSwiftPackageReference "sentry-cocoa" */;
+			productName = Sentry;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = P001 /* Project object */;
 }

@@ -13,4 +13,4 @@ export const CloseIcon = (props: Props) => <svg {...base} {...props} fill="none"
 export const BookmarkIcon = (props: Props) => <svg {...base} {...props}><path d="M5 2h14v21l-7-4-7 4V2Z" /></svg>
 export const TrashIcon = (props: Props) => <svg {...base} {...props}><path d="M8 2h8l1 2h5v2H2V4h5l1-2Zm-3 6h14l-1 14H6L5 8Zm4 2v9h2v-9H9Zm4 0v9h2v-9h-2Z" /></svg>
 export const ShieldIcon = (props: Props) => <svg {...base} {...props}><path d="M12 1 3 5v6c0 5.8 3.8 10.7 9 12 5.2-1.3 9-6.2 9-12V5l-9-4Zm0 3.2 6 2.7V11c0 4.1-2.4 7.8-6 9-3.6-1.2-6-4.9-6-9V6.9l6-2.7Z" /></svg>
-
+export const ChatIcon = (props: Props) => <svg {...base} {...props}><path d="M4 3h16a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2H8l-6 5V5a2 2 0 0 1 2-2Zm0 2v11.2L7.2 15H20V5H4Z" /></svg>

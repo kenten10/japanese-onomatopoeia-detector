@@ -10,11 +10,28 @@ actor OnoEngine {
 
     static let shared = OnoEngine()
 
-    private let dictionary: [OnomatopoeiaEntry]
+    /// 照合用に見出し語を正規化して保持したエントリ。
+    ///
+    /// 辞書には `ドキドキ` のようなカタカナ表記の見出しがあり、入力側だけを正規化すると
+    /// 一致しない。辞書側も同じ正規化を通してから比較する。
+    ///
+    /// `reading` は `fuwafuwa` のようなローマ字表記で、入力は常にひらがなへ揃えられる。
+    /// 照合には使えないためここでは持たない（読みは結果表示にだけ使う）。
+    private struct NormalizedEntry {
+        let entry: OnomatopoeiaEntry
+        let word: String
+    }
+
+    /// 辞書と部分一致で照合する最小の文字数。
+    private static let minMatchLength = 2
+
+    private let normalizedDictionary: [NormalizedEntry]
     private static let log = Logger(subsystem: "OnomatopoeiaDetector", category: "OnoEngine")
 
     private init() {
-        dictionary = Self.loadDictionary()
+        normalizedDictionary = Self.loadDictionary().map {
+            NormalizedEntry(entry: $0, word: Self.normalize($0.word))
+        }
     }
 
     private static func loadDictionary() -> [OnomatopoeiaEntry] {
@@ -31,7 +48,7 @@ actor OnoEngine {
     // MARK: - Public API
 
     func evaluate(text: String) -> EvaluationResult {
-        let normalized = normalize(text)
+        let normalized = Self.normalize(text)
 
         if isDictionaryExactMatch(normalized) {
             return EvaluationResult(
@@ -69,7 +86,7 @@ actor OnoEngine {
     // MARK: - Dictionary Score
 
     private func isDictionaryExactMatch(_ text: String) -> Bool {
-        dictionary.contains { $0.word == text || $0.reading == text }
+        normalizedDictionary.contains { $0.word == text }
     }
 
     private func dictionaryScore(_ text: String) -> Double {
@@ -77,18 +94,16 @@ actor OnoEngine {
         if isDictionaryExactMatch(text) {
             return 1.0
         }
+        // 1文字以下は語として照合しない。空文字はあらゆる見出しの部分文字列になり、
+        // 「ん」「ー」のような1文字も辞書のどこかに必ず含まれてしまうため。
+        guard text.count >= Self.minMatchLength else {
+            return 0.0
+        }
         // 部分一致
-        let partials = dictionary.filter {
+        let partials = normalizedDictionary.filter {
             text.contains($0.word) || $0.word.contains(text)
         }
-        if !partials.isEmpty {
-            return 0.7
-        }
-        // 読みレベルの部分一致
-        let readingPartials = dictionary.filter {
-            text.contains($0.reading) || $0.reading.contains(text)
-        }
-        return readingPartials.isEmpty ? 0.0 : 0.4
+        return partials.isEmpty ? 0.0 : 0.7
     }
 
     // MARK: - Phonetic Pattern Score
@@ -146,33 +161,54 @@ actor OnoEngine {
 
     // MARK: - Morpheme Score
 
+    /// 助詞を含めば 0、動詞を含めば 0.3、どちらも無い独立語なら 1.0。
+    ///
+    /// `NLTagger` は日本語の単語分割はできるが、品詞（`.lexicalClass`）は
+    /// かな・漢字を問わず `.otherWord` しか返さない。そのため分割だけを借り、
+    /// 語の判定は自前の一覧で行う。PWA 版・Android 版が使う kuromoji ほどの
+    /// 精度は無いが、「オノマトペ＋助詞／する」という頻出形は拾える。
     private func morphemeScore(_ text: String) -> Double {
-        let tagger = NLTagger(tagSchemes: [.lexicalClass])
-        tagger.string = text
-        var hasParticle = false
-        var hasVerb = false
-
-        tagger.enumerateTags(in: text.startIndex..<text.endIndex,
-                             unit: .word,
-                             scheme: .lexicalClass) { tag, _ in
-            if tag == .particle { hasParticle = true }
-            if tag == .verb     { hasVerb = true }
-            return true
-        }
-
-        if hasParticle { return 0.0 }
-        if hasVerb     { return 0.3 }
+        let tokens = words(in: text)
+        if tokens.contains(where: { Self.particles.contains($0) }) { return 0.0 }
+        if tokens.contains(where: { Self.verbForms.contains($0) }) { return 0.3 }
         return 1.0
     }
+
+    private func words(in text: String) -> [String] {
+        let tagger = NLTagger(tagSchemes: [.lexicalClass])
+        tagger.string = text
+        var tokens: [String] = []
+        tagger.enumerateTags(in: text.startIndex..<text.endIndex,
+                             unit: .word,
+                             scheme: .lexicalClass) { _, range in
+            tokens.append(String(text[range]))
+            return true
+        }
+        return tokens
+    }
+
+    /// 単独の語として現れたら助詞とみなすもの。
+    private static let particles: Set<String> = [
+        "を", "が", "は", "に", "へ", "と", "で", "の", "も", "や",
+        "から", "まで", "より", "など", "ね", "よ", "か", "ば", "し"
+    ]
+
+    /// オノマトペに続きやすい動詞と、その主な活用形。
+    private static let verbForms: Set<String> = [
+        "する", "した", "して", "します", "しない", "される", "させる",
+        "なる", "なった", "なって", "ある", "あった", "いる", "いた",
+        "くる", "きた", "いく", "いった", "みる", "みた"
+    ]
 
     // MARK: - Similarity Search
 
     func findSimilar(to text: String, top k: Int) -> [SimilarEntry] {
-        dictionary
-            .map { SimilarEntry(entry: $0, similarity: similarity(text, $0.word)) }
-            .sorted { $0.similarity > $1.similarity }
-            .prefix(k)
-            .map { $0 }
+        Array(
+            normalizedDictionary
+                .map { SimilarEntry(entry: $0.entry, similarity: similarity(text, $0.word)) }
+                .sorted { $0.similarity > $1.similarity }
+                .prefix(k)
+        )
     }
 
     /// 複合類似度: レーベンシュタイン(60%) + 文字集合の重なり(40%)
@@ -212,7 +248,7 @@ actor OnoEngine {
     // MARK: - Helpers
 
     /// カタカナ→ひらがな正規化＋空白・記号除去
-    private func normalize(_ text: String) -> String {
+    static func normalize(_ text: String) -> String {
         var result = ""
         for c in text.unicodeScalars {
             let v = c.value

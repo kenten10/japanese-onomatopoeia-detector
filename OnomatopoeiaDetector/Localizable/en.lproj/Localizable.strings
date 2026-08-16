@@ -5,8 +5,6 @@
 /* Home */
 "home.tab" = "Home";
 "home.record.button" = "Record";
-"home.record.hint" = "Tap to speak";
-"home.last.result" = "Latest Result";
 "home.no.result" = "Say a Japanese sound word";
 "home.no.result.sub" = "Tap the mic and try one —\nlike ふわふわ or きらきら";
 
@@ -25,7 +23,6 @@
 "result.comment.2" = "A little onomatopoeic";
 "result.comment.1" = "Not onomatopoeia yet — try another!";
 "result.similar.title" = "Similar Onomatopoeia";
-"result.similar.meaning" = "Meaning";
 "result.similar.example" = "Example";
 "result.again" = "Try Again";
 "result.save" = "Save to History";
@@ -51,24 +48,24 @@
 "settings.about" = "About";
 "settings.about.desc" = "Rate how onomatopoeic your spoken Japanese is, on a scale of 1 to 5.";
 "settings.privacy" = "Privacy Policy";
+"settings.feedback" = "Send Feedback";
 
 /* Privacy */
-"privacy.summary" = "This app does not collect personal or usage data, serve advertising, or track you.";
+"privacy.summary" = "This app does not serve advertising or track you. The only data collected is what is needed to fix problems.";
 "privacy.audio.title" = "Audio Data";
 "privacy.audio.body" = "Microphone audio is used only to recognize spoken Japanese. Recognition runs on your device, and neither recordings nor recognized text are sent to the developer's servers. Recordings are not saved.";
 "privacy.storage.title" = "Data Stored on Your Device";
 "privacy.storage.body" = "Only saved evaluation history and your display language preference are stored on your device. This data is not shared with third parties.";
+"privacy.diagnostics.title" = "Problem Reports";
+"privacy.diagnostics.body" = "When the app crashes or an operation fails, the following is sent so the cause can be fixed: the error and where it happened, the app version, the OS and its version, and the device model. Audio, recognized words, and saved history are never sent. Neither is anything that identifies you, such as a name, email address, or advertising ID.";
+"privacy.feedback.title" = "Sending Feedback";
+"privacy.feedback.body" = "You can send feedback from the form in Settings. The form is hosted on Google Forms, and what you submit is stored on Google servers. Sending is optional — nothing is submitted unless you open the form and send it.";
 "privacy.control.title" = "Deletion and Permissions";
 "privacy.control.body" = "You can delete evaluation history from Settings at any time. You can change microphone and speech recognition access at any time in the iOS Settings app.";
 
 /* Permissions */
-"permission.mic.title" = "Microphone Access";
-"permission.mic.message" = "Microphone is used to record your voice and evaluate onomatopoeia";
 "permission.mic.deny" = "Microphone access is off. Turn it on in Settings to record.";
 "permission.mic.open.settings" = "Open Settings";
-"permission.denied.title" = "Permission Required to Record";
-"permission.speech.title" = "Speech Recognition";
-"permission.speech.message" = "Used to convert your recorded voice to text";
 
 /* Score accessibility */
 "score.stars" = "%d stars";
@@ -77,6 +74,7 @@
 "error.title" = "Error";
 "error.ok" = "OK";
 "error.recognizer.unavailable" = "Speech recognition is unavailable. Please try again in a moment.";
+"error.recognition.failed" = "Speech recognition failed. Please try again.";
 "error.persistence.load" = "Your history could not be loaded. Please restart the app.";
 "error.persistence.save" = "Your history could not be saved. Check available storage and try again.";
 "error.persistence.delete" = "Your history could not be deleted. Please try again.";

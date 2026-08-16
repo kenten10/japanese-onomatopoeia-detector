@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- App -->
+    <string name="app_name">Onomatopoeia Detector</string>
+    <string name="app_title">Onomatopoeia Detector</string>
+    <string name="app_subtitle">オノマトペ判定</string>
+
+    <!-- Home -->
+    <string name="home_tab">Home</string>
+    <string name="home_record_button">Record</string>
+    <string name="home_no_result">Say a Japanese sound word</string>
+    <string name="home_no_result_sub">Tap the mic and try one —\nlike ふわふわ or きらきら</string>
+
+    <!-- Recording -->
+    <string name="recording_listening">Listening…</string>
+    <string name="recording_recognizing">Recognizing…</string>
+    <string name="recording_tap_stop">Tap to stop</string>
+
+    <!-- Result -->
+    <string name="result_title">Result</string>
+    <string name="result_recognized">You said</string>
+    <string name="result_score_label">Onomatopoeia Score</string>
+    <string name="result_comment_5">Perfect onomatopoeia! 🎉</string>
+    <string name="result_comment_4">Very onomatopoeic! ✨</string>
+    <string name="result_comment_3">Nicely onomatopoeic 😊</string>
+    <string name="result_comment_2">A little onomatopoeic</string>
+    <string name="result_comment_1">Not onomatopoeia yet — try another!</string>
+    <string name="result_similar_title">Similar Onomatopoeia</string>
+    <string name="result_similar_example">Example</string>
+    <string name="result_again">Try Again</string>
+    <string name="result_save">Save to History</string>
+    <string name="result_saved">Saved!</string>
+    <string name="result_close">Close</string>
+
+    <!-- History -->
+    <string name="history_title">History</string>
+    <string name="history_empty">No saved results yet</string>
+    <string name="history_delete">Delete</string>
+    <string name="history_clear_all">Clear All</string>
+    <string name="history_clear_confirm">Delete all history?</string>
+    <string name="history_clear_yes">Delete</string>
+    <string name="history_clear_cancel">Cancel</string>
+
+    <!-- Settings -->
+    <string name="settings_title">Settings</string>
+    <string name="settings_language">Display Language</string>
+    <string name="settings_language_auto">Follow System</string>
+    <string name="settings_language_ja">日本語</string>
+    <string name="settings_language_en">English</string>
+    <string name="settings_history_clear">Clear All History</string>
+    <string name="settings_version">Version</string>
+    <string name="settings_about">About</string>
+    <string name="settings_about_desc">Rate how onomatopoeic your spoken Japanese is, on a scale of 1 to 5.</string>
+    <string name="settings_privacy">Privacy Policy</string>
+    <string name="settings_feedback">Send Feedback</string>
+
+    <!-- Privacy -->
+    <string name="privacy_summary">This app does not serve advertising or track you. The only data collected is what is needed to fix problems.</string>
+    <string name="privacy_audio_title">Audio Data</string>
+    <string name="privacy_audio_body">Microphone audio is used only to recognize spoken Japanese. On-device recognition is preferred when available; otherwise your device\'s speech recognition service may process it. Neither recordings nor recognized text are sent to or stored on the developer\'s servers. Recordings are not saved by this app.</string>
+    <string name="privacy_storage_title">Data Stored on Your Device</string>
+    <string name="privacy_storage_body">Only saved evaluation history and your display language preference are stored on your device. This data is not shared with third parties.</string>
+    <string name="privacy_diagnostics_title">Problem Reports</string>
+    <string name="privacy_diagnostics_body">When the app crashes or an operation fails, the following is sent so the cause can be fixed: the error and where it happened, the app version, the OS and its version, and the device model. Audio, recognized words, and saved history are never sent. Neither is anything that identifies you, such as a name, email address, or advertising ID.</string>
+    <string name="privacy_feedback_title">Sending Feedback</string>
+    <string name="privacy_feedback_body">You can send feedback from the form in Settings. The form is hosted on Google Forms, and what you submit is stored on Google servers. Sending is optional — nothing is submitted unless you open the form and send it.</string>
+    <string name="privacy_control_title">Deletion and Permissions</string>
+    <string name="privacy_control_body">You can delete evaluation history from Settings at any time. You can change microphone access at any time in the Android Settings app.</string>
+
+    <!-- Permissions -->
+    <string name="permission_mic_deny">Microphone access is off. Turn it on in Settings to record.</string>
+    <string name="permission_mic_open_settings">Open Settings</string>
+
+    <!-- Score accessibility -->
+    <string name="score_stars">%1$d stars</string>
+
+    <!-- Errors -->
+    <string name="error_title">Error</string>
+    <string name="error_ok">OK</string>
+    <string name="error_recognizer_unavailable">Speech recognition is unavailable. Please try again in a moment.</string>
+    <string name="error_recognition_failed">Speech recognition failed. Please try again.</string>
+    <string name="error_persistence_load">Your history could not be loaded. Please restart the app.</string>
+    <string name="error_persistence_save">Your history could not be saved. Check available storage and try again.</string>
+    <string name="error_persistence_delete">Your history could not be deleted. Please try again.</string>
+</resources>

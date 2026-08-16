@@ -3,14 +3,14 @@ import { useApp } from '../AppContext'
 import { useI18n } from '../i18n/I18nContext'
 import type { AppLanguage } from '../types'
 import { ConfirmDialog } from '../components/ConfirmDialog'
-import { ShieldIcon, TrashIcon } from '../components/Icons'
+import { ChatIcon, ShieldIcon, TrashIcon } from '../components/Icons'
 
 export function PrivacyPolicyView({ onBack }: { onBack(): void }) {
   const { t } = useI18n()
   return <main className="screen settings-screen privacy-screen">
     <header className="navigation-header centered"><button className="back-button" aria-label={t('navigation.back')} onClick={onBack}>‹</button><h1>{t('settings.privacy')}</h1></header>
     <div className="form-list privacy-list"><section><p>{t('privacy.summary')}</p></section>
-      {(['audio', 'storage', 'control'] as const).map((section) => <section key={section}><h2>{t(`privacy.${section}.title`)}</h2><p>{t(`privacy.${section}.body`)}</p></section>)}
+      {(['audio', 'storage', 'diagnostics', 'feedback', 'control'] as const).map((section) => <section key={section}><h2>{t(`privacy.${section}.title`)}</h2><p>{t(`privacy.${section}.body`)}</p></section>)}
     </div>
   </main>
 }
@@ -36,6 +36,7 @@ export function SettingsView() {
         <div className="form-row"><span>{t('settings.version')}</span><code>1.0</code></div>
         <div className="about-row"><strong>{t('settings.about')}</strong><p>{t('settings.about.desc')}</p></div>
         <button className="form-row privacy-link" onClick={() => setPrivacy(true)}><ShieldIcon /><span>{t('settings.privacy')}</span><b>›</b></button>
+        {__FEEDBACK_FORM_URL__ && <a className="form-row privacy-link" href={__FEEDBACK_FORM_URL__} target="_blank" rel="noreferrer noopener"><ChatIcon /><span>{t('settings.feedback')}</span><b>›</b></a>}
       </section>
     </div>
     <ConfirmDialog open={confirmClear} onCancel={() => setConfirmClear(false)} onConfirm={() => { setConfirmClear(false); void clearHistory() }} />
