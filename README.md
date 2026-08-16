@@ -2,6 +2,25 @@
 
 iOSアプリ、Androidアプリ、PWA。音声入力された日本語をひらがな表記に整え、オノマトペらしさを5段階で評価します。
 
+| ホーム | 判定結果 | 履歴 | 設定 |
+|---|---|---|---|
+| <img src="docs/screenshots/1-home-ja-light.png" width="200"> | <img src="docs/screenshots/2-result-ja-light.png" width="200"> | <img src="docs/screenshots/3-history-ja-light.png" width="200"> | <img src="docs/screenshots/4-settings-ja-light.png" width="200"> |
+
+<details>
+<summary>ダークモード / English</summary>
+
+ダークモードと英語表示にも対応しています。表示言語は端末の設定に追従するほか、アプリ内でも切り替えられます。
+
+| ホーム | 判定結果 | 履歴 | 設定 |
+|---|---|---|---|
+| <img src="docs/screenshots/1-home-ja-dark.png" width="200"> | <img src="docs/screenshots/2-result-ja-dark.png" width="200"> | <img src="docs/screenshots/3-history-ja-dark.png" width="200"> | <img src="docs/screenshots/4-settings-ja-dark.png" width="200"> |
+| <img src="docs/screenshots/1-home-en-light.png" width="200"> | <img src="docs/screenshots/2-result-en-light.png" width="200"> | <img src="docs/screenshots/3-history-en-light.png" width="200"> | <img src="docs/screenshots/4-settings-en-light.png" width="200"> |
+| <img src="docs/screenshots/1-home-en-dark.png" width="200"> | <img src="docs/screenshots/2-result-en-dark.png" width="200"> | <img src="docs/screenshots/3-history-en-dark.png" width="200"> | <img src="docs/screenshots/4-settings-en-dark.png" width="200"> |
+
+</details>
+
+画面はPWA版のものです。iOS版・Android版も同じデザインです。撮り直すときは `cd web && npm run screenshots` を実行してください（音声認識は差し替えるため、実機もマイクも要りません）。
+
 ## Android版
 
 Kotlin、Jetpack Composeで実装したAndroid版は `android/` にあります。iOS版と同じ3タブ、マンガの描き文字を基調としたデザイン、判定アルゴリズム、最大100件の端末内履歴、日本語・英語UIを備えています。判定辞書は3プラットフォームで共有している `shared/onomatopoeia_dict.json` をビルド時にassetsへ取り込みます。
