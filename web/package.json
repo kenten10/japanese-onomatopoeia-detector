@@ -10,6 +10,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:e2e": "npm run build && playwright test",
+    "screenshots": "npm run build && CAPTURE_SCREENSHOTS=1 playwright test e2e/screenshots.spec.ts --project=iPhone",
     "postinstall": "node scripts/copy-kuromoji-dict.mjs && node scripts/build-privacy-page.mjs"
   },
   "dependencies": {
