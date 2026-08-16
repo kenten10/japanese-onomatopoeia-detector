@@ -7,9 +7,12 @@ struct SettingsView: View {
     private let appVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "1.0"
 
     /// ご意見フォーム。設定していなければ導線を出さない。
+    /// URL は `shared/feedback-form-url.txt` を単一の正とし、辞書と同じくバンドルへ同梱している。
+    /// ビルド設定に持たせると 3 実装で二重管理になり、xcconfig では `//` がコメント扱いで URL が壊れる。
     private static var feedbackFormURL: URL? {
-        let value = (Bundle.main.object(forInfoDictionaryKey: "FeedbackFormURL") as? String ?? "")
-            .trimmingCharacters(in: .whitespacesAndNewlines)
+        guard let path = Bundle.main.url(forResource: "feedback-form-url", withExtension: "txt"),
+              let contents = try? String(contentsOf: path, encoding: .utf8) else { return nil }
+        let value = contents.trimmingCharacters(in: .whitespacesAndNewlines)
         return value.isEmpty ? nil : URL(string: value)
     }
 
