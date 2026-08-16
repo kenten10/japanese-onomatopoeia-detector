@@ -338,6 +338,4 @@ GitHub Actionsで3プラットフォームを検証します。判定辞書 `sha
 |-------------|---------|------|
 | `web.yml` | push / PR（`web/**`、辞書） | ユニットテスト、ビルド、Playwright E2E |
 | `android.yml` | push / PR（`android/**`、辞書） | ユニットテスト、lint、デバッグビルド |
-| `ios.yml` | PR（iOS関連）と手動実行のみ | シミュレータでのユニットテスト |
-
-`ios.yml` はmacOSランナーがLinuxの10倍の分数を消費するため、pushでは起動しません。
+| `ios.yml` | push / PR（`OnomatopoeiaDetector*`、辞書）、手動実行 | シミュレータでのユニットテスト |
