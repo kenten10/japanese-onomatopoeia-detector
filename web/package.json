@@ -14,7 +14,7 @@
     "postinstall": "node scripts/copy-kuromoji-dict.mjs && node scripts/build-privacy-page.mjs"
   },
   "dependencies": {
-    "@sentry/browser": "^10.70.0",
+    "@sentry/browser": "^10.75.3",
     "kuromoji": "^0.1.2",
     "react": "^19.3.0",
     "react-dom": "^19.3.0"
