@@ -144,7 +144,7 @@ dependencies {
     implementation("com.atilika.kuromoji:kuromoji-ipadic:0.9.0")
 
     // 不具合の報告
-    implementation("io.sentry:sentry-android:8.52.0")
+    implementation("io.sentry:sentry-android:8.58.0")
 
     testImplementation("junit:junit:4.13.2")
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.11.0")
