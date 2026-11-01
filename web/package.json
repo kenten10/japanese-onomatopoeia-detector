@@ -16,8 +16,8 @@
   "dependencies": {
     "@sentry/browser": "^10.75.3",
     "kuromoji": "^0.1.2",
-    "react": "^19.3.0",
-    "react-dom": "^19.3.0"
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1"
   },
   "devDependencies": {
     "@playwright/test": "^1.63.0",
